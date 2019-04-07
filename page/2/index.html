@@ -252,6 +252,189 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/29/取证分析之发现Windows恶意程序执行痕迹/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/10/29/取证分析之发现Windows恶意程序执行痕迹/" itemprop="url">取证分析之发现Windows恶意程序执行痕迹</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-29T09:38:36+08:00">
+                2018-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/应急响应/" itemprop="url" rel="index">
+                    <span itemprop="name">应急响应</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>2018-10-29 首发于阿里先知: <a href="https://xz.aliyun.com/t/3067" target="_blank" rel="noopener">https://xz.aliyun.com/t/3067</a></p>
+<p>本文主要简述当Windows系统中存在恶意可执行程序时，如何发现恶意程序的执行痕迹（文件路径、时间等），以及相关的辅助分析工具。<br>从注册表、文件、日志三个方面介绍，以及简单介绍下Win10中的几个特有功能。</p>
+<h3 id="一、注册表"><a href="#一、注册表" class="headerlink" title="一、注册表"></a>一、注册表</h3><h4 id="1-ShimCache"><a href="#1-ShimCache" class="headerlink" title="1)ShimCache"></a>1)ShimCache</h4><p>ShimCache 又称为AppCompatCache，从 Windows XP开始存在，用来识别应用程序兼容性问题。跟踪文件路径，大小和上次修改时间（LastModifiedTime）和上次更新时间（LastUpdateTime）。<br>其中在Windows7/8/10系统中最多包含1024条记录，Windows7/8/10系统中不存在“上次更新时间”。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182010-e26034c0-d9d1-1.png" alt=""></p>
+<h5 id="辅助工具AppCompatCacheParser"><a href="#辅助工具AppCompatCacheParser" class="headerlink" title="辅助工具AppCompatCacheParser"></a>辅助工具AppCompatCacheParser</h5><p><a href="https://github.com/EricZimmerman/AppCompatCacheParser/" target="_blank" rel="noopener">https://github.com/EricZimmerman/AppCompatCacheParser/</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AppCompatCacheParser.exe --csv d:\temp  -t</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182152-1f1ba99e-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182204-2689023a-d9d2-1.png" alt=""></p>
+<h5 id="辅助工具ShimCacheParser"><a href="#辅助工具ShimCacheParser" class="headerlink" title="辅助工具ShimCacheParser"></a>辅助工具ShimCacheParser</h5><p><a href="https://github.com/mandiant/ShimCacheParser" target="_blank" rel="noopener">https://github.com/mandiant/ShimCacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">reg export &quot;HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\AppCompatCache&quot; shimcache.reg</span><br><span class="line">ShimCacheParser.py -o out.csv -r D:\Tool\TEST\shimcache.reg -t</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182432-7ebb7ff0-d9d2-1.png" alt=""><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182443-851cca34-d9d2-1.png" alt=""></p>
+<h4 id="2-UserAssist"><a href="#2-UserAssist" class="headerlink" title="2)UserAssist"></a>2)UserAssist</h4><p>userassist键值包含GUI应用执行的信息，如名称、路径、关联快捷方式、执行次数、上一次执行时间等。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist\&#123;GUID&#125;\Count</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182646-cea366e0-d9d2-1.png" alt="image.png"></p>
+<h5 id="辅助工具UserAssist-V2-6-0"><a href="#辅助工具UserAssist-V2-6-0" class="headerlink" title="辅助工具UserAssist_V2_6_0"></a>辅助工具UserAssist_V2_6_0</h5><p><a href="https://blog.didierstevens.com/programs/userassist/" target="_blank" rel="noopener">https://blog.didierstevens.com/programs/userassist/</a><br><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027182827-0aeb287c-d9d3-1.png" alt="image.png"></p>
+<h4 id="3-MUICache"><a href="#3-MUICache" class="headerlink" title="3)MUICache"></a>3)MUICache</h4><p>MUICache记录执行程序的名称和路径，但是没有记录相关执行时间。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HKCU/Software/Microsoft/Windows/ShellNoRoam/MUICache (XP, 2000, 2003) </span><br><span class="line">HKCU/Software/Classes/Local Settings/Software/Microsoft/Windows/Shell/MuiCache  (Vista, 7, 2008)</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183121-721a720a-d9d3-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183131-786d3822-d9d3-1.png" alt="image.png"></p>
+<h5 id="辅助工具muicache-view"><a href="#辅助工具muicache-view" class="headerlink" title="辅助工具muicache_view"></a>辅助工具muicache_view</h5><p><a href="http://www.nirsoft.net/utils/muicache_view.html" target="_blank" rel="noopener">http://www.nirsoft.net/utils/muicache_view.html</a></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183158-8882060c-d9d3-1.png" alt="image.png"></p>
+<h3 id="二、文件"><a href="#二、文件" class="headerlink" title="二、文件"></a>二、文件</h3><h4 id="1-Prefetch"><a href="#1-Prefetch" class="headerlink" title="1)Prefetch"></a>1)Prefetch</h4><p>Prefetch（预读取），从Windows XP开始引入，用来加速应用程序启动过程。Prefetch包含可执行文件的名称、文件时间戳、运行次数、上次执行时间、Hash等。<br>Win7上记录最近128个可执行文件的信息，Win8-10上的最近1024个可执行文件。</p>
+<p>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Prefetch</span><br></pre></td></tr></table></figure></p>
+<p>注册表HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters  中EnablePrefetcher的键值控制是否开启Prefetch。<br>EnablePrefetcher的数值设置：<br>0 =已禁用<br>1 =启用应用程序预读取<br>2 =启用引导预读取<br>3 =启用应用程序和引导预读取（最佳和默认）<br>虽然Windows 2003中也存在Prefetch，但默认为2,仅用于引导预读取。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183526-044c3d66-d9d4-1.png" alt="image.png"></p>
+<h5 id="辅助工具PECmd"><a href="#辅助工具PECmd" class="headerlink" title="辅助工具PECmd"></a>辅助工具PECmd</h5><p><a href="https://github.com/EricZimmerman/PECmd" target="_blank" rel="noopener">https://github.com/EricZimmerman/PECmd</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">PECmd.exe -d &quot;C:\Windows\Prefetch&quot; --csv &quot;d:\temp&quot; --json d:\temp\json</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183717-46713b10-d9d4-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183726-4becd87e-d9d4-1.png" alt="image.png"></p>
+<h4 id="2-Amcache"><a href="#2-Amcache" class="headerlink" title="2)Amcache"></a>2)Amcache</h4><p>Amcache.hve记录执应用程序的执行路径、上次执行时间、以及SHA1值。<br>文件路径:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\AppCompat\Programs\Amcache.hve</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183739-537a5f6c-d9d4-1.png" alt="image.png"></p>
+<h4 id="辅助工具AmcacheParse"><a href="#辅助工具AmcacheParse" class="headerlink" title="辅助工具AmcacheParse"></a>辅助工具AmcacheParse</h4><p><a href="https://github.com/EricZimmerman/AmcacheParser" target="_blank" rel="noopener">https://github.com/EricZimmerman/AmcacheParser</a><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">usage：</span><br><span class="line">AmcacheParser.exe -f C:\Windows\AppCompat\Programs\Amcache.hve --csv d:\temp</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183822-6d073a72-d9d4-1.png" alt="image.png"></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183830-724ff78a-d9d4-1.png" alt="image.png"></p>
+<h4 id="3-Jump-Lists"><a href="#3-Jump-Lists" class="headerlink" title="3)Jump Lists"></a>3)Jump Lists</h4><p>Windows 7-10用来任务栏显示经常使用或最近使用的项目。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;username&gt;\AppData\Roaming\Microsoft\Windows\Recent\AutomaticDestinations</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183913-8bfec36e-d9d4-1.png" alt="image.png"></p>
+<h4 id="辅助工具JumpListExplorer"><a href="#辅助工具JumpListExplorer" class="headerlink" title="辅助工具JumpListExplorer"></a>辅助工具JumpListExplorer</h4><p><a href="https://ericzimmerman.github.io/Software/JumpListExplorer.zip" target="_blank" rel="noopener">https://ericzimmerman.github.io/Software/JumpListExplorer.zip</a></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027183942-9d0f0a88-d9d4-1.png" alt="image.png"></p>
+<h3 id="三、日志"><a href="#三、日志" class="headerlink" title="三、日志"></a>三、日志</h3><h4 id="1-安全事件日志Security-Log-592-4688"><a href="#1-安全事件日志Security-Log-592-4688" class="headerlink" title="1) 安全事件日志Security Log (592/4688)"></a>1) 安全事件日志Security Log (592/4688)</h4><p>Windows 7、Windows Server 2008 R2 /2012 及之后，会在每次创建一个进程时创建一个事件日志，并传递到该进程的命令行信息。事件将记录到现有事件 ID 4688 并保存到 Windows 安全日志。但仅在启用了“审核进程创建”时记录4688。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">592   创建一个新进程（Windows Server 2003）</span><br><span class="line">4688  创建一个新进程（Windows 7、Windows Server 2008 R2/ 2012及之后）</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184400-36f3f80c-d9d5-1.png" alt="image.png"></p>
+<h4 id="2-系统事件日志System-Log-7035-7036"><a href="#2-系统事件日志System-Log-7035-7036" class="headerlink" title="2) 系统事件日志System Log (7035/7036)"></a>2) 系统事件日志System Log (7035/7036)</h4><p>Windows XP/7/ Windows Server 2003,当服务启动或停止时，服务控制管理器会记录到系统事件日志中的ID 7035。因此，如果关联的进程被注册为服务，则可发现执行痕迹。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">7035   Service Control Manager    xxx服务成功发送一个开始控件。</span><br><span class="line">7036   Service Control Manager    xxx服务处于 正在运行/停止 状态</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184413-3e5efc9a-d9d5-1.png" alt="image.png"></p>
+<h4 id="3-计划任务日志TaskScheduler"><a href="#3-计划任务日志TaskScheduler" class="headerlink" title="3) 计划任务日志TaskScheduler"></a>3) 计划任务日志TaskScheduler</h4><p>计划任务日志中也可能发现可执行文件执行的痕迹。</p>
+<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20181027184424-452b0906-d9d5-1.png" alt="image.png"></p>
+<h3 id="四、Win10特有功能"><a href="#四、Win10特有功能" class="headerlink" title="四、Win10特有功能"></a>四、Win10特有功能</h3><h4 id="1-RecentApps（win10）"><a href="#1-RecentApps（win10）" class="headerlink" title="1) RecentApps（win10）"></a>1) RecentApps（win10）</h4><p>Windows 10<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKCU\Software\Microsoft\Windows\Current Version\Search\RecentApps</span><br></pre></td></tr></table></figure></p>
+<h4 id="2-BAM-Background-Activity-Monitor-win10"><a href="#2-BAM-Background-Activity-Monitor-win10" class="headerlink" title="2) BAM/Background Activity Monitor (win10)"></a>2) BAM/Background Activity Monitor (win10)</h4><p>从Windows 10 1709 (Fall Creators update)版本开始引用。<br>注册表中位置：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HKLM\SYSTEM\CurrentControlSet\Services\bam\UserSettings\&#123;SID&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-ActivitiesCache-db（win10）"><a href="#3-ActivitiesCache-db（win10）" class="headerlink" title="3) ActivitiesCache.db（win10）"></a>3) ActivitiesCache.db（win10）</h4><p>从Windows 10 1803 (April 2018)版本开始引用。<br>文件路径：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\&lt;profile&gt;\AppData\Local\ConnectedDevicesPlatform\L.&lt;profile&gt;\ActivitiesCache.db</span><br></pre></td></tr></table></figure></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1" target="_blank" rel="noopener">https://blog.1234n6.com/2018/10/available-artifacts-evidence-of.html?m=1</a><br><a href="https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/" target="_blank" rel="noopener">https://www.andreafortuna.org/dfir/forensic-artifacts-evidences-of-program-execution-on-windows-systems/</a><br><a href="https://www.fireeye.com/blog/threat-research/2013/08/execute.html" target="_blank" rel="noopener">https://www.fireeye.com/blog/threat-research/2013/08/execute.html</a><br><a href="https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/" target="_blank" rel="noopener">https://www.andreafortuna.org/cybersecurity/amcache-and-shimcache-in-forensic-analysis/</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/JAVA代码审计之XXE与SSRF/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1134,148 +1317,6 @@
 <p><strong>0x14查看时间线cmdliner</strong><br>timeliner 查看各组件时间线。 输出会很多，建议输出到指定文件中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python vol.py -f /root/lltest/PC-20170527XAOD-20180407-042003.raw --profile=Win7SP1x86 timeliner --output=text --output-file=out1.txt</span><br></pre></td></tr></table></figure></p>
 <p>当然，volatility还有许多命令和插件，本文只是抛砖引玉，简单写了一些常用方式。</p>
 <p><strong>参考</strong><br><a href="https://github.com/volatilityfoundation/volatility/wiki/Command-Reference" target="_blank" rel="noopener">https://github.com/volatilityfoundation/volatility/wiki/Command-Reference</a><br><a href="http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/" target="_blank" rel="noopener">http://cyberforensicator.com/2018/03/11/finding-metasploits-meterpreter-traces-with-memory-forensics/</a><br><a href="https://eforensicsmag.com/finding-advanced-malware-using-volatility/" target="_blank" rel="noopener">https://eforensicsmag.com/finding-advanced-malware-using-volatility/</a><br><a href="https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html" target="_blank" rel="noopener">https://volatility-labs.blogspot.com/2012/09/howto-scan-for-internet-cachehistory.html</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/06/powershell反弹shell常见方式/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/06/powershell反弹shell常见方式/" itemprop="url">powershell反弹shell常见方式</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-06T09:38:36+08:00">
-                2018-03-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-03-06 首发于360安全客: <a href="https://www.anquanke.com/post/id/99793" target="_blank" rel="noopener">https://www.anquanke.com/post/id/99793</a></p>
 
           
         
