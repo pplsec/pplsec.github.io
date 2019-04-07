@@ -367,10 +367,10 @@
 <h3 id="3-漏洞分析-ThinkPHP-5-0-15"><a href="#3-漏洞分析-ThinkPHP-5-0-15" class="headerlink" title="3)    漏洞分析(ThinkPHP 5.0.15)"></a>3)    漏洞分析(ThinkPHP 5.0.15)</h3><h4 id="github-commit信息"><a href="#github-commit信息" class="headerlink" title="github commit信息"></a>github commit信息</h4><p>首先看下官方github commit信息<br><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br>library/think/Request.php的public function method($method = false)方法<br><img src="/images/ThinkPHP-RCE20190111-11.png" alt=""></p>
 <h4 id="静态代码分析"><a href="#静态代码分析" class="headerlink" title="静态代码分析"></a>静态代码分析</h4><p>以官网下载的ThinkPHP 5.0.15完整版进行分析，首先定位到漏洞关键点：<br>漏洞主要出现在Request 类的method 函数中<br>thinkphp5015\thinkphp/library/think/Request.php:501<br><img src="/images/ThinkPHP-RCE20190111-21.png" alt=""></p>
 <p>method()函数可以用来获取当前请求类型，如 GET、POST 等，当传入参数$method为false 的时候，会通过var_method 来配置$method</p>
-<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’。<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
+<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’：<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
 <p>取得$_POST[‘_method’]的值并将其赋值给$this-&gt;method，然后动态调用$this-&gt;{$this-&gt;method}($_POST)。这意味着攻击者可利用POST 参数可以实现对当前类的任意方法进行调用，通过调用当前类的构造方法可以实现任意覆盖成员属性的值。如果动态调用__construct构造函数，可以实现任意覆盖成员属性的值则会导致代码执行。</p>
-<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖。<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
-<p>当<strong>method被赋值为</strong>construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
+<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖：<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
+<p>当method被赋值为construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
 <p>当$method参数为true，进入server()：<br><img src="/images/ThinkPHP-RCE20190111-24.png" alt=""></p>
 <p>进入param()<br><img src="/images/ThinkPHP-RCE20190111-25.png" alt=""></p>
 <p>进入input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br><img src="/images/ThinkPHP-RCE20190111-26.png" alt=""></p>
@@ -422,8 +422,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/" rel="prev" title="InstallUtil&csc.exe-bypass application whitelisting">
-                InstallUtil&csc.exe-bypass application whitelisting <i class="fa fa-chevron-right"></i>
+              <a href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" rel="prev" title="MSBuild.exe-bypass application whitelisting">
+                MSBuild.exe-bypass application whitelisting <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

